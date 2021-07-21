@@ -1,0 +1,15 @@
+// This model shows the problem with cancellation in floating point arithmetic.
+
+mdp
+
+label "unsafe" = s = 2;
+
+const double p = 1e-17; // with 1e-16 all goes well
+
+module m
+  s : [0..1];
+
+  [a] s=0 ->   0.5 : (s'=0) + 0.5 : (s'=1);
+  [a] s=1 -> (1-p) : (s'=1) + p   : (s'=0);
+
+endmodule

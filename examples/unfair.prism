@@ -1,0 +1,43 @@
+// Model of "Winning an unfair game."  (Mosteller, Fifty Challenging
+// Problems in Probability with Solutions, n. 44.)
+//
+// The agent has to play an even number of games with probability p of
+// winning each game.  The agent wins the tournament if it wins more
+// games than it loses.  The agent gets to choose the number of games
+// (between 2 and 2*N) so as to maximize its probability of victory in
+// the tournament.
+// The maximum value of N is the number of choice actions in the MDP.
+
+mdp
+
+const double p = 0.45;
+const int N = 10;
+
+label "victory" = won>target;
+
+module game
+  won : [0..2*N] init 0;
+  target : [0..N] init 0;
+
+  [choose1]  target = 0 & N > 0 -> (target' = 1);
+  [choose2]  target = 0 & N > 1 -> (target' = 2);
+  [choose3]  target = 0 & N > 2 -> (target' = 3);
+  [choose4]  target = 0 & N > 3 -> (target' = 4);
+  [choose5]  target = 0 & N > 4 -> (target' = 5);
+  [choose6]  target = 0 & N > 5 -> (target' = 6);
+  [choose7]  target = 0 & N > 6 -> (target' = 7);
+  [choose8]  target = 0 & N > 7 -> (target' = 8);
+  [choose9]  target = 0 & N > 8 -> (target' = 9);
+  [choose10] target = 0 & N > 9 -> (target' = 10);
+
+  // Stop the tournament as soon as it is known that the agent lost.
+  [play] target > 0 & played < 2*target & target > played-won ->
+         p : (won' = won+1) + 1-p : true;
+  [stay] target > 0 & (played = 2*target | target <= played-won) -> true;
+endmodule
+
+module counter
+  played : [0..2*N] init 0;
+
+  [play] true -> (played' = played+1);
+endmodule

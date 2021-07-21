@@ -1,0 +1,23 @@
+Input File is ../mungojerrie/examples/boolVars.prism
+@ 0.00642204 s: the environment has 5 nodes, 5 of which are decision nodes.
+@ 0.0138584 s: the DPA has 1 state (0 traps) and 3 priorities.
+@ 0.0209286 s: the product has 5 nodes, 5 of which are decision nodes.
+@ 0.0209781 s: strategy computed.
+@ 0.0209825 s: probability of satisfaction: 1
+digraph "Pruned Product" {
+node [shape=circle];
+"title" [label="Pruned Product",shape=plaintext];
+"0_init" [style=invis]
+"0_init" -> 0
+0 [label="x0y1z0, 0\n", shape=box];
+1 [label="x0y0z0, 0\n", shape=box];
+2 [label="x1y0z0, 0\n", shape=box];
+3 [label="x1y1z1, 0\np", shape=box];
+4 [label="x1y0z1, 0\nq", shape=box];
+0 -> 1 [label=" a,0.25\n(2) "];
+1 -> 2 [label=" a,0.25\n(2) "];
+2 -> 3 [label=" a,0.25\n(2) "];
+3 -> 4 [label=" a,1\n(1) "];
+4 -> 3 [label=" a,0.25\n(1) "];
+}
+@ 0.0216932 s: end

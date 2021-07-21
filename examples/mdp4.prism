@@ -1,0 +1,14 @@
+mdp
+
+label "safe" = state<5;
+
+module mdp3
+  state : [0..5] init 0;
+
+  [a] state=0 -> 1/4 : (state'=1) + 3/4 : (state'=2);
+  [a] state=1 -> 1/4 : (state'=0) + 3/4 : (state'=3);
+  [a] state=2 -> 1/2 : (state'=4) + 1/2 : (state'=5);
+  [b] state=2 -> (state'=0);
+  [a] state=3 -> 1/3 : (state'=4) + 2/3 : (state'=5);
+  [a] state>3 -> true;
+endmodule

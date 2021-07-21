@@ -1,0 +1,15 @@
+// Simple MDP model.
+
+mdp
+
+label "q" = x = 1;
+
+module ratchet
+  x : [0..2] init 0;
+
+  [a] true -> true;
+  [b] x=0 -> 0.5 : (x'=1) + 0.5 : (x'=2);
+endmodule
+rewards "unbounded_return"
+  x = 1 : 1;
+endrewards

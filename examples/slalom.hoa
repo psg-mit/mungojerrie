@@ -1,0 +1,26 @@
+HOA: v1
+name: "G(p -> XG !q) & G(q -> XG !p)"
+States: 5
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 2 "p" "q"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "nn"
+ [!0&!1] 0 {1}
+ [0&!1] 1 {1}
+ [!0&1] 2 {1}
+ [0&1] 3 {1}
+State: 1 "pn"
+ [!1] 1 {1}
+ [1] 4 {0}
+State: 2 "np"
+ [!0] 2 {1}
+ [0] 4 {0}
+State: 3 "pp"
+ [!0&!1] 3 {1}
+ [0|1] 4 {0}
+State: 4 "trap"
+ [t] 4 {0}
+--END--

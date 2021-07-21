@@ -1,0 +1,6 @@
+Input File is ../mungojerrie/examples/shoot.prism
+@ 0.00661619 s: the environment has 562 nodes, 242 of which are decision nodes.
+@ 0.0120284 s: the DBA has 2 states (0 traps).
+@ 0.018117 s: the product has 964 nodes, 429 of which are decision nodes.
+@ 0.188122 s: probability of satisfaction: 0.859214
+@ 0.18885 s: end

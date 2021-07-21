@@ -1,0 +1,18 @@
+// Example of uses of ITE operator.
+
+mdp
+
+const int xmin = 0;
+const int xmax = 2;
+label "pmin" = x=xmin ? true : false;
+label "pmax" = x=xmax;
+
+module m1
+  x : [xmin..xmax] init xmin;
+
+  [] true -> (x'= x=xmax ? xmin : x+1);
+endmodule
+
+rewards
+  [] x=xmin ? true : x>xmin : x=xmin ? 0.1 : 0.2; // guard always true
+endrewards

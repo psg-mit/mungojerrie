@@ -1,0 +1,17 @@
+// Simple gambler's ruin model.
+
+mdp
+
+const int Goal   = 10;      // desired wealth
+const int Wealth = Goal/2;  // initial wealth
+const double p   = 1/2;     // probability of winning
+
+label "ruin" = x = 0;
+label "goal" = x = Goal;
+
+module gambler
+  x : [0..Goal] init Wealth;
+
+  [alpha] x != 0 & x != Goal -> p : (x'=x+1) + (1-p) : (x'=x-1);
+  [beta]  true -> true;
+endmodule

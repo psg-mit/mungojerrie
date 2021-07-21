@@ -1,0 +1,91 @@
+// Another MDP in the "frozen lake" style from
+// Bozkurt, Wang, Zavlanos, and Pajic,
+// Control Synthesis from Linear Temporal Logic Specifications
+// using Model-Free Reinforcement Learning. (arXiv:1909.07299v1)
+//
+// The row numbers increase downward.
+
+mdp
+
+const int M = 5;              // number of rows of the grid
+const int N = 5;              // number of columns of the grid
+const double pfw = 4/5;       // forward move probability
+const double psw = (1-pfw)/2; // sideways move probability
+
+formula goalA = c=2 & (r=1 | r=3);
+formula goalB = r=1 & c=3 | r=3 & c=0;
+formula trap  = (c=2 & (r=0 | r=2)) | (r=4 & (c=1 | c=3));
+formula absorbing = (c=2 & r=3) | (r=1 & c=3 | r=3 & c=0);
+formula obstacle = r=2 & c=0;
+
+label "start" = r=0 & c=0;
+label "gA"    = goalA;
+label "gB"    = goalB;
+label "t"     = trap;
+
+module grid
+  r : [0..M-1] init 0;
+  c : [0..N-1] init 0;
+
+  // All three directions are possible.
+  [s] !absorbing & r<M-1 & c>0 & c<N-1 & !(r=2 & c=1) ->
+    pfw : (r'=r+1) & (c'=c) + psw : (r'=r) & (c'=c-1) + psw : (r'=r) & (c'=c+1);
+  // Going right is not possible.
+  [s] !absorbing & ((r<M-1 & c=0) | (r=2 & c=1))      ->
+    pfw : (r'=r+1) & (c'=c) + psw : (r'=r) & (c'=c) + psw : (r'=r) & (c'=c+1);
+  // Going left is not possible.
+  [s] !absorbing & r<M-1 & c=N-1       ->
+    pfw : (r'=r+1) & (c'=c) + psw : (r'=r) & (c'=c-1) + psw : (r'=r) & (c'=c);
+  // Going forward is not possible.
+  [s] !absorbing & r=M-1 & c>0 & c<N-1 ->
+    pfw : (r'=r) & (c'=c) + psw : (r'=r) & (c'=c-1) + psw : (r'=r) & (c'=c+1);
+  // Going either forward or right is not possible.
+  [s] !absorbing & r=M-1 & c=0         ->
+    pfw+psw : (r'=r) & (c'=c) + psw : (r'=r) & (c'=c+1);
+  // Going either forward or left is not possible.
+  [s] !absorbing & r=M-1 & c=N-1       ->
+    pfw+psw : (r'=r) & (c'=c) + psw : (r'=r) & (c'=c-1);
+
+  [e] !absorbing & r>0 & r<M-1 & c<N-1 ->
+    pfw : (r'=r) & (c'=c+1) + psw : (r'=r+1) & (c'=c) + psw : (r'=r-1) & (c'=c);
+  [e] !absorbing & r=0 & c<N-1         ->
+    pfw : (r'=r) & (c'=c+1) + psw : (r'=r+1) & (c'=c) + psw : (r'=r) & (c'=c);
+  [e] !absorbing & r=M-1 & c<N-1       ->
+    pfw : (r'=r) & (c'=c+1) + psw : (r'=r) & (c'=c) + psw : (r'=r-1) & (c'=c);
+  [e] !absorbing & r>0 & r<M-1 & c=N-1 ->
+    pfw : (r'=r) & (c'=c) + psw : (r'=r+1) & (c'=c) + psw : (r'=r-1) & (c'=c);
+  [e] !absorbing & r=0 & c=N-1         ->
+    pfw+psw : (r'=r) & (c'=c) + psw : (r'=r+1) & (c'=c);
+  [e] !absorbing & r=M-1 & c=N-1       ->
+    pfw+psw : (r'=r) & (c'=c) + psw : (r'=r-1) & (c'=c);
+
+  [n] !absorbing & r>0 & c>0 & c<N-1   ->
+    pfw : (r'=r-1) & (c'=c) + psw : (r'=r) & (c'=c-1) + psw : (r'=r) & (c'=c+1);
+  [n] !absorbing & r>0 & c=0           ->
+    pfw : (r'=r-1) & (c'=c) + psw : (r'=r) & (c'=c) + psw : (r'=r) & (c'=c+1);
+  [n] !absorbing & r>0 & c=N-1         ->
+    pfw : (r'=r-1) & (c'=c) + psw : (r'=r) & (c'=c-1) + psw : (r'=r) & (c'=c);
+  [n] !absorbing & r=0 & c>0 & c<N-1   ->
+    pfw : (r'=r) & (c'=c) + psw : (r'=r) & (c'=c-1) + psw : (r'=r) & (c'=c+1);
+  [n] !absorbing & r=0 & c=0           ->
+    pfw+psw : (r'=r) & (c'=c) + psw : (r'=r) & (c'=c+1);
+  [n] !absorbing & r=0 & c=N-1         ->
+    pfw+psw : (r'=r) & (c'=c) + psw : (r'=r) & (c'=c-1);
+
+  [w] !absorbing & r>0 & r<M-1 & c>0   ->
+    pfw : (r'=r) & (c'=c-1) + psw : (r'=r+1) & (c'=c) + psw : (r'=r-1) & (c'=c);
+  [w] !absorbing & r=0 & c>0           ->
+    pfw : (r'=r) & (c'=c-1) + psw : (r'=r+1) & (c'=c) + psw : (r'=r) & (c'=c);
+  [w] !absorbing & r=M-1 & c>0         ->
+    pfw : (r'=r) & (c'=c-1) + psw : (r'=r) & (c'=c) + psw : (r'=r-1) & (c'=c);
+  [w] !absorbing & r>0 & r<M-1 & c=0   ->
+    pfw : (r'=r) & (c'=c) + psw : (r'=r+1) & (c'=c) + psw : (r'=r-1) & (c'=c);
+  [w] !absorbing & r=0 & c=0           ->
+    pfw+psw : (r'=r) & (c'=c) + psw : (r'=r+1) & (c'=c);
+  [w] !absorbing & r=M-1 & c=0         ->
+    pfw+psw : (r'=r) & (c'=c) + psw : (r'=r-1) & (c'=c);
+
+  [e1] r=3 & c=2 -> true;
+
+  [e2] goalB -> true;
+endmodule

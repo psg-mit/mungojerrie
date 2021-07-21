@@ -1,0 +1,49 @@
+//Branching Decision Process
+// p = -3.1
+// q = 0.9
+// r = 0.1
+// entities = {A, B} init A
+// A -(alpha, 2)-> p : A A + (1-p) : \epsilon
+// A -(beta, 1)-> B
+// B -(alpha, 1)-> q  : A + (1-q) : \epsilon
+// B -(beta, 2)-> r : A + (1-r) : \epsilon
+
+
+bdp
+
+const double p = 0.1;
+const double q = 0.9;
+const double r = 0.1;
+
+label "final" = entity = 2; // extinction
+
+module main
+  entity : [0..2] init 0;
+  nature : [0..1] init 0;
+
+  [alpha] entity=0 & nature = 0  -> p : (nature' = 1) + (1-p) : (entity' = 2);
+  [beta] entity=0 & nature = 0  -> (entity' = 1);
+  [alpha] entity=1 & nature = 0  -> q : (entity' = 0) + (1-q) : (entity' = 2);
+  [beta] entity=1 & nature = 0  -> r : (entity' = 0) + (1-p) : (entity' = 2);
+
+  [step] (entity = 2) & (nature = 0) -> (entity' = 2); // sink 
+  
+  [c1] nature = 1 -> (entity' = 0) & (nature' = 0); 
+  [c2] nature = 1 -> (entity' = 0) & (nature' = 0); 
+
+endmodule
+
+player Pentity
+  [alpha], [beta], [step]
+endplayer
+
+player Pnature
+  [c1], [c2]
+endplayer
+
+rewards
+    [alpha] entity=0 : 2;
+    [alpha] entity=1: 1;
+    [beta] entity=0 : 1;
+    [beta] entity=1: 2;
+endrewards

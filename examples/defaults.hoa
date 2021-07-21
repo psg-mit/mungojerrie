@@ -1,0 +1,18 @@
+HOA: v1
+name: "G(p -> Xp)"
+States: 3
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 1 "p"
+properties: deterministic complete colored trans-acc trans-labels explicit-labels
+--BODY--
+State: 0 "start"
+ [!0] 0 {1}
+ [0] 1 {1}
+State: 1 "ready"
+ [!0] 2 {0}
+ [0] 1 {1}
+State: 2 "trap"
+ [t] 1 {0}
+--END--

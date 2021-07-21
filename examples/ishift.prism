@@ -1,0 +1,17 @@
+// Example from Aidan Harding's thesis.
+
+mdp
+
+label "p0" = state=0;
+label "q0" = state=1;
+label "p1" = state=2;
+label "q1" = state=3;
+
+module ishift
+  state : [0..3] init 0;
+  [a] state=0 -> (state'=1);
+  [b] state=0 -> (state'=2);
+  [a] state=1 -> (state'=0);
+  [b] state=2 -> (state'=3);
+  [b] state=3 -> (state'=0);
+endmodule

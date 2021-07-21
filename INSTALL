@@ -1,0 +1,106 @@
+Mungojerrie is a tool for reinforcement learning and model checking of
+omega-regular objectives of Markov Decision Processes.
+
+Mungojerrie reads models written in a subset of the PRISM language
+(http://www.prismmodelchecker.org)
+
+The properties are specified in the HOA format (http://adl.github.io/hoaf).
+
+Mungojerrie includes cpphoafparser (https://automata.tools/hoa/cpphoafparser)
+whose authors are gratefully acknowledged.
+
+Mungojerrie can optionally be linked against Google's OR Tools
+(https://developers.google.com/optimization) for 
+linear programming support in the model checker.
+
+----------------------------------------------------------------------
+BUILDING MUNGOJERRIE FROM SOURCE
+
+Dependencies:
+
+For each tool you need to build Mungojerrie from source we list the
+versions that have been tested:
+
+ * A C/C++ compiler (gcc 7.3.0, 9.3.0, 10.2.0; clang 10.0.0, 11.0.0, 12.0.0)
+ * GNU make (4.1, 4.2.1, 4.3)
+ * flex (2.6.4)
+ * GNU Bison (3.0.4, 3.5.1, 3.7; versions older than 3.0.4 do not work)
+ * GNU autotools (automake 1.15.1, 1.16.2. autoconf 2.69)
+ * Boost Program Options and Serialization libraries (1.69, 1.71, 1.74)
+ * Google OR-tools (version for your operating system; optional)
+ * Doxygen (1.8.13, 1.8.17, 1.8.18; optional, to extract documentation
+            from source code)
+ * dot (graphviz version 2.40.1, 2.43.0; optional)
+ * latex (texlive 2017, 2019; optional, for the documentation)
+
+Building instructions:
+
+These instructions describe an "external build."
+
+Unpack the source code in a directory.  We assume that this directory is
+called "mungojerrie."
+
+We also assume that the OR-tools are in directory /path/to/or-tools.
+
+Create a build directory in the parent directory of directory mungojerrie.
+We assume that this directory is called "build-mungojerrie."
+
+Change your working directory to build-mungojerrie.  Issue the following
+commands:
+
+  ../mungojerrie/configure --enable-silent-rules --with-or-tools=/path/to/or-tools
+  make check
+  make html/index.html # to extract the documentation
+
+This will produce a program called "mungojerrie" and will run a sanity check.
+
+Notes:
+
+ * ../mungojerrie/configure --help to see the configuation options
+ * --enable-silent-rules is optional
+
+Mungojerrie can use one of two external tools to translate an LTL formula
+into a good-for-games automaton in HOA format:
+
+ * epmc-mj/SPOT produces slim and semideterministic automata
+ * Owl's ltl2ldba produces suitable limit-determinitic automata
+ * SPOT produces parity automata
+
+Mungojerrie's interaction with the LTL translators requires three
+additional Boost libraries:
+
+ * System
+ * Filesystem
+ * Process
+
+A recent Java VM is also required for emmc-mj and Owl.  (We tested with
+OpenJDK 11.)
+
+epmc-mj-v16.jar can be downloaded from https://www.dropbox.com/sh/gzhik73cb2e1wcd/AABfJURF5MT_Wirz2PJs2w2ua/epmc-mj-v16.jar
+
+SPOT can downloaded from https://spot.lrde.epita.fr/  We tested spot 2.9.5.
+
+Owl can be downloaded from https://owl.model.in.tum.de/  We tested owl 20.06.
+
+To let Mungojerrie connect to empc-mj/SPOT, configure with
+ --with-spot=<path to spot directory>
+ --with-epmc-mj=<path to epmc-mj directory>
+To let Mungojerrie connect to owl, configure with
+ --with-owl=<path to owl directory>
+
+----------------------------------------------------------------------
+USING MUNGOJERRIE
+
+Mungojerrie is a command-line tool.
+
+  ./mungojerrie --help
+
+prints all the options.
+
+A number of examples are found in the "examples" directory of the source tree.
+See examples/catalog.txt for a description of the appropriate pairings 
+of these files.
+
+Typical usage:
+
+./mungojerrie -p test.hoa test.prism --learn Q

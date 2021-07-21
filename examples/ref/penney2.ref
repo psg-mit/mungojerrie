@@ -1,0 +1,6 @@
+Input File is ../mungojerrie/examples/penney2.prism
+@ 0.00832462 s: the environment has 1689 nodes, 849 of which are decision nodes.
+@ 0.0207393 s: the DBA has 3 states (1 trap).
+@ 0.0304686 s: the product has 3369 nodes, 1745 of which are decision nodes.
+@ 0.105341 s: probability of satisfaction: 0.333333
+@ 0.106287 s: end

@@ -1,0 +1,16 @@
+// This MDP illustrates worst-case run-time for end-component computation.
+// The number of SCC computations is linear in N.
+
+mdp
+
+const int N=5;
+const double p=1/2;
+
+label "term" = state=N;
+
+module mdp3
+  state : [0..N] init 0;
+
+  [a] state<N -> p : (state'=state+1) + 1-p : (state'=0);
+  [b] true    -> true;
+endmodule

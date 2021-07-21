@@ -1,0 +1,41 @@
+// A 5x5 grid-world example from Sadigh et al. with correct initial state.
+
+mdp
+
+label "start" = r=0 & c=0;
+label "goal"  = r=4 & c=4;
+label "trap"  = r=0 & c=2 | r=3 & (c=2 | c=3) | r=4 & c=0;
+
+module grid
+  r : [0..4] init 3;
+  c : [0..4] init 0;
+
+  [nw] r<4 & c>0 -> 1/5 : (r'=r) & (c'=c) +
+                    2/5 : (r'=r) & (c'=c-1) + 2/5 : (r'=r+1) & (c'=c);
+  [nw] r=4 & c>0 -> 1/5 : (r'=r) & (c'=c) + 4/5 : (r'=r) & (c'=c-1);
+  [nw] r<4 & c=0 -> 1/5 : (r'=r) & (c'=c) + 4/5 : (r'=r+1) & (c'=c);
+  [nw] r=4 & c=0 -> (r'=r) & (c'=c);
+
+  [ne] r<4 & c<4 -> 1/5 : (r'=r) & (c'=c) +
+                    2/5 : (r'=r) & (c'=c+1) + 2/5 : (r'=r+1) & (c'=c);
+  [ne] r=4 & c<4 -> 1/5 : (r'=r) & (c'=c) + 4/5 : (r'=r) & (c'=c+1);
+  [ne] r<4 & c=4 -> 1/5 : (r'=r) & (c'=c) + 4/5 : (r'=r+1) & (c'=c);
+  [ne] r=4 & c=4 -> (r'=r) & (c'=c);
+
+  [se] r>0 & c<4 -> 1/5 : (r'=r) & (c'=c) +
+                    2/5 : (r'=r) & (c'=c+1) + 2/5 : (r'=r-1) & (c'=c);
+  [se] r=0 & c<4 -> 1/5 : (r'=r) & (c'=c) + 4/5 : (r'=r) & (c'=c+1);
+  [se] r>0 & c=4 -> 1/5 : (r'=r) & (c'=c) + 4/5 : (r'=r-1) & (c'=c);
+  [se] r=0 & c=4 -> (r'=r) & (c'=c);
+
+  [sw] r>0 & c>0 -> 1/5 : (r'=r) & (c'=c) +
+                    2/5 : (r'=r) & (c'=c-1) + 2/5 : (r'=r-1) & (c'=c);
+  [sw] r=0 & c>0 -> 1/5 : (r'=r) & (c'=c) + 4/5 : (r'=r) & (c'=c-1);
+  [sw] r>0 & c=0 -> 1/5 : (r'=r) & (c'=c) + 4/5 : (r'=r-1) & (c'=c);
+  [sw] r=0 & c=0 -> (r'=r) & (c'=c);
+endmodule
+
+rewards
+  r=4 & c=4 | r=0 & c=0 : 1;
+  r=0 & c=2 | r=3 & (c=2 | c=3) | r=4 & c=0 : -1;
+endrewards

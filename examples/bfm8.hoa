@@ -1,0 +1,19 @@
+HOA: v1
+name: "NPW11"
+States: 3
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 2 "p" "q"
+properties: complete trans-acc explicit-labels
+--BODY--
+State: 0 "0"
+ [!0|!1] 0 {0}
+ [!0] 1
+ [0&1] 2
+State: 1 "1"
+ [0] 1
+ [!0] 0
+State: 2 "2"
+ [t] 2
+--END--

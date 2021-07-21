@@ -1,0 +1,34 @@
+// What is the best strategy when playing rock, paper, scissors against an
+// opponent that plays:
+//
+// rock     with probability 0.6
+// paper    with probability 0.1
+// scissors with probability 0.3
+//
+// in a best-of-N tournament?
+
+mdp
+
+const int N = 10; // number of rounds
+const double pR = 0.6;
+const double pP = 0.1;
+const double pS = 1 - (pR + pP);
+
+label "victory" = cnt = N & won > 1;
+
+module rps
+  won : [-N..N] init 0;
+  [Ro] cnt < N -> pR : true + pP : (won'=won-1) + pS : (won'=won+1); 
+  [Pa] cnt < N -> pR : (won'=won+1) + pP : true + pS : (won'=won-1); 
+  [Sc] cnt < N -> pR : (won'=won-1) + pP : (won'=won+1) + pS : true;
+  [No] cnt = N -> true;
+endmodule
+
+module counter
+  cnt : [0..N] init 0;
+
+  [Ro] cnt < N -> (cnt'=cnt+1);
+  [Pa] cnt < N -> (cnt'=cnt+1);
+  [Sc] cnt < N -> (cnt'=cnt+1);
+  [No] cnt = N -> true;
+endmodule

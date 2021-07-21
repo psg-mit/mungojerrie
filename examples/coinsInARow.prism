@@ -1,0 +1,63 @@
+// Coins in a row game from Peter Winkler's Mathematical Puzzles.
+
+smg
+
+const int N = 4; // number of coins
+const int M = 6; // maximum face value
+
+player P0 [fill], [l0], [r0], [loop] endplayer
+player P1 [l1], [r1] endplayer
+
+label "w0" = i > j & t0 >= t1;
+label "w1" = i > j & t0 < t1;
+
+module play
+  c0 : [1..M];
+  c1 : [1..M];
+  c2 : [1..M];
+  c3 : [1..M];
+  t0 : [0..M*N/2] init 0;
+  t1 : [0..M*N/2] init 0;
+
+  // Pick random values for the coins.
+  [fill] s = 0 & i = 0 -> 1/M : (c0' = 1) + 1/M : (c0' = 2) + 1/M : (c0' = 3) +
+                          1/M : (c0' = 4) + 1/M : (c0' = 5) + 1/M : (c0' = 6);
+  [fill] s = 0 & i = 1 -> 1/M : (c1' = 1) + 1/M : (c1' = 2) + 1/M : (c1' = 3) +
+                          1/M : (c1' = 4) + 1/M : (c1' = 5) + 1/M : (c1' = 6);
+  [fill] s = 0 & i = 2 -> 1/M : (c2' = 1) + 1/M : (c2' = 2) + 1/M : (c2' = 3) +
+                          1/M : (c2' = 4) + 1/M : (c2' = 5) + 1/M : (c2' = 6);
+  [fill] s = 0 & i = 3 -> 1/M : (c3' = 1) + 1/M : (c3' = 2) + 1/M : (c3' = 3) +
+                          1/M : (c3' = 4) + 1/M : (c3' = 5) + 1/M : (c3' = 6);
+  // P0 picks one coin.
+  [l0] s = 1 & i <= j & i = 0 -> (t0' = t0 + c0);
+  [l0] s = 1 & i <= j & i = 1 -> (t0' = t0 + c1);
+  [l0] s = 1 & i <= j & i = 2 -> (t0' = t0 + c2);
+  [r0] s = 1 & i <= j & j = 3 -> (t0' = t0 + c3);
+  [r0] s = 1 & i <= j & j = 2 -> (t0' = t0 + c2);
+  [r0] s = 1 & i <= j & j = 1 -> (t0' = t0 + c1);
+
+  // P1 picks one coin.
+  [l1] s = 2 & i <= j & i = 0 -> (t1' = t1 + c0);
+  [l1] s = 2 & i <= j & i = 1 -> (t1' = t1 + c1);
+  [l1] s = 2 & i <= j & i = 2 -> (t1' = t1 + c2);
+  [r1] s = 2 & i <= j & j = 3 -> (t1' = t1 + c3);
+  [r1] s = 2 & i <= j & j = 2 -> (t1' = t1 + c2);
+  [r1] s = 2 & i <= j & j = 1 -> (t1' = t1 + c1);
+endmodule
+
+module control
+  s : [0..2] init 0;     // stage
+  i : [0..N-1] init 0;   // index
+  j : [0..N-1] init N-1; // index
+
+  // Choose the coins.
+  [fill] s = 0  & i < N-1 -> (i' = i + 1);
+  [fill] s = 0  & i = N-1 -> (s' = 1) & (i' = 0);
+  // Alternate between the players.
+  [l0] s = 1 & i <= j     -> (i' = i + 1) & (s' = 2);
+  [r0] s = 1 & i <= j     -> (j' = j - 1) & (s' = 2);
+  [l1] s = 2 & i <= j     -> (i' = i + 1) & (s' = 1);
+  [r1] s = 2 & i <= j     -> (j' = j - 1) & (s' = 1);
+  // Endgame.
+  [loop] s = 1 & i > j    -> true;
+endmodule

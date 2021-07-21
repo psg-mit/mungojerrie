@@ -1,0 +1,13 @@
+HOA: v1
+name: "FG target" /* for lda3-5.prism and lda3-7.prism */
+States: 1
+Start: 0
+acc-name: co-Buchi
+Acceptance: 1 Fin(0)
+AP: 1 "target"
+properties: deterministic complete trans-acc explicit-labels
+--BODY--
+State: 0 "only"
+ [!0] 0 {0}
+ [0] 0
+--END--

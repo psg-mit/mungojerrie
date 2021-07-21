@@ -1,0 +1,23 @@
+// Test of reward specifications.
+
+mdp
+
+label "p" = x=0 & y=1;
+
+module m
+  x : [0..2] init 0;
+  y : [0..3] init 0;
+
+  [] true -> (x'=mod(x+1,3)) & (y'=mod(y+1,4));
+  [a] x=0 & y=0 -> 1/2 : (x'=1) + 1/2 : (y'=1);
+endmodule
+
+rewards "r_a"
+  [a] x=0 & y=0 : 1.5;
+            y=2 : 1/4;
+endrewards
+
+rewards "r_b"
+  [] x=1 & y=2 : -1/2;
+     x=2 & y=3 : 2;
+endrewards

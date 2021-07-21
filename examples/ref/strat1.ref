@@ -1,0 +1,8 @@
+Input File is ../mungojerrie/examples/strat1.prism
+@ 0.0076018 s: the environment has 4 nodes, 3 of which are decision nodes.
+@ 0.689503 s: the NBA has 9 states (1 trap).
+@ 0.695057 s: the product has 17 nodes, 13 of which are decision nodes.
+@ 0.695105 s: 1 WECs computed.
+@ 0.695128 s: reachability completed.
+@ 0.695131 s: probability of satisfaction: 1
+@ 0.69574 s: end

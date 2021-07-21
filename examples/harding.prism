@@ -1,0 +1,25 @@
+// A rendition of Harding's LTL game illustrating the problems encountered
+// with nondeterministic automata.  No probabilities appear in this game.
+
+smg
+
+label "p" = s<2;
+
+module arena
+  s : [0..3] init 0;
+  // Actions are named after Right/Left and System/Environment.
+  [Rs] s=0 -> (s'=1);
+  [Le] s=1 -> (s'=0);
+  [Re] s=1 -> (s'=2);
+  [Ls] s=2 -> (s'=1);
+  [Rs] s=2 -> (s'=3);
+  [Le] s=3 -> (s'=2);
+endmodule
+
+player sys
+  [Ls], [Rs]
+endplayer
+
+player environment
+  [Le], [Re]
+endplayer

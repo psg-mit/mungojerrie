@@ -1,0 +1,6 @@
+Input File is ../mungojerrie/examples/pursuit.prism
+@ 0.027916 s: the environment has 12960 nodes, 2592 of which are decision nodes.
+@ 0.0414387 s: the DPA has 4 states (1 trap) and 4 priorities.
+@ 0.105832 s: the product has 46183 nodes, 9663 of which are decision nodes.
+@ 0.278835 s: probability of satisfaction: 0
+@ 0.288356 s: end

@@ -1,0 +1,20 @@
+// Test for global variables.
+
+mdp
+
+const int Max = 3;
+
+label "shared" = shared;
+
+global shared : bool;
+global semaphore : [0..Max] init Max;
+
+module mt
+  [] !shared -> (shared'=true);
+  [] semaphore < Max -> (semaphore'=semaphore+1);
+endmodule
+
+module mf
+  [] shared -> (shared'=false);
+  [] semaphore > 0 -> (semaphore'=semaphore-1);
+endmodule

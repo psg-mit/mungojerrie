@@ -1,0 +1,29 @@
+// There are N boxes.  Initially each box contains M chocolates.
+// At each turn the agent picks a box.  If there are chocolates in
+// the chosen box, one of them is removed with probability p.
+
+mdp
+
+const int N = 5;
+const int M = 3;
+const double p = 3/4;
+
+module pluck
+  b0 : [0..M] init M;
+  b1 : [0..M] init M;
+  b2 : [0..M] init M;
+  b3 : [0..M] init M;
+  b4 : [0..M] init M;
+
+  [a0] true -> p : (b0' = b0 > 0 ? b0-1 : b0) + (1-p) : true;
+  [a1] true -> p : (b1' = b1 > 0 ? b1-1 : b1) + (1-p) : true;
+  [a2] true -> p : (b2' = b2 > 0 ? b2-1 : b2) + (1-p) : true;
+  [a3] true -> p : (b3' = b3 > 0 ? b3-1 : b3) + (1-p) : true;
+  [a4] true -> p : (b4' = b4 > 0 ? b4-1 : b4) + (1-p) : true;
+endmodule
+
+label "p0" = b0 = 1 & b1 = 0 & b2 = 0 & b3 = 0 & b4 = 0;
+label "p1" = b1 = 1 & b0 = 0 & b2 = 0 & b3 = 0 & b4 = 0;
+label "p2" = b2 = 1 & b0 = 0 & b1 = 0 & b3 = 0 & b4 = 0;
+label "p3" = b3 = 1 & b0 = 0 & b1 = 0 & b2 = 0 & b4 = 0;
+label "p4" = b4 = 1 & b0 = 0 & b1 = 0 & b2 = 0 & b3 = 0;

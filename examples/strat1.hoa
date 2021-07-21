@@ -1,0 +1,14 @@
+HOA: v1
+name: "(GF !p) -> (GF !q)"
+States: 1
+Start: 0
+acc-name: parity max odd 4
+Acceptance: 4 Inf(3) | (Fin(2) & (Inf(1) | Fin(0)))
+AP: 2 "p" "q"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "only"
+ [!1] 0 {3}
+ [!0 & 1] 0 {2}
+ [0 & 1] 0 {1}
+--END--

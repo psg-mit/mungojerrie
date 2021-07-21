@@ -1,0 +1,18 @@
+HOA: v1
+name: "(GF z01) & (GF z02)"
+States: 2
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 2 "z01" "z02"
+properties: deterministic complete trans-acc explicit-labels
+--BODY--
+State: 0 "none"
+ [!0]      0
+ [ 0 & !1] 1
+ [ 0 &  1] 0 {0}
+State: 1 "s0"
+ [     !1] 1
+ [!0 &  1] 0 {0}
+ [ 0 &  1] 1 {0}
+--END--

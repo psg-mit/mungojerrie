@@ -1,0 +1,131 @@
+// A probabilistic version of the game of dots and boxes.
+//
+// Two players take turns connecting adjacent points of a 3x3 lattice.
+// A player who completes a box scores a point and plays again with probability p.
+
+smg
+
+// Default gives deterministic behavior.
+const double p = 1;
+const double q = 1-p;
+
+// Either player may play last, but the no-op action is (arbitrarily)
+// assigned to Player 0.
+player P0
+  [ah00], [ah01], [ah10], [ah11], [ah20], [ah21],
+  [av00], [av01], [av10], [av11], [av20], [av21],
+  [noop]
+endplayer
+player P1
+  [bh00], [bh01], [bh10], [bh11], [bh20], [bh21],
+  [bv00], [bv01], [bv10], [bv11], [bv20], [bv21]
+endplayer
+
+// cxij counts the boxes completed by choosing edge xij.
+// x is either h or v, i ranges from 0 to 2, and j is either 0 or 1.
+// Boundary edges may only complete one box.  Internal edges, up to two.
+formula ch00 = (v00 & h10 & v10) ? 1 : 0;
+formula ch01 = (v10 & h11 & v20) ? 1 : 0;
+formula ch10 = ((v00 & h00 & v10) ? 1 : 0) + ((v01 & h20 & v11) ? 1 : 0);
+formula ch11 = ((v10 & h01 & v20) ? 1 : 0) + ((v11 & h21 & v21) ? 1 : 0);
+formula ch20 = (v01 & h10 & v11) ? 1 : 0;
+formula ch21 = (v11 & h11 & v21) ? 1 : 0;
+
+formula cv00 = (h00 & v10 & h10) ? 1 : 0;
+formula cv01 = (h10 & v11 & h20) ? 1 : 0;
+formula cv10 = ((h00 & v00 & h10) ? 1 : 0) + ((h01 & v20 & h11) ? 1 : 0);
+formula cv11 = ((h10 & v01 & h20) ? 1 : 0) + ((h11 & v21 & h21) ? 1 : 0);
+formula cv20 = (h01 & v10 & h11) ? 1 : 0;
+formula cv21 = (h11 & v11 & h21) ? 1 : 0;
+
+// End of the game: all edges have been drawn.
+formula full = h00 & h01 & h10 & h11 & h20 & h21 &
+               v00 & v01 & v10 & v11 & v20 & v21;
+
+label "w0" = full & sq0 > sq1;
+label "w1" = full & sq0 < sq1;
+label "done" = full;
+label "all" = sq0 + sq1 = 4;
+
+module play
+  h00 : bool init false; // top row left side
+  h01 : bool init false; // top row right side
+  h10 : bool init false; // middle row left side
+  h11 : bool init false; // middle row right side
+  h20 : bool init false; // bottom row left side
+  h21 : bool init false; // bottom row right side
+  v00 : bool init false; // left column left side
+  v01 : bool init false; // left column right side    
+  v10 : bool init false; // middle column left side
+  v11 : bool init false; // middle column right side
+  v20 : bool init false; // right column left side
+  v21 : bool init false; // right column right side
+  sq0 : [0..4] init 0;   // squares completed by P0
+  sq1 : [0..4] init 0;   // squares completed by P1
+
+  [ah00] t=0 & !h00 -> (h00'=true) & (sq0'=sq0+ch00);
+  [ah01] t=0 & !h01 -> (h01'=true) & (sq0'=sq0+ch01);
+  [ah10] t=0 & !h10 -> (h10'=true) & (sq0'=sq0+ch10);
+  [ah11] t=0 & !h11 -> (h11'=true) & (sq0'=sq0+ch11);
+  [ah20] t=0 & !h20 -> (h20'=true) & (sq0'=sq0+ch20);
+  [ah21] t=0 & !h21 -> (h21'=true) & (sq0'=sq0+ch21);
+
+  [av00] t=0 & !v00 -> (v00'=true) & (sq0'=sq0+cv00);
+  [av01] t=0 & !v01 -> (v01'=true) & (sq0'=sq0+cv01);
+  [av10] t=0 & !v10 -> (v10'=true) & (sq0'=sq0+cv10);
+  [av11] t=0 & !v11 -> (v11'=true) & (sq0'=sq0+cv11);
+  [av20] t=0 & !v20 -> (v20'=true) & (sq0'=sq0+cv20);
+  [av21] t=0 & !v21 -> (v21'=true) & (sq0'=sq0+cv21);
+
+  [noop] full -> true;
+
+  [bh00] t=1 & !h00 -> (h00'=true) & (sq1'=sq1+ch00);
+  [bh01] t=1 & !h01 -> (h01'=true) & (sq1'=sq1+ch01);
+  [bh10] t=1 & !h10 -> (h10'=true) & (sq1'=sq1+ch10);
+  [bh11] t=1 & !h11 -> (h11'=true) & (sq1'=sq1+ch11);
+  [bh20] t=1 & !h20 -> (h20'=true) & (sq1'=sq1+ch20);
+  [bh21] t=1 & !h21 -> (h21'=true) & (sq1'=sq1+ch21);
+
+  [bv00] t=1 & !v00 -> (v00'=true) & (sq1'=sq1+cv00);
+  [bv01] t=1 & !v01 -> (v01'=true) & (sq1'=sq1+cv01);
+  [bv10] t=1 & !v10 -> (v10'=true) & (sq1'=sq1+cv10);
+  [bv11] t=1 & !v11 -> (v11'=true) & (sq1'=sq1+cv11);
+  [bv20] t=1 & !v20 -> (v20'=true) & (sq1'=sq1+cv20);
+  [bv21] t=1 & !v21 -> (v21'=true) & (sq1'=sq1+cv21);
+
+endmodule
+
+module turn
+  t : [0..1] init 0; // 0: P0's turn; 1: P1's turn
+
+  [ah00] t=0 & !h00 -> p : (t'=(ch00 > 0 ? 0 : 1)) + q : (t'=1);
+  [ah01] t=0 & !h01 -> p : (t'=(ch01 > 0 ? 0 : 1)) + q : (t'=1);
+  [ah10] t=0 & !h10 -> p : (t'=(ch10 > 0 ? 0 : 1)) + q : (t'=1);
+  [ah11] t=0 & !h11 -> p : (t'=(ch11 > 0 ? 0 : 1)) + q : (t'=1);
+  [ah20] t=0 & !h20 -> p : (t'=(ch20 > 0 ? 0 : 1)) + q : (t'=1);
+  [ah21] t=0 & !h21 -> p : (t'=(ch21 > 0 ? 0 : 1)) + q : (t'=1);
+
+  [av00] t=0 & !v00 -> p : (t'=(cv00 > 0 ? 0 : 1)) + q : (t'=1);
+  [av01] t=0 & !v01 -> p : (t'=(cv01 > 0 ? 0 : 1)) + q : (t'=1);
+  [av10] t=0 & !v10 -> p : (t'=(cv10 > 0 ? 0 : 1)) + q : (t'=1);
+  [av11] t=0 & !v11 -> p : (t'=(cv11 > 0 ? 0 : 1)) + q : (t'=1);
+  [av20] t=0 & !v20 -> p : (t'=(cv20 > 0 ? 0 : 1)) + q : (t'=1);
+  [av21] t=0 & !v21 -> p : (t'=(cv21 > 0 ? 0 : 1)) + q : (t'=1);
+
+  [noop] full -> true;
+
+  [bh00] t=1 & !h00 -> p : (t'=(ch00 > 0 ? 1 : 0)) + q : (t'=0);
+  [bh01] t=1 & !h01 -> p : (t'=(ch01 > 0 ? 1 : 0)) + q : (t'=0);
+  [bh10] t=1 & !h10 -> p : (t'=(ch10 > 0 ? 1 : 0)) + q : (t'=0);
+  [bh11] t=1 & !h11 -> p : (t'=(ch11 > 0 ? 1 : 0)) + q : (t'=0);
+  [bh20] t=1 & !h20 -> p : (t'=(ch20 > 0 ? 1 : 0)) + q : (t'=0);
+  [bh21] t=1 & !h21 -> p : (t'=(ch21 > 0 ? 1 : 0)) + q : (t'=0);
+
+  [bv00] t=1 & !v00 -> p : (t'=(cv00 > 0 ? 1 : 0)) + q : (t'=0);
+  [bv01] t=1 & !v01 -> p : (t'=(cv01 > 0 ? 1 : 0)) + q : (t'=0);
+  [bv10] t=1 & !v10 -> p : (t'=(cv10 > 0 ? 1 : 0)) + q : (t'=0);
+  [bv11] t=1 & !v11 -> p : (t'=(cv11 > 0 ? 1 : 0)) + q : (t'=0);
+  [bv20] t=1 & !v20 -> p : (t'=(cv20 > 0 ? 1 : 0)) + q : (t'=0);
+  [bv21] t=1 & !v21 -> p : (t'=(cv21 > 0 ? 1 : 0)) + q : (t'=0);
+
+endmodule

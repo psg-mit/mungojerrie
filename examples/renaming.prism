@@ -1,0 +1,16 @@
+// Simple test for module renamings.
+
+mdp
+
+formula alias = x;
+formula p = x^y;
+
+label "p" = p;
+
+module mx
+  x : bool init false;
+  [a] x=x -> 1/2 : (x'=x) + 1/2 : (alias'=!y);  // always enabled
+  [b] p   -> (x'=false);
+endmodule
+
+module my = mx [ x=y, y=x ] endmodule

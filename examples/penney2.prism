@@ -1,0 +1,125 @@
+// Model of Penney's game.  Two players choose distinct sequences of
+// heads and tails of length 3.  A coin is repeatedly tossed.  The winner
+// is the player whose sequence shows up first.
+//
+// If the first player chooses optimally, the second player secures
+// victory with probability 2/3.
+//
+// For a fair coin, the optimal strategy for P1 (with probability of victory) is:
+//   TTT -> HTT (7/8)
+//   TTH -> HTT (3/4)
+//   THT -> TTH (2/3)
+//   THH -> TTH (2/3)
+//   HTT -> HHT (2/3)
+//   HTH -> HHT (2/3)
+//   HHT -> THH (3/4)
+//   HHH -> THH (7/8)
+//
+// From the strategy table one sees thata if the first player picks randomly,
+// and the coin is fair, the optimal strategy for the second player secures
+// victory with probability 71/96.
+
+smg
+
+player P0 [fTTT], [fTTH], [fTHT], [fTHH], [fHTT], [fHTH], [fHHT], [fHHH] endplayer
+player P1 [sTTT], [sTTH], [sTHT], [sTHH], [sHTT], [sHTH], [sHHT], [sHHH], [toss] endplayer
+
+// Symbolic state names.
+const int empty     = 0;
+const int T         = 1;
+const int H         = 2;
+const int TT        = 3;
+const int TH        = 4;
+const int HT        = 5;
+const int HH        = 6;
+const int TTT       = 7;
+const int TTH       = 8;
+const int THT       = 9;
+const int THH       = 10;
+const int HTT       = 11;
+const int HTH       = 12;
+const int HHT       = 13;
+const int HHH       = 14;
+
+const double p = 1/2; // probability of tails in one coin toss
+
+formula q = 1-p;      // probability of heads
+
+label "ttt" = s=TTT;
+label "tth" = s=TTH;
+label "tht" = s=THT;
+label "thh" = s=THH;
+label "htt" = s=HTT;
+label "hth" = s=HTH;
+label "hht" = s=HHT;
+label "hhh" = s=HHH;
+
+label "ahit" = s=sa;
+label "bhit" = s=sb;
+
+module penney
+  s : [empty..HHH] init empty;
+  sa : [TTT..HHH];
+  sb : [TTT..HHH];
+
+  // Player P0 picks one sequence.
+  [fTTT] stage=0 -> (sa'=TTT);
+  [fTTH] stage=0 -> (sa'=TTH);
+  [fTHT] stage=0 -> (sa'=THT);
+  [fTHH] stage=0 -> (sa'=THH);
+  [fHTT] stage=0 -> (sa'=HTT);
+  [fHTH] stage=0 -> (sa'=HTH);
+  [fHHT] stage=0 -> (sa'=HHT);
+  [fHHH] stage=0 -> (sa'=HHH);
+
+  // Player P1 picks one of the remaining sequences.
+  [sTTT] stage=1 & sa!=TTT -> (sb'=TTT);
+  [sTTH] stage=1 & sa!=TTH -> (sb'=TTH);
+  [sTHT] stage=1 & sa!=THT -> (sb'=THT);
+  [sTHH] stage=1 & sa!=THH -> (sb'=THH);
+  [sHTT] stage=1 & sa!=HTT -> (sb'=HTT);
+  [sHTH] stage=1 & sa!=HTH -> (sb'=HTH);
+  [sHHT] stage=1 & sa!=HHT -> (sb'=HHT);
+  [sHHH] stage=1 & sa!=HHH -> (sb'=HHH);
+
+  // The coin is repeatedly tossed.
+  [toss] stage=2 & s=empty -> p : (s'=T)   + q : (s'=H);
+  [toss] stage=2 & s=T     -> p : (s'=TT)  + q : (s'=TH);
+  [toss] stage=2 & s=H     -> p : (s'=HT)  + q : (s'=HH);
+  [toss] stage=2 & s=TT    -> p : (s'=TTT) + q : (s'=TTH);
+  [toss] stage=2 & s=TH    -> p : (s'=THT) + q : (s'=THH);
+  [toss] stage=2 & s=HT    -> p : (s'=HTT) + q : (s'=HTH);
+  [toss] stage=2 & s=HH    -> p : (s'=HHT) + q : (s'=HHH);
+  [toss] stage=2 & s=TTT   -> p : (s'=TTT) + q : (s'=TTH);
+  [toss] stage=2 & s=TTH   -> p : (s'=THT) + q : (s'=THH);
+  [toss] stage=2 & s=THT   -> p : (s'=HTT) + q : (s'=HTH);
+  [toss] stage=2 & s=THH   -> p : (s'=HHT) + q : (s'=HHH);
+  [toss] stage=2 & s=HTT   -> p : (s'=TTT) + q : (s'=TTH);
+  [toss] stage=2 & s=HTH   -> p : (s'=THT) + q : (s'=THH);
+  [toss] stage=2 & s=HHT   -> p : (s'=HTT) + q : (s'=HTH);
+  [toss] stage=2 & s=HHH   -> p : (s'=HHT) + q : (s'=HHH);
+endmodule
+
+module stage
+  stage : [0..2] init 0; // game stage
+
+  [fTTT] stage=0 -> (stage'=1);
+  [fTTH] stage=0 -> (stage'=1);
+  [fTHT] stage=0 -> (stage'=1);
+  [fTHH] stage=0 -> (stage'=1);
+  [fHTT] stage=0 -> (stage'=1);
+  [fHTH] stage=0 -> (stage'=1);
+  [fHHT] stage=0 -> (stage'=1);
+  [fHHH] stage=0 -> (stage'=1);
+
+  [sTTT] stage=1 -> (stage'=2);
+  [sTTH] stage=1 -> (stage'=2);
+  [sTHT] stage=1 -> (stage'=2);
+  [sTHH] stage=1 -> (stage'=2);
+  [sHTT] stage=1 -> (stage'=2);
+  [sHTH] stage=1 -> (stage'=2);
+  [sHHT] stage=1 -> (stage'=2);
+  [sHHH] stage=1 -> (stage'=2);
+
+  [toss] stage=2 -> true;
+endmodule

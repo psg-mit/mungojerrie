@@ -1,0 +1,34 @@
+mdp
+
+const double p = 0.9;
+
+label "a" = s = 0;
+label "b" = s = 8;
+label "c" = s = 2 | s = 3 | s = 5 | s = 6;
+
+module rooms
+  s : [0..8] init 7;
+
+  [n] s < 4 -> p : true + (1-p) : (s'=4);
+  [n] s > 4 -> p : (s'=4) + (1-p) : true;
+
+  [s] s < 4 -> p : (s'=4) + (1-p) : true;
+  [s] s > 4 -> p : true + (1-p) : (s'=4);
+
+  [w] s = 0 | s = 5 -> p : true + (1-p) : (s'=s+1);
+  [w] s = 1 | s = 2 | s = 6 | s = 7 -> p : (s'=s-1) + (1-p) : (s'=s+1);
+  [w] s = 3 | s = 8 -> p : (s' = s-1) + (1-p) : true;
+
+  [e] s = 0 | s = 5 -> p : (s' = s+1) + (1-p) : true;
+  [e] s = 1 | s = 2 | s = 6 | s = 7 -> p : (s'=s+1) + (1-p) : (s'=s-1);
+  [e] s = 3 | s = 8 -> p : true + (1-p) : (s'=s-1);
+
+  [t0] s = 4 -> p : (s'=0) + (1-p) : true;
+  [t1] s = 4 -> p : (s'=1) + (1-p) : true;
+  [t2] s = 4 -> p : (s'=2) + (1-p) : true;
+  [t3] s = 4 -> p : (s'=3) + (1-p) : true;
+  [t5] s = 4 -> p : (s'=5) + (1-p) : true;
+  [t6] s = 4 -> p : (s'=6) + (1-p) : true;
+  [t7] s = 4 -> p : (s'=7) + (1-p) : true;
+  [t8] s = 4 -> p : (s'=8) + (1-p) : true;
+endmodule

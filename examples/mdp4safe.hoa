@@ -1,0 +1,15 @@
+HOA: v1
+name: "G safe"
+States: 2
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 1 "safe"
+properties: deterministic complete explicit-labels trans-acc
+--BODY--
+State: 0 "start"
+ [!0] 1
+ [0] 0 {0}
+State: 1 "trap"
+ [t] 1
+--END--

@@ -1,0 +1,36 @@
+// Markov chain for the computation of hitting times for sequences
+// of fair coin tosses.  We want to know how the hitting time of HH
+// compares to the hitting time of TH or HT.  (All other cases can be
+// reduced to these by symmetry.)
+
+mdp
+
+// State symbolic names.
+const int empty = 0;
+const int T = 1;
+const int H = 2;
+const int TT = 3;
+const int TH = 4;
+const int HT = 5;
+const int HH = 6;
+
+const double p = 1/2; // probability of tails in one coin toss
+
+formula q = 1-p;      // probability of heads
+
+label "tt" = s=TT;
+label "th" = s=TH;
+label "ht" = s=HT;
+label "hh" = s=HH;
+
+module headstails
+  s : [empty..HH] init empty;
+
+  [toss] s=empty -> p : (s'=T)  + q : (s'=H);
+  [toss] s=T     -> p : (s'=TT) + q : (s'=TH);
+  [toss] s=H     -> p : (s'=HT) + q : (s'=HH);
+  [toss] s=TT    -> p : (s'=TT) + q : (s'=TH);
+  [toss] s=TH    -> p : (s'=HT) + q : (s'=HH);
+  [toss] s=HT    -> p : (s'=TT) + q : (s'=TH);
+  [toss] s=HH    -> p : (s'=HT) + q : (s'=HH);
+endmodule

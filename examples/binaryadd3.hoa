@@ -1,0 +1,41 @@
+HOA: v1
+name: "XG((odd <-> X(o)) & (mj1 <-> X(co1)) & (mj2 <-> X(co2)))"
+States: 9
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 6 "odd" "mj1" "mj2" "o" "co1" "co2"
+properties: deterministic complete trans-acc explicit-labels
+--BODY--
+State: 0 "init"
+ [t] 1 {0}
+State: 1 "read"
+ [!0 & !1 & !2] 2 {0}
+ [!0 & !1 &  2] 3 {0}
+ [!0 &  1 & !2] 4 {0}
+ [!0 &  1 &  2] 8
+ [ 0 & !1 & !2] 5 {0}
+ [ 0 & !1 &  2] 6 {0}
+ [ 0 &  1 & !2] 7 {0}
+ [ 0 &  1 &  2] 8
+State: 2 "00"
+ [!3 & !4 & !5] 1 {0}
+ [ 3 |  4 |  5] 8
+State: 3 "02"
+ [!3 & !4 &  5] 1 {0}
+ [ 3 |  4 | !5] 8
+State: 4 "01"
+ [!3 &  4 & !5] 1 {0}
+ [ 3 | !4 |  5] 8
+State: 5 "10"
+ [ 3 & !4 & !5] 1 {0}
+ [!3 |  4 |  5] 8
+State: 6 "12"
+ [ 3 & !4 &  5] 1 {0}
+ [!3 |  4 | !5] 8
+State: 7 "11"
+ [ 3 &  4 & !5] 1 {0}
+ [!3 | !4 |  5] 8
+State: 8 "trap"
+ [t] 8
+--END--

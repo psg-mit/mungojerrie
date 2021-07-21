@@ -1,0 +1,19 @@
+mdp
+
+const double p = 0.9;
+
+label "g" = s=1 | s=2;
+
+module rr
+  s : [0..4] init 0;
+
+  [safe]  s=0       -> (s'=1);
+  [risky] s=0       -> p : (s'=2) + 1-p : (s'=3);
+  [only]  s=1       -> (s'=4);
+  [only]  s=2 | s=3 -> true;
+  [only]  s=4       -> (s'=1);
+endmodule
+
+rewards
+  s=1 | s=2 : 1;
+endrewards

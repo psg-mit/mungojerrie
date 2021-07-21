@@ -1,0 +1,17 @@
+Input File is ../mungojerrie/examples/coprobp.prism
+@ 0.00655524 s: the environment has 197 nodes, 56 of which are decision nodes.
+@ 0.012678 s: the terminal DBA has 3 states (1 trap).
+@ 0.0186214 s: the product has 485 nodes, 150 of which are decision nodes.
+@ 0.0239757 s: probability of satisfaction: 0.866667
+
+--------QLearning--------
+@ 5.03365 s: learning complete.
+Initial-state value estimate: 0.832565
+Number of accepting episodes: 16802
+Number of trapped episodes  : 3191
+Number of steps: 3662313
+Average total reward per episode: 0.8401
+Random seed used: 1
+There were 50 unseen decision nodes reachable under learned strategy for tol 0.01.
+Probability for tol 0.01 is: 0.866667
+@ 5.03846 s: end

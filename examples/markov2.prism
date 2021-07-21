@@ -1,0 +1,21 @@
+// The question about this circular random walk is the following:
+//
+// What is the probability that a clockwise cycle is completed before a
+// counterclockwise cycle is?
+
+mdp
+
+const double p = 1/2;   // probability of moving clockwise (up)
+const double q = 1 - p; // probability of moving counterclockwise (down)
+const int K = 10;       // number of states of the Markov chain
+
+label "frst" = s=0;
+label "scnd" = s=1;
+label "last" = s=K-1;
+
+module markov
+  s : [0..K-1] init 0;
+
+  [a] true -> p : (s' = s<K-1 ? s+1 : 0) + q : (s' = s>0 ? s-1 : K-1);
+
+endmodule

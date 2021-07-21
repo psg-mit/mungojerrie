@@ -1,0 +1,30 @@
+HOA: v1
+name: "(FG p0) | (FG p1) | (FG p2) | (FG p3) | (FG p4)"
+States: 7
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 5 "p0" "p1" "p2" "p3" "p4"
+properties: complete colored explicit-labels trans-acc
+--BODY--
+State: 0 "start"
+ [t] 0 {0}
+ [t] 1 {0}
+State: 1 "G p0"
+ [0] 1 {1}
+ [!0] 2 {0}
+State: 2 "G p1"
+ [1] 2 {1}
+ [!1] 3 {0}
+State: 3 "G p2"
+ [2] 3 {1}
+ [!2] 4 {0}
+State: 4 "G p3"
+ [3] 4 {1}
+ [!3] 5 {0}
+State: 5 "G p4"
+ [4] 5 {1}
+ [!4] 6 {0}
+State: 6 "trap"
+ [t] 6 {0}
+--END--

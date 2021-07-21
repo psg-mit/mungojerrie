@@ -1,0 +1,62 @@
+// A stochastic pursuit game with two agents.
+
+smg
+
+player Pmx [nmx], [emx], [smx], [wmx] endplayer
+player Pmn [nmn], [emn], [smn], [wmn] endplayer
+
+const int M = 6;      // number of rows
+const int N = 6;      // number of columns
+const int D = 4;      // maximum distance
+const int scmn = 0;   // starting column for agent min
+const int scmx = N-1; // starting column for agent max
+const double p = 1/2; // probability of double move
+const double q = 1-p; // probability of single move
+
+formula trapmn = rmn=M/2 & cmn=N/2;
+formula trapmx = rmx=M/2 & cmx=N/2;
+formula dr = rmn>rmx ? rmn-rmx : rmx-rmn; // vertical distance
+formula dc = cmn>cmx ? cmn-cmx : cmx-cmn; // horizontal distance
+
+label "trapmn"  = trapmn;
+label "trapmx"  = trapmx;
+label "close"   = dr + dc < D;
+
+module gridmn
+  rmn : [0..M-1] init 0;
+  cmn : [0..N-1] init scmn;
+
+  [nmn] rmn < M-2 -> p : (rmn' = rmn + 2) + q : (rmn' = rmn + 1);
+  [nmn] rmn = M-2 -> (rmn' = rmn + 1);
+  [nmn] rmn = M-1 -> true;
+
+  [emn] cmn < N-2 -> p : (cmn' = cmn + 2) + q : (cmn' = cmn + 1);
+  [emn] cmn = N-2 -> (cmn' = cmn + 1);
+  [emn] cmn = N-1 -> true;
+
+  [smn] rmn > 1 -> p : (rmn' = rmn - 2) + q : (rmn' = rmn - 1);
+  [smn] rmn = 1 -> (rmn' = rmn - 1);
+  [smn] rmn = 0 -> true;
+
+  [wmn] cmn > 1 -> p : (cmn' = cmn - 2) + q : (cmn' = cmn - 1);
+  [wmn] cmn = 1 -> (cmn' = cmn - 1);
+  [wmn] cmn = 0 -> true;
+
+endmodule
+
+module gridmx = gridmn [ rmn=rmx, cmn=cmx, scmn=scmx, nmn=nmx, emn=emx, smn=smx, wmn=wmx ] endmodule
+
+module control
+  t : [0..1] init 0;
+
+  [nmn] t=0 -> (t'=1-t);
+  [emn] t=0 -> (t'=1-t);
+  [smn] t=0 -> (t'=1-t);
+  [wmn] t=0 -> (t'=1-t);
+
+  [nmx] t=1 -> (t'=1-t);
+  [emx] t=1 -> (t'=1-t);
+  [smx] t=1 -> (t'=1-t);
+  [wmx] t=1 -> (t'=1-t);
+
+endmodule

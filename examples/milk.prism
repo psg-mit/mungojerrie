@@ -1,0 +1,15 @@
+mdp
+
+const int M = 4;
+
+module m
+  b : [0..M] init M;
+
+  [a] true -> (b' = b > 0 ? b-1 : b);
+endmodule
+
+label "p0" = b > 0;
+label "p1" = b > 1;
+label "p2" = b > 2;
+label "p3" = b > 3;
+label "p4" = b = 0;

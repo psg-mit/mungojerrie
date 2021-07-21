@@ -1,0 +1,18 @@
+HOA: v1
+name: "(GF pmin) & (GF pmax)"
+States: 2
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 2 "pmin" "pmax"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "none"
+ [!0] 0 {0}
+ [0 & 1] 0 {1}
+ [0 & !1] 1 {0}
+State: 1 "pmin"
+ [!1] 1 {0}
+ [!0 & 1] 0 {1}
+ [0 & 1] 1 {1}
+--END--

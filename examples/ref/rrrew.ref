@@ -1,0 +1,24 @@
+Input File is ../mungojerrie/examples/rrrew.prism
+@ 0.00537875 s: the environment has 5 nodes, 4 of which are decision nodes.
+@ 0.01074 s: the DBA has 1 state (0 traps).
+@ 0.0158766 s: the product has 5 nodes, 4 of which are decision nodes.
+@ 0.0159081 s: 2 WECs computed.
+@ 0.0159166 s: reachability completed.
+@ 0.015919 s: probability of satisfaction: 1
+
+--------QLearning--------
+@ 0.954288 s: learning complete.
+Initial-state value estimate: 10.8873
+Total number of accepting edges seen: 0
+Number of accepting episodes: 0
+Number of steps: 1600000
+Average total reward per episode: 28.1027
+Random seed used: 1
+State, Player, Action(s)
+"s0, 0, 0", 0, "risky+0"
+"s1, 0, 0", 0, "reset+0"
+"s2, 0, 0", 0, "stay+0"
+"s3, 0, 0", 0, "stay+0"
+There were 0 unseen decision nodes reachable under learned strategy for tol 0.01.
+Probability for tol 0.01 is: 0.6
+@ 0.95493 s: end

@@ -1,0 +1,51 @@
+HOA: v1
+name: "!done & X(!done & X(!done ... & G(done)...))" /* deterministic 3x3 only */
+States: 14
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 1 "done"
+properties: deterministic complete trans-acc explicit-labels
+--BODY--
+State: 0 "s0"
+ [!0] 1
+ [ 0] 13
+State: 1 "s1"
+ [!0] 2
+ [ 0] 13
+State: 2 "s2"
+ [!0] 3
+ [ 0] 13
+State: 3 "s3"
+ [!0] 4
+ [ 0] 13
+State: 4 "s4"
+ [!0] 5
+ [ 0] 13
+State: 5 "s5"
+ [!0] 6
+ [ 0] 13
+State: 6 "s6"
+ [!0] 7
+ [ 0] 13
+State: 7 "s7"
+ [!0] 8
+ [ 0] 13
+State: 8 "s8"
+ [!0] 9
+ [ 0] 13
+State: 9 "s9"
+ [!0] 10
+ [ 0] 13
+State: 10 "s10"
+ [!0] 11
+ [ 0] 13
+State: 11 "s11"
+ [!0] 12 {0}
+ [ 0] 13
+State: 12 "s12"
+ [!0] 13
+ [ 0] 12 {0}
+State: 13 "trap"
+ [t] 13
+--END--

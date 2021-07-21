@@ -1,0 +1,36 @@
+// An MDP for Sutton and Barto's Windy Gridworld example (p. 130).
+
+mdp
+
+// Grid dimensions.
+const int M = 7;
+const int N = 10;
+
+// Start and goal positions.
+const int srow = M/2;
+const int scol = 0;
+const int grow = srow;
+const int gcol = N-3;
+
+formula goal  = r=grow & c=gcol;
+
+label "goal"  = goal;
+label "hwalls" = r=0 | r=M-1;
+
+// Southerly wind velocity to be added to the agent's velocity.
+formula wind  = (c=6 | c=7) ? 2 : ((2<c & c<6) | c=8) ? 1 : 0;
+
+module grid
+  r : [0..M-1] init srow;
+  c : [0..N-1] init scol;
+
+  [n] true -> (r' = min(r+wind+1,M-1));
+  [s] true -> (r' = wind-1 < 0 ? max(0,r+wind-1) : min(r+wind-1,M-1));
+  [e] true -> (r' = min(r+wind,M-1)) & (c' = min(c+1,N-1));
+  [w] true -> (r' = min(r+wind,M-1)) & (c' = max(c-1,0));
+endmodule
+
+rewards
+   goal :  0.0;
+  !goal : -1.0;
+endrewards

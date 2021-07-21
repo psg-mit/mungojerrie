@@ -1,0 +1,34 @@
+Input File is ../mungojerrie/examples/lda3-5.prism
+@ 0.00651395 s: the environment has 9 nodes, 6 of which are decision nodes.
+@ 0.0159487 s: the DPA has 1 state (0 traps) and 3 priorities.
+@ 0.0310542 s: the product has 9 nodes, 6 of which are decision nodes.
+@ 0.0312179 s: strategy computed.
+@ 0.0312271 s: probability of satisfaction: 0.533333
+digraph "Pruned Product" {
+node [shape=circle];
+"title" [label="Pruned Product",shape=plaintext];
+"0_init" [style=invis]
+"0_init" -> 0
+0 [label="t0, 0\n", shape=box];
+1 [label="",width=0.25];
+2 [label="t1, 0\n", shape=box];
+3 [label="t3, 0\n", shape=box];
+4 [label="t2, 0\n", shape=box];
+5 [label="",width=0.25];
+6 [label="",width=0.25];
+7 [label="t4, 0\ntarget", shape=box];
+8 [label="t5, 0\n", shape=box];
+0 -> 1 [label=" _a0(2) "];
+1 -> 2 [label=" 0.5(0) "];
+1 -> 3 [label=" 0.5(0) "];
+2 -> 4 [label=" a(2) "];
+3 -> 5 [label=" _a2(2) "];
+4 -> 6 [label=" _a1(2) "];
+5 -> 7 [label=" 0.333333(0) "];
+5 -> 8 [label=" 0.666667(0) "];
+6 -> 7 [label=" 0.6(0) "];
+6 -> 3 [label=" 0.4(0) "];
+7 -> 7 [label=" _a3(1) "];
+8 -> 8 [label=" _a4(2) "];
+}
+@ 0.033559 s: end

@@ -1,0 +1,42 @@
+Input File is ../mungojerrie/examples/deferred.prism
+@ 0.0065254 s: the environment has 17 nodes, 17 of which are decision nodes.
+@ 0.0129759 s: the DBA has 1 state (0 traps).
+@ 0.018792 s: the product has 17 nodes, 17 of which are decision nodes.
+@ 0.0188649 s: strategy computed.
+@ 0.0188694 s: probability of satisfaction: 1
+digraph "Pruned Product" {
+node [shape=circle];
+"title" [label="Pruned Product",shape=plaintext];
+"0_init" [style=invis]
+"0_init" -> 0
+0 [label="br0n0, 0\n", shape=box];
+2 [label="br1n1, 0\n", shape=box];
+4 [label="br1n2, 0\n", shape=box];
+6 [label="br1n3, 0\n", shape=box];
+8 [label="br1n4, 0\n", shape=box];
+10 [label="br1n5, 0\n", shape=box];
+12 [label="br1n6, 0\n", shape=box];
+14 [label="br1n7, 0\n", shape=box];
+16 [label="br1n8, 0\np", shape=box];
+0 -> 2 [label=" b(0) "];
+2 -> 4 [label=" c(0) "];
+4 -> 6 [label=" c(0) "];
+6 -> 8 [label=" c(0) "];
+8 -> 10 [label=" c(0) "];
+10 -> 12 [label=" c(0) "];
+12 -> 14 [label=" c(0) "];
+14 -> 16 [label=" c(0) "];
+16 -> 16 [label=" c(1) "];
+}
+
+--------QLearning--------
+@ 0.207971 s: learning complete.
+Initial-state value estimate: 1
+Total number of accepting edges seen: 99451
+Number of accepting episodes: 19681
+Number of steps: 257831
+Average total reward per episode: 0.98405
+Random seed used: 1
+There were 0 unseen decision nodes reachable under learned strategy for tol 0.01.
+Probability for tol 0.01 is: 1
+@ 0.208828 s: end

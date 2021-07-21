@@ -1,0 +1,27 @@
+mdp
+
+const int Max = 3;
+
+const double p = 0.75;
+
+formula g = b=1 & (n=0 | n=5 | n=6) | b=2;
+
+label "g" = g;
+
+module base
+  b : [0..3] init 0;
+
+  [a] b=0 -> (b'=1);
+  [b] b=0 -> p : (b'=2) + 1-p : (b'=3);
+  [c] b>1 -> true;
+endmodule
+
+module branch
+  n : [0..2*Max+1] init 0;
+
+  [d] b=1 & (n=0) -> (n'=1);
+  [e] n=1 -> (n'=2);
+  [f] n=1 -> (n'=2+Max);
+  [g] n>1 & n<2+Max -> (n'=mod(n+1,2+Max));
+  [h] n>Max+1 -> (n'= n<2*Max+1 ? n+1 : n);
+endmodule

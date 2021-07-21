@@ -1,0 +1,71 @@
+// Skeleton of a two-client arbiter.
+//
+// We want to compute a strategy that causes arbiter and clients to
+// satisfy the property (G !(c1 & c2)) & (GF c1) & (GF c2) with probability 1.
+// The clients are not adversarial: rather, they are modeled as a single
+// agent that acts stochartically.
+//
+// The grant_i and exit_i actions require synchronization between the arbiter
+// and the clients.  The clients never have a choice of strategy.  This way,
+// conniving clients cannot cooperate with the arbiter by, say,
+// never requesting at the same time.  The price that is paid is that 
+// actions drop and steal are needed.
+
+mdp
+
+// Clients' states.
+const int II = 0;
+const int WI = 1;
+const int IW = 2;
+const int WW = 3;
+const int CI = 4;
+const int IC = 5;
+const int CW = 6;
+const int WC = 7;
+const int EI = 8;
+const int IE = 9;
+const int EW = 10;
+const int WE = 11;
+const int CC = 12;
+
+// Atomic propositions.
+label "r1" = c=WI | c=WW | c=WC | c=WE;
+label "r2" = c=IW | c=WW | c=CW | c=EW;
+label "c1" = c=CI | c=CW | c=CC;
+label "c2" = c=IC | c=WC | c=CC;
+
+// grantN and exitN are synchronized actions.  They cause the orderly
+// tranfer of the token from the arbiter to a client or vice versa.
+// drop and steal are non-synchronized actions.  They should not appear
+// in an optimal strategy.
+module arbiter
+  t : bool init true;
+
+  [grant1] true -> (t'=false);
+  [grant2] true -> (t'=false);
+  [drop]   true -> (t'=false);
+  [exit1]  true -> (t'=true);
+  [exit2]  true -> (t'=true);
+  [steal]  true -> (t'=true);
+endmodule
+
+module clients
+  c : [II..CC] init II;
+
+  [self]   c=II -> 1/4 : (c'=WI) + 1/4 : (c'=IW) + 1/4 : (c'=WW) + 1/4 : true;
+  [grant1] c=WI -> 1/2 : (c'=CI) + 1/2 : (c'=CW);
+  [grant1] c=WW -> (c'=CW);
+  [grant2] c=IW -> 1/2 : (c'=IC) + 1/2 : (c'=WC);
+  [grant2] c=WW -> (c'=WC);
+  [self]   c=CI -> 1/4 : (c'=EI) + 1/4 : (c'=CW) + 1/4 : (c'=EW) + 1/4 : true;
+  [self]   c=IC -> 1/4 : (c'=IE) + 1/4 : (c'=WC) + 1/4 : (c'=WE) + 1/4 : true;
+  [self]   c=CW -> 1/2 : (c'=EW) + 1/2 : true;
+  [grant2] c=CW -> (c'=CC);
+  [self]   c=WC -> 1/2 : (c'=WE) + 1/2 : true;
+  [grant1] c=WC -> (c'=CC);
+  [exit1]  c=EI -> 1/4 : (c'=II) + 1/4 : (c'=WI) + 1/4 : (c'=IW) + 1/4 : (c'=WW);
+  [exit1]  c=EW -> 1/2 : (c'=IW) + 1/2 : (c'=WW);
+  [exit2]  c=IE -> 1/4 : (c'=II) + 1/4 : (c'=WI) + 1/4 : (c'=IW) + 1/4 : (c'=WW);
+  [exit2]  c=WE -> 1/2 : (c'=WI) + 1/2 : (c'=WW);
+  [self]   c=CC -> true;
+endmodule

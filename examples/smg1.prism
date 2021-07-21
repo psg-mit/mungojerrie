@@ -1,0 +1,32 @@
+// Turn-based stochastic two-player game taken from the PRISM website.
+
+smg
+
+const double p = 0.85;
+
+label "c0" = c=0;
+label "c1" = c=1;
+label "c2" = c=2;
+
+module host
+  h : [0..2] init 2;
+  [msg0] h=2 -> (h'=0); // send message 0
+  [msg1] h=2 -> (h'=1); // send message 1
+  []     c=2 -> (h'=2); // restart
+endmodule
+
+module client
+  c : [0..2] init 2;
+  [msg0] c=2  -> p : (c'=0) + 1-p : (c'=2); // receive message 0
+  [msg1] c=2  -> p : (c'=1) + 1-p : (c'=2); // receive message 1
+  []     c!=2 -> (c'=2);                    // request another message
+  []     c!=2 -> true;                      // wait
+endmodule
+
+player p0
+  host, [msg0], [msg1]
+endplayer
+
+player p1
+  client
+endplayer

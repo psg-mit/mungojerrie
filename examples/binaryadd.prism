@@ -1,0 +1,31 @@
+// Binary addition MDP.
+
+mdp
+
+label "a"   = a;
+label "odd" = a & mod(i+c,2) = 1;
+label "maj" = a & (i+c > 1);
+label "co"  = !a & c=1;
+label "o"   = !a & o=1;
+
+module add
+  o : [0..1] init 0;
+  c : [0..1] init 0;
+  i : [0..2] init 0;
+
+  [read] !a -> 1/4 : (i'=0) + 1/2 : (i'=1) + 1/4 : (i'=2);
+  [w00]   a -> (o'=0) & (c'=0);
+  [w01]   a -> (o'=0) & (c'=1);
+  [w10]   a -> (o'=1) & (c'=0);
+  [w11]   a -> (o'=1) & (c'=1);
+endmodule
+
+module turn
+  a : bool init false;
+
+  [read] !a -> (a'=true);
+  [w00]   a -> (a'=false);
+  [w01]   a -> (a'=false);
+  [w10]   a -> (a'=false);
+  [w11]   a -> (a'=false);
+endmodule

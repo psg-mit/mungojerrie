@@ -1,0 +1,500 @@
+/*  -*- C++ -*- */
+/** 
+  @file Pparser.yy
+
+  @brief 
+
+  @author Mateo Perez, Fabio Somenzi, Ashutosh Trivedi
+
+  @copyright@parblock
+  Copyright (c) 2021, Regents of the University of Colorado
+
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+
+  Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+
+  Neither the name of the University of Colorado nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
+  @endparblock
+
+*/
+
+%skeleton "lalr1.cc"
+%require "3.0"
+%defines
+%define @BISON_PARSER_CLASS@ {p_parser}
+%code requires {
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#pragma clang diagnostic ignored "-Wunneeded-internal-declaration"
+#endif
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif
+#define pparserlex plex
+#include "Util.hh"
+#include "Model.hh"
+#include "Past.hh"
+  class p_driver;
+}
+// The parsing context.
+%parse-param { p_driver& driver }
+%lex-param   { p_driver& driver }
+%locations
+%initial-action
+{
+  // Initialize the initial location.
+  @$.begin.filename = @$.end.filename = &driver.file;
+};
+%debug
+%define parse.error verbose
+%define api.value.type variant
+%define parse.assert
+// Symbols.
+%code {
+#include "Pwrapper.hh"
+  ast::LocationType astloc(pparser::p_parser::location_type const & l);
+}
+%token        END      0  "end of file"
+%token        NOTEQ       "!="
+%token        ARROW       "->"
+%token        RANGE       ".."
+%token        IFF         "<=>"
+%token        IMPLIES     "=>"
+%token        GE          ">="
+%token        LE          "<="
+%token        A           "A"
+%token        BOOL        "bool"
+%token        CLOCK       "clock"
+%token        CONST       "const"
+%token        CTMC        "ctmc"
+%token        C           "C"
+%token        CEIL        "ceil"
+%token        DOUBLE      "double"
+%token        DTMC        "dtmc"
+%token        E           "E"
+%token        ENDINIT     "endinit"
+%token        ENDINVARIANT "endinvariant"
+%token        ENDMODULE   "endmodule"
+%token        ENDPLAYER   "endplayer"
+%token        ENDREWARDS  "endrewards"
+%token        ENDSYSTEM   "endsystem"
+%token        FALSE       "false"
+%token        FLOOR       "floor"
+%token        FORMULA     "formula"
+%token        FILTER      "filter"
+%token        FUNC        "func"
+%token        F           "F"
+%token        GLOBAL      "global"
+%token        G           "G"
+%token        INIT        "init"
+%token        INVARIANT   "invariant"
+%token        I           "I"
+%token        INT         "int"
+%token        LABEL       "label"
+%token        LOG         "log"
+%token        MAX         "max"
+%token        MDP         "mdp"
+%token        MIN         "min"
+%token        MOD         "mod"
+%token        MODULE      "module"
+%token        X           "X"
+%token        NONDETERMINISTIC "nondeterministic"
+%token        PLAYER      "player"
+%token        PMAX        "Pmax"
+%token        PMIN        "Pmin"
+%token        P           "P"
+%token        POW         "pow"
+%token        PROBABILISTIC "probabilistic"
+%token        PROB        "prob"
+%token        PTA         "pta"
+%token        RATE        "rate"
+%token        REWARDS     "rewards"
+%token        RMAX        "Rmax"
+%token        RMIN        "Rmin"
+%token        R           "R"
+%token        S           "S"
+%token        SMG         "smg"
+%token        BDP         "bdp"
+%token        STOCHASTIC  "stochastic"
+%token        SYSTEM      "system"
+%token        TRUE        "true"
+%token        U           "U"
+%token        W           "W"
+%token        INVALID_CHAR "invalid character"
+%token <std::string> IDENTIFIER "identifier"
+%token <int> INUMBER "integer number"
+%token <double> FPNUMBER "floating-point number"
+
+%type <std::string> module_name
+%type <ast::Formula> formula_definition
+%type <std::string> formula_name
+%type <ast::Variable> variable_definition
+%type <ast::Variable> global_variable_definition
+%type <ast::Expression> low_value
+%type <ast::Expression> high_value
+%type <ast::Expression> init_value
+%type <std::string> variable_name
+%type <ast::Command> module_command
+%type <std::pair<std::vector<ast::Variable>,std::vector<ast::Command>>> module_variables_and_commands
+%type <std::string> action_name
+%type <ast::Expression> expression
+%type <ast::Expression> command_guard
+%type <ast::Expression> reward_guard
+%type <ast::Expression> reward_value
+%type <ast::Transition> prob_transition
+%type <ast::Expression> next_state_expression
+%type <ast::Expression> primed_state_expression
+%type <std::vector<ast::Transition> > transitions
+%type <std::vector<ast::Transition> > transition_list
+%type <ast::RewardSpec> reward_specification
+%type <std::string> optional_reward_name
+%type <std::vector<ast::RewardSpec> > reward_list
+%type <ast::RewardSection> rewards_definition
+%type <std::vector<ast::Expression>> expression_list
+%type <ast::NameReplacement> replacement
+%type <std::vector<ast::NameReplacement>> replacement_list
+%type <std::string> player_name
+%type <std::vector<ast::Player>> player_definition
+%type <std::vector<ast::ControlSpec>> player_control_list
+%type <ast::ControlSpec> control_specification
+
+%printer    { debug_stream() << $$; } <std::string>
+%printer    { debug_stream() << $$; } <int>
+%printer    { debug_stream() << $$; } <double>
+
+%left '^' IFF IMPLIES
+%left '|'
+%left '&'
+%nonassoc '!'
+%right '?'
+%nonassoc '=' '<' '>' NOTEQ LE GE
+%left '+' '-'
+%left '*' '/'
+%nonassoc UMINUS
+
+%start model;
+%%
+
+model:
+model_type sections
+;
+
+model_type:
+  MDP  { driver.modelType = ast::MDP; }
+//| DTMC { driver.modelType = ast::DTMC; }
+  | SMG  { driver.modelType = ast::SMG; }
+  | BDP  { driver.modelType = ast::BDP; }
+;
+
+sections:
+  section
+| sections section
+;
+
+section:
+  module_definition
+| module_renaming
+| formula_definition
+| const_definition
+| global_variable_definition
+| label_definition
+| rewards_definition
+| player_definition
+;
+
+module_definition:
+MODULE module_name module_variables_and_commands ENDMODULE
+{ driver.modules.emplace_back(ast::Module{$2, $3.first, $3.second}); } 
+;
+
+module_name:
+IDENTIFIER { std::swap($$, $1); }
+;
+
+variable_definition:
+  variable_name ':' '[' low_value RANGE high_value ']' INIT init_value ';'
+  { $$ = {ast::NUMBER, $1, $4, $6, $9}; }
+| variable_name ':' '[' low_value RANGE high_value ']' ';'
+  { $$ = {ast::NUMBER, $1, $4, $6, $4}; }
+| variable_name ':' BOOL INIT init_value ';'
+  { $5.type = ast::BOOL;
+    $$ = {ast::BOOL, $1,
+          ast::Expression{ast::BOOL, ast::FALSE, {}, "", 0, 0.0, astloc(@$)},
+          ast::Expression{ast::BOOL, ast::TRUE, {}, "", 1, 1.0, astloc(@$)},
+          $5}; }
+| variable_name ':' BOOL ';'
+  { $$ = {ast::BOOL, $1,
+          ast::Expression{ast::BOOL, ast::FALSE, {}, "", 0, 0.0, astloc(@$)},
+          ast::Expression{ast::BOOL, ast::TRUE, {}, "", 1, 1.0, astloc(@$)},
+          ast::Expression{ast::BOOL, ast::FALSE, {}, "", 0, 0.0, astloc(@$)}}; }
+;
+
+global_variable_definition:
+GLOBAL variable_definition
+{ driver.globals.emplace_back($2); }
+;
+
+low_value:
+expression { std::swap($$, $1); }
+;
+
+high_value:
+expression { std::swap($$, $1); }
+;
+
+init_value:
+expression { std::swap($$, $1); }
+;
+
+module_variables_and_commands:
+  module_command { $$ = {{}, {$1}}; }
+| variable_definition { $$ = {{$1}, {}}; }
+| module_variables_and_commands module_command
+  { ($1).second.emplace_back($2); std::swap($$, $1); }
+| module_variables_and_commands variable_definition
+  { ($1).first.emplace_back($2); std::swap($$, $1); }
+;
+
+module_command:
+'[' action_name ']' command_guard ARROW transitions ';'
+{ $$ = {$2, $4, $6}; }
+;
+
+action_name:
+  %empty { $$ = std::string(); }
+| IDENTIFIER { std::swap($$, $1); }
+;
+
+command_guard:
+expression { std::swap($$, $1); }
+;
+
+transitions:
+  next_state_expression
+  { $$ = {{{ast::NUMBER, ast::NUMERAL, {}, "", 1, 1.0, astloc(@$)}, $1}}; }
+| transition_list { std::swap($$, $1); }
+;
+
+transition_list:
+  prob_transition { $$ = {$1}; }
+| transition_list '+' prob_transition { ($1).emplace_back($3); std::swap($$, $1); }
+;
+
+prob_transition:
+expression ':' next_state_expression
+{ $$ = {$1, $3}; }
+;
+
+next_state_expression:
+  TRUE
+  { $$ = {ast::BOOL, ast::TRUE, {}, "", 0, 0.0, astloc(@$)}; }
+| primed_state_expression
+  { std::swap($$, $1); }
+;
+
+primed_state_expression:
+'(' variable_name '\'' '=' expression ')'
+  { $$ = {ast::BOOL, ast::EQUAL, {$5}, $2, 0, 0.0, astloc(@$)}; }
+| primed_state_expression '&' primed_state_expression
+  { $$ = {ast::BOOL, ast::AND, {$1, $3}, "", 0, 0.0, astloc(@$)}; } 
+;
+
+const_definition:
+  CONST INT IDENTIFIER '=' expression ';'
+  { driver.constants.emplace_back(ast::Constant{ast::NUMBER, $3, $5}); }
+| CONST DOUBLE IDENTIFIER '=' expression ';'
+{ driver.constants.emplace_back(ast::Constant{ast::DOUBLE, $3, $5}); }
+| CONST BOOL IDENTIFIER '=' expression ';'
+{ $5.type = ast::BOOL;
+  driver.constants.emplace_back(ast::Constant{ast::BOOL, $3, $5}); }
+;
+
+formula_definition:
+FORMULA formula_name '=' expression ';'
+{ driver.formulae.emplace_back(ast::Formula{$2, $4}); }
+;
+
+formula_name:
+IDENTIFIER { std::swap($$, $1); }
+;
+
+expression:
+  '(' expression ')'
+  { $$ = $2; }
+| INUMBER
+  { $$ = {ast::NUMBER, ast::NUMERAL, {}, "", $1, (double) $1, astloc(@$)}; }
+| FPNUMBER
+  { $$ = {ast::DOUBLE, ast::NUMERAL, {}, "", 0, $1, astloc(@$)}; }
+| TRUE
+  { $$ = {ast::BOOL, ast::TRUE, {}, "", 1, 1.0, astloc(@$)}; }
+| FALSE
+  { $$ = {ast::BOOL, ast::FALSE, {}, "", 0, 0.0, astloc(@$)}; }
+| IDENTIFIER
+  { $$ = {ast::NUMBER, ast::IDENTIFIER, {}, $1, -1, -1.0, astloc(@$)}; }
+| MOD '(' expression ',' expression ')'
+  { $$ = {ast::NUMBER, ast::MOD, {$3, $5}, "mod", 0, 0.0, astloc(@$)}; }
+| POW '(' expression ',' expression ')'
+  { $$ = {ast::NUMBER, ast::POW, {$3, $5}, "pow", 0, 0.0, astloc(@$)}; }
+| MIN '(' expression_list ')'
+  { $$ = {ast::NUMBER, ast::MIN, $3, "min", 0, 0.0, astloc(@$)}; }
+| MAX '(' expression_list ')'
+  { $$ = {ast::NUMBER, ast::MAX, $3, "max", 0, 0.0, astloc(@$)}; }
+| LOG '(' expression ',' expression ')'
+  { $$ = {ast::NUMBER, ast::LOG, {$3, $5}, "log", 0, 0.0, astloc(@$)}; }
+| CEIL '(' expression ')'
+  { $$ = {ast::NUMBER, ast::CEIL, {$3}, "ceil", 0, 0.0, astloc(@$)}; }
+| FLOOR '(' expression ')'
+  { $$ = {ast::NUMBER, ast::FLOOR, {$3}, "floor", 0, 0.0, astloc(@$)}; }
+| expression '+' expression
+  { $$ = {ast::NUMBER, ast::PLUS, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| expression '-' expression
+  { $$ = {ast::NUMBER, ast::MINUS, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| expression '*' expression
+  { $$ = {ast::NUMBER, ast::TIMES, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| expression '/' expression
+  { $$ = {ast::NUMBER, ast::DIVIDE, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| '-' expression %prec UMINUS
+  { $$ = {ast::NUMBER, ast::UNARYMINUS, {$2}, "", 0, 0.0, astloc(@$)}; }
+| expression '?' expression ':' expression %prec '?'
+  { $$ = {ast::NUMBER, ast::ITE, {$1, $3, $5}, "", 0, 0.0, astloc(@$)}; }
+| expression '|' expression
+  { $$ = {ast::BOOL, ast::OR, {$1, $3}, "", 0, 0.0, astloc(@$)}; } 
+| expression '&' expression
+  { $$ = {ast::BOOL, ast::AND, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| expression '^' expression
+  { $$ = {ast::BOOL, ast::XOR, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| expression IFF expression
+  { $$ = {ast::BOOL, ast::IFF, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| expression IMPLIES expression
+  { $$ = {ast::BOOL, ast::IMPLIES, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| '!' expression
+  { $$ = {ast::BOOL, ast::NOT, {$2}, "", 0, 0.0, astloc(@$)}; }
+| expression '=' expression
+  { $$ = {ast::BOOL, ast::EQUAL, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| expression "!=" expression
+  { $$ = {ast::BOOL, ast::NOTEQ, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| expression '<' expression
+  { $$ = {ast::BOOL, ast::LT, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| expression LE expression
+  { $$ = {ast::BOOL, ast::LE, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| expression '>' expression
+  { $$ = {ast::BOOL, ast::GT, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+| expression GE expression
+  { $$ = {ast::BOOL, ast::GE, {$1, $3}, "", 0, 0.0, astloc(@$)}; }
+;
+
+expression_list:
+  expression                     { $$ = {$1}; }
+| expression_list ',' expression { ($1).emplace_back($3); std::swap($$, $1); }
+;
+
+module_renaming:
+MODULE module_name '=' module_name '[' replacement_list ']' ENDMODULE
+{ driver.renamings.emplace_back(ast::ModuleRenaming{$2, $4, $6, astloc(@$)}); }
+;
+
+replacement_list:
+  replacement                      { $$ = {$1}; }
+| replacement_list ',' replacement { ($1).emplace_back($3); std::swap($$, $1); }
+;
+
+replacement:
+IDENTIFIER '=' IDENTIFIER { $$ = {$1,$3}; }
+;
+
+label_definition:
+LABEL '"' IDENTIFIER '"' '=' expression ';'
+{ driver.labels.emplace_back(ast::Label{$3, $6}); }
+;
+
+rewards_definition:
+REWARDS optional_reward_name reward_list ENDREWARDS
+{ driver.rewards.emplace_back(ast::RewardSection{$2, $3}); }
+;
+
+optional_reward_name:
+  %empty { $$ = std::string(""); }
+| '"' IDENTIFIER '"' { std::swap($$, $2); }
+;
+
+reward_list:
+  %empty { $$ = {}; }
+| reward_list reward_specification
+  { ($1).emplace_back($2); std::swap($$, $1); }
+;
+
+reward_specification:
+  reward_guard ':' reward_value ';'
+  { $$ = {ast::STATE, "", $1, $3}; }
+| '[' action_name ']' reward_guard ':' reward_value ';'
+  { $$ = {ast::ACTION, $2, $4, $6}; }
+;
+
+reward_guard:
+expression { std::swap($$, $1); }
+;
+
+reward_value:
+expression { std::swap($$, $1); }
+;
+
+player_definition:
+  PLAYER player_name player_control_list ENDPLAYER
+  { driver.players.emplace_back(ast::Player{$2, $3, astloc(@$)}); }
+;
+
+player_name:
+  IDENTIFIER { std::swap($$, $1); }
+;
+
+player_control_list:
+  control_specification { $$ = {$1}; }
+| player_control_list ',' control_specification
+  { ($1).emplace_back($3); std::swap($$, $1); }
+;
+
+control_specification:
+  module_name { $$ = {ast::PMODULE, $1}; }
+| '[' action_name ']' { $$ = {ast::PACTION, $2}; }
+;
+
+variable_name:
+IDENTIFIER { std::swap($$, $1); }
+;
+
+%%
+
+void
+pparser::p_parser::error(location_type const & l, std::string const & m)
+{
+  driver.error(l, m);
+}
+
+ast::LocationType astloc(pparser::p_parser::location_type const & l)
+{
+  return {(int) l.begin.line, (int) l.begin.column, (int) l.end.line, (int) l.end.column};
+}

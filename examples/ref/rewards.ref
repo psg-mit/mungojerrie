@@ -1,0 +1,50 @@
+Input File is ../mungojerrie/examples/rewards.prism
+@ 0.00580009 s: the environment has 13 nodes, 12 of which are decision nodes.
+mdp
+
+const int x0y0 = 0; 
+const int x0y1 = 1; 
+const int x0y2 = 2; 
+const int x0y3 = 3; 
+const int x1y0 = 4; 
+const int x1y1 = 5; 
+const int x1y2 = 6; 
+const int x1y3 = 7; 
+const int x2y0 = 8; 
+const int x2y1 = 9; 
+const int x2y2 = 10; 
+const int x2y3 = 11; 
+
+label "p" = state=x0y1;
+module m
+  state : [0..11] init 0;
+  [_a0] state=x0y0 -> (state'=x1y1);
+  [a] state=x0y0 -> 0.5 : (state'=x1y0) + 0.5 : (state'=x0y1);
+  [_a0] state=x0y1 -> (state'=x1y2);
+  [_a0] state=x0y2 -> (state'=x1y3);
+  [_a0] state=x0y3 -> (state'=x1y0);
+  [_a0] state=x1y0 -> (state'=x2y1);
+  [_a0] state=x1y1 -> (state'=x2y2);
+  [_a0] state=x1y2 -> (state'=x2y3);
+  [_a0] state=x1y3 -> (state'=x2y0);
+  [_a0] state=x2y0 -> (state'=x0y1);
+  [_a0] state=x2y1 -> (state'=x0y2);
+  [_a0] state=x2y2 -> (state'=x0y3);
+  [_a0] state=x2y3 -> (state'=x0y0);
+endmodule
+rewards
+  [_a0] state=x0y0 : 0;
+  [a] state=x0y0 : 1.5;
+  [_a0] state=x0y1 : 0;
+  [_a0] state=x0y2 : 0.25;
+  [_a0] state=x0y3 : 0;
+  [_a0] state=x1y0 : 0;
+  [_a0] state=x1y1 : 0;
+  [_a0] state=x1y2 : 0.25;
+  [_a0] state=x1y3 : 0;
+  [_a0] state=x2y0 : 0;
+  [_a0] state=x2y1 : 0;
+  [_a0] state=x2y2 : 0.25;
+  [_a0] state=x2y3 : 2;
+endrewards
+@ 0.00640649 s: end

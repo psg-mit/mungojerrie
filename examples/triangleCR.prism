@@ -1,0 +1,54 @@
+// Example of cops and robbers game with triangle graph.
+// This is a cop-win regardless of the value of passive.
+//
+//       0
+//      / \
+//     /   \
+//    1-----2
+//
+// We use the "passive" bool constant to let the user control
+// which version of the game to play.
+
+smg
+
+const bool passive = true;
+
+label "caught" = !first & c=r;
+
+module turn
+  t : bool init true;
+  first : bool init true;
+
+  [c0] true -> (t'=!t);
+  [c1] true -> (t'=!t);
+  [c2] true -> (t'=!t);
+  [r0] true -> (t'=!t) & (first'=false);
+  [r1] true -> (t'=!t) & (first'=false);
+  [r2] true -> (t'=!t) & (first'=false);
+  [sk] true -> (t'=!t) & (first'=false);
+endmodule
+
+module cop
+  c : [0..2] init 0;
+
+  [c0] t & (first | c=1 | c=2) -> (c'=0);
+  [c1] t & (first | c=0 | c=2) -> (c'=1);
+  [c2] t & (first | c=0 | c=1) -> (c'=2);
+endmodule
+
+module robber
+  r : [0..2] init 0;
+
+  [r0] !t & (first | r=1 | r=2) -> (r'=0);
+  [r1] !t & (first | r=0 | r=2) -> (r'=1);
+  [r2] !t & (first | r=0 | r=1) -> (r'=2);
+  [sk] !t & passive             -> true;
+endmodule
+
+player cop
+  [c0], [c1], [c2]
+endplayer
+
+player robber
+  [r0], [r1], [r2], [sk]
+endplayer

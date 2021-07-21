@@ -1,0 +1,18 @@
+HOA: v1
+name: "FG odd"
+States: 3
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 1 "odd"
+properties: complete explicit-labels trans-acc
+--BODY--
+State: 0 "start"
+ [t] 0
+ [0] 1 {0}
+State: 1 "FG odd"
+ [0] 1 {0}
+ [!0] 2
+State: 2 "trap"
+ [t] 2
+--END--

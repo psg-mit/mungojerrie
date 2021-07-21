@@ -1,0 +1,43 @@
+// A chess tournament between George and an opponent is played best of
+// "end" games.  Each game may end up in a win, a loss, or a tie for George.
+// If the number of wins is tied after "end" games, tie breakers are played
+// until one player gets the upper hand.
+//
+// In each game, George may attack or defend.  If he attacks, he wins with
+// probability pa and loses with probability (1-pa).  If he defends, he ties
+// with probability pd and loses with probability (1-pd).
+//
+// We are interested in George's best strategy in case pa < 0.5.  Does that
+// strategy give him victory in the tournament with probability greater
+// than 0.5?
+//
+// Source: https://math.stackexchange.com/q/2910257/123852
+
+mdp
+
+const int end = 2;
+
+const double pa = 0.45;
+const double pd = 0.95;
+
+formula ongoing = played < end | won = lost;
+
+label "victory" = played = end & won > lost;
+label "loss"    = played = end & won < lost;
+
+module winLossCounter
+  won  : [0..end] init 0;
+  lost : [0..end] init 0;
+
+  [attack] ongoing -> pa : (won'=won+1) + 1-pa : (lost'=lost+1);
+  [defend] ongoing -> pd : true         + 1-pd : (lost'=lost+1);
+
+  [end]   !ongoing -> true;
+endmodule
+
+module gameCounter
+  played : [0..end] init 0;
+
+  [attack] true -> (played'=min(played+1,end));
+  [defend] true -> (played'=min(played+1,end));
+endmodule

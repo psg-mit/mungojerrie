@@ -1,0 +1,38 @@
+// Skeleton of a one-client arbiter.
+
+mdp
+
+// Client states.
+const int idle     = 0;
+const int waiting  = 1;
+const int critical = 2;
+
+// Transition probabilities.
+const double pwait = 1/8;
+const double pexit = 1/4;
+
+formula request = c=waiting | c=critical;
+
+label "token" = token;
+label "request" = request;
+label "critical" = c=critical;
+
+module arbiter
+  token : bool init true;
+
+  [drop]  token & !request -> (token'=false); // bad
+  [grant] token & request  -> (token'=false); // good
+  [idle]  token & request  -> true;           // bad
+
+  [reset] !token & !request -> (token'=true); // good
+  [idle]  !token & !request -> true;          // bad
+  [cheat] !token & request  -> (token'=true); // bad
+endmodule
+
+module client
+  c : [idle..critical] init idle;
+
+  [req]   c=idle            -> pwait : (c'=waiting) + (1-pwait) : true;
+  [grant] c=waiting & token -> (c'=critical);
+  [exit]  c=critical        -> pexit : (c'=idle) + (1-pexit) : true;
+endmodule

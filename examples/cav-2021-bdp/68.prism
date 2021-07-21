@@ -1,0 +1,57 @@
+bdp
+label "final" = entity = 29; // extinction
+module main
+entity : [0..29] init 0;
+nature : [0..11] init 0;
+[a0] (entity=0) & (nature = 0) -> 1/9: (nature'=1) +1/9: (nature'=2) +1/9: (nature'=3) +1/9: (nature'=4) +1/9: (nature'=5) +1/9: (nature'=6) +1/9: (nature'=7) +1/9: (nature'=8) + 1/9: (entity'=29);
+[a0] (entity=1) & (nature = 0) -> 1/11: (nature'=1) +1/11: (nature'=2) +1/11: (nature'=3) +1/11: (nature'=4) +1/11: (nature'=5) +1/11: (nature'=6) +1/11: (nature'=7) +1/11: (nature'=8) +1/11: (nature'=9) +1/11: (nature'=10) + 1/11: (entity'=29);
+[a0] (entity=2) & (nature = 0) -> 1/6: (nature'=1) +1/6: (nature'=2) +1/6: (nature'=3) +1/6: (nature'=4) +1/6: (nature'=5) + 1/6: (entity'=29);
+[a0] (entity=3) & (nature = 0) -> 1/7: (nature'=1) +1/7: (nature'=2) +1/7: (nature'=3) +1/7: (nature'=4) +1/7: (nature'=5) +1/7: (nature'=6) + 1/7: (entity'=29);
+[a0] (entity=4) & (nature = 0) -> 1/6: (nature'=1) +1/6: (nature'=2) +1/6: (nature'=3) +1/6: (nature'=4) +1/6: (nature'=5) + 1/6: (entity'=29);
+[a0] (entity=5) & (nature = 0) -> 1/10: (nature'=1) +1/10: (nature'=2) +1/10: (nature'=3) +1/10: (nature'=4) +1/10: (nature'=5) +1/10: (nature'=6) +1/10: (nature'=7) +1/10: (nature'=8) +1/10: (nature'=9) + 1/10: (entity'=29);
+[a0] (entity=6) & (nature = 0) ->  1/1: (entity'=29);
+[a0] (entity=7) & (nature = 0) -> 1/3: (nature'=1) +1/3: (nature'=2) + 1/3: (entity'=29);
+[a0] (entity=8) & (nature = 0) -> 1/5: (nature'=1) +1/5: (nature'=2) +1/5: (nature'=3) +1/5: (nature'=4) + 1/5: (entity'=29);
+[a0] (entity=9) & (nature = 0) -> 1/7: (nature'=1) +1/7: (nature'=2) +1/7: (nature'=3) +1/7: (nature'=4) +1/7: (nature'=5) +1/7: (nature'=6) + 1/7: (entity'=29);
+[a0] (entity=10) & (nature = 0) -> 1/4: (nature'=1) +1/4: (nature'=2) +1/4: (nature'=3) + 1/4: (entity'=29);
+[a0] (entity=11) & (nature = 0) -> 1/4: (nature'=1) +1/4: (nature'=2) +1/4: (nature'=3) + 1/4: (entity'=29);
+[a0] (entity=12) & (nature = 0) -> 1/7: (nature'=1) +1/7: (nature'=2) +1/7: (nature'=3) +1/7: (nature'=4) +1/7: (nature'=5) +1/7: (nature'=6) + 1/7: (entity'=29);
+[a0] (entity=13) & (nature = 0) -> 1/10: (nature'=1) +1/10: (nature'=2) +1/10: (nature'=3) +1/10: (nature'=4) +1/10: (nature'=5) +1/10: (nature'=6) +1/10: (nature'=7) +1/10: (nature'=8) +1/10: (nature'=9) + 1/10: (entity'=29);
+[a0] (entity=14) & (nature = 0) -> 1/2: (nature'=1) + 1/2: (entity'=29);
+[a0] (entity=15) & (nature = 0) -> 1/4: (nature'=1) +1/4: (nature'=2) +1/4: (nature'=3) + 1/4: (entity'=29);
+[a0] (entity=16) & (nature = 0) ->  1/1: (entity'=29);
+[a0] (entity=17) & (nature = 0) -> 1/2: (nature'=1) + 1/2: (entity'=29);
+[a0] (entity=18) & (nature = 0) -> 1/7: (nature'=1) +1/7: (nature'=2) +1/7: (nature'=3) +1/7: (nature'=4) +1/7: (nature'=5) +1/7: (nature'=6) + 1/7: (entity'=29);
+[a0] (entity=19) & (nature = 0) -> 1/3: (nature'=1) +1/3: (nature'=2) + 1/3: (entity'=29);
+[a0] (entity=20) & (nature = 0) -> 1/6: (nature'=1) +1/6: (nature'=2) +1/6: (nature'=3) +1/6: (nature'=4) +1/6: (nature'=5) + 1/6: (entity'=29);
+[a0] (entity=21) & (nature = 0) -> 1/10: (nature'=1) +1/10: (nature'=2) +1/10: (nature'=3) +1/10: (nature'=4) +1/10: (nature'=5) +1/10: (nature'=6) +1/10: (nature'=7) +1/10: (nature'=8) +1/10: (nature'=9) + 1/10: (entity'=29);
+[a0] (entity=22) & (nature = 0) -> 1/2: (nature'=1) + 1/2: (entity'=29);
+[a0] (entity=23) & (nature = 0) ->  1/1: (entity'=29);
+[a0] (entity=24) & (nature = 0) -> 1/3: (nature'=1) +1/3: (nature'=2) + 1/3: (entity'=29);
+[a0] (entity=25) & (nature = 0) -> 1/11: (nature'=1) +1/11: (nature'=2) +1/11: (nature'=3) +1/11: (nature'=4) +1/11: (nature'=5) +1/11: (nature'=6) +1/11: (nature'=7) +1/11: (nature'=8) +1/11: (nature'=9) +1/11: (nature'=10) + 1/11: (entity'=29);
+[a0] (entity=26) & (nature = 0) -> 1/9: (nature'=1) +1/9: (nature'=2) +1/9: (nature'=3) +1/9: (nature'=4) +1/9: (nature'=5) +1/9: (nature'=6) +1/9: (nature'=7) +1/9: (nature'=8) + 1/9: (entity'=29);
+[a0] (entity=27) & (nature = 0) -> 1/8: (nature'=1) +1/8: (nature'=2) +1/8: (nature'=3) +1/8: (nature'=4) +1/8: (nature'=5) +1/8: (nature'=6) +1/8: (nature'=7) + 1/8: (entity'=29);
+[a0] (entity=28) & (nature = 0) -> 1/7: (nature'=1) +1/7: (nature'=2) +1/7: (nature'=3) +1/7: (nature'=4) +1/7: (nature'=5) +1/7: (nature'=6) + 1/7: (entity'=29);
+[a0] (entity=29) & (nature = 0) -> 1/11: (nature'=1) +1/11: (nature'=2) +1/11: (nature'=3) +1/11: (nature'=4) +1/11: (nature'=5) +1/11: (nature'=6) +1/11: (nature'=7) +1/11: (nature'=8) +1/11: (nature'=9) +1/11: (nature'=10) + 1/11: (entity'=29);
+[step] (entity = 29) & (nature = 0) -> (entity'=29); // sink 
+[c0](nature=1) -> (nature' = 0) & (entity' =13);
+[c0](nature=2) -> (nature' = 0) & (entity' =5);
+[c0](nature=3) -> (nature' = 0) & (entity' =19);
+[c0](nature=4) -> (nature' = 0) & (entity' =28);
+[c0](nature=5) -> (nature' = 0) & (entity' =22);
+[c0](nature=6) -> (nature' = 0) & (entity' =8);
+[c0](nature=7) -> (nature' = 0) & (entity' =19);
+[c0](nature=8) -> (nature' = 0) & (entity' =3);
+[c0](nature=9) -> (nature' = 0) & (entity' =11);
+[c0](nature=10) -> (nature' = 0) & (entity' =5);
+[c0](nature=11) -> (nature' = 0) & (entity' =28);
+endmodule
+player Pentity
+[a0],[step]
+endplayer
+player Pnature
+[c0]
+endplayer
+rewards
+[a0] true : 28 ;
+endrewards

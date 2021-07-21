@@ -1,0 +1,25 @@
+mdp
+
+const double p1 = 1/4;
+const double p2 = 1/4;
+
+const int d = 10;
+const int n = d+5;
+const int m = 20;
+
+label "goal" = s=n;
+label "safe" = !(s=1 | s=n+m);
+
+module markov
+  s : [1..n+m] init 2;
+
+  [a] s=1 -> p1 : (s'=2) + 1-p1 : (s'=1);
+  [a] s>1 & s<d -> p1 : (s'=s+1) + p2 : (s'=s-1) + 1-p1-p2 : (s'=s);
+  [a] s=d -> p1 : (s'=n+1) + p2 : (s'=d+1) + p2 : (s'=d-1) + 1-p1-2*p2 : (s'=d);
+  [a] s>d & s<n -> p2 : (s'=s+1) + p1 : (s'=s-1) + 1-p1-p2 : (s'=s);
+  [a] s=n -> p1 : (s'=n-1) + 1-p1 : (s'=n);
+  [a] s=n+1 -> p1 : (s'=n+2) + p2 : (s'=d) + 1-p1-p2 : (s'=n+1);
+  [a] s>n+1 & s<n+m -> p1 : (s'=s+1) + p2 : (s'=s-1) + 1-p1-p2 : (s'=s);
+  [a] s=n+m -> true;
+
+endmodule

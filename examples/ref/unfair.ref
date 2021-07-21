@@ -1,0 +1,8 @@
+Input File is ../mungojerrie/examples/unfair.prism
+@ 0.00752979 s: the environment has 1331 nodes, 726 of which are decision nodes.
+@ 0.0132354 s: the DBA has 1 state (0 traps).
+@ 0.0193337 s: the product has 1331 nodes, 726 of which are decision nodes.
+@ 0.0227343 s: 55 WECs computed.
+@ 0.0307903 s: reachability completed.
+@ 0.0308162 s: probability of satisfaction: 0.261563
+@ 0.0317296 s: end

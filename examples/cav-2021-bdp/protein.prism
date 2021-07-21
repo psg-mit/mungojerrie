@@ -1,0 +1,61 @@
+//Branching Decision Process
+// In biological cells, each protein is encoded by a certain gene.
+// If the gene is active, the corresponding protein will be synthesized.
+// Also, proteins may degenerate and thus disappear after a time.
+// Activation and deactivation of genes, protein synthesis (in case of active gene)
+// as well as protein degeneration are modeled by stochastic rates. In the model,
+// the place p1 corresponds to an inactive gene encoding the protein, p2 corresponds
+// to an active gene, and p3 gives the numbers of existing proteins. The transition t1
+// deactivates the gene with rate \mu, while t2 activates it with rate \lambda. If the
+// gene is active, t3 can produce new proteins with rate \nu. Each individual protein
+// degenerates with rate \delta, which is modeled by the transition t4.
+//
+// p2 -(step, 1)-> mu: p1 + nu : p2 p2 + (1-mu*nu): \epsilon  
+//p1 -(step, 1)-> lambda: p2 + (1-lambda): p1
+
+
+bdp
+
+const double mu = 0.2;
+const double nu = 0.1;
+const double delta = 0.1;
+const double lambda = 0.1;
+
+const int nStates = 2;
+const int nBranches = 1;
+const int p2 = 0;
+const int p1 = 1;
+const int eps = 2;
+const int idle = 0;
+const int splitp2p2 = 1;
+
+label "final" = entity = eps; // extinction
+
+module main
+  entity : [0..nStates] init p2;
+  nature : [0..nBranches] init idle;
+
+  [active] entity=p2 & nature = idle  -> mu : (entity' = p1) + nu: (nature' = splitp2p2) + delta : (entity' = p2) + (1-mu-nu-delta) : (entity' = eps);
+  [passive] entity=p1 & nature = idle  -> lambda: (entity' = p2) + (1-lambda) : (entity' = p1);
+
+  [step] entity=eps  -> (entity' = eps) & (nature'=idle);
+  
+  [c1] nature = splitp2p2 -> (entity' = p2) & (nature' = idle); 
+  [c2] nature = splitp2p2 -> (entity' = p2) & (nature' = idle); 
+
+endmodule
+
+player Pentity
+  [active], [passive], [step]
+endplayer
+
+player Pnature
+  [c1], [c2]
+endplayer
+
+rewards
+    [c1] nature=splitp2p2 : 0;
+    [c2] entity=splitp2p2 : 0;
+    [active] entity=p2 : 1;
+    [passive] entity=p1 : 1;
+endrewards

@@ -1,0 +1,13 @@
+mdp
+
+const double pr = 1/2;
+
+label "p" = s!=1;
+
+module m
+  s : [0..2] init 0;
+
+  [a] s=0 -> pr : (s'=1) + (1-pr) : (s'=2);
+  [a] s=1 -> (s'=2);
+  [a] s=2 -> true;
+endmodule

@@ -1,0 +1,19 @@
+// Based on Figure 2 of the ATVA 2020 paper.
+
+mdp
+
+const double p = 1/2;
+
+label "g" = s=1;
+
+module convergence
+  s : [0..2] init 0;
+
+  [a] s=0 -> (s'=1);
+  [b] s=0 | s=2 -> true;
+  [b] s=1 -> p : (s'=0) + 1-p : (s'=2);
+endmodule
+
+rewards
+  s=1 : 1;
+endrewards

@@ -1,0 +1,13 @@
+HOA: v1
+name: "FG (p | q)"
+States: 1
+Start: 0
+acc-name: Rabin 1
+Acceptance: 2 Fin(0) & Inf(1)
+AP: 2 "p" "q"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "only"
+ [!0 & !1] 0 {0}
+ [0 | 1] 0 {1}
+--END--

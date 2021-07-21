@@ -1,0 +1,85 @@
+// There are N blue shirts and M red shirts, with M > N.  Each day a
+// clean shirt is worn and goes from clean to dirty.  When no shirts
+// of one color are clean, all dirty shirts are washed are return
+// clean.  Each shirt has an initial number of uses.  Each time it is
+// washed its number of uses decreases by 1.  When it goes to 0 the
+// shirt is thrown out and can no longer be worn.
+//
+// We are interested in the property that eventually no red shirts are left.
+// This is a fully deterministic model.
+
+mdp
+
+const int Lb = 4;
+const int Lr = 5;
+
+label "stop" = nored;
+
+formula available = (c1b & r1b > 0 | c2b & r2b > 0 | c3b & r3b > 0) &
+                    (c1r & r1r > 0 | c2r & r2r > 0 |
+                     c3r & r3r > 0 | c4r & r4r > 0);
+formula noblue = r1b = 0 & r2b = 0 & r3b = 0;
+formula nored = r1r = 0 & r2r = 0 & r3r = 0 & r4r = 0;
+
+module blueshirt1
+  c1b: bool init true;
+  r1b: [0..Lb] init Lb;
+
+  [wear1b] available & c1b & r1b > 0 -> (c1b'=false);
+  [wash] !available -> (c1b'=true) & (r1b'=c1b?r1b:r1b-1);
+
+endmodule
+
+module blueshirt2
+  c2b: bool init true;
+  r2b: [0..Lb] init Lb;
+
+  [wear2b] available & c2b & r2b > 0 -> (c2b'=false);
+  [wash] !available -> (c2b'=true) & (r2b'=c2b?r2b:r2b-1);
+
+endmodule
+
+module blueshirt3
+  c3b: bool init true;
+  r3b: [0..Lb] init Lb;
+
+  [wear3b] available & c3b & r3b > 0 -> (c3b'=false);
+  [wash] !available -> (c3b'=true) & (r3b'=c3b?r3b:r3b-1);
+
+endmodule
+
+module redshirt1
+  c1r: bool init true;
+  r1r: [0..Lr] init Lr;
+
+  [wear1r] available & c1r & r1r > 0 -> (c1r'=false);
+  [wash] !available -> (c1r'=true) & (r1r'=c1r?r1r:r1r-1);
+
+endmodule
+
+module redshirt2
+  c2r: bool init true;
+  r2r: [0..Lr] init Lr;
+
+  [wear2r] available & c2r & r2r > 0 -> (c2r'=false);
+  [wash] !available -> (c2r'=true) & (r2r'=c2r?r2r:r2r-1);
+
+endmodule
+
+module redshirt3
+  c3r: bool init true;
+  r3r: [0..Lr] init Lr;
+
+  [wear3r] available & c3r & r3r > 0 -> (c3r'=false);
+  [wash] !available -> (c3r'=true) & (r3r'=c3r?r3r:r3r-1);
+
+endmodule
+
+module redshirt4
+  c4r: bool init true;
+  r4r: [0..Lr] init Lr;
+
+  [wear4r] available & c4r & r4r > 0 -> (c4r'=false);
+  [wash] !available -> (c4r'=true) & (r4r'=c4r?r4r:r4r-1);
+
+endmodule

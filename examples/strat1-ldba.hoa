@@ -1,0 +1,22 @@
+HOA: v1
+name: "(GF !p) -> (GF !q)"
+States: 4
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 3 "p" "q" "epsilon"
+properties: complete colored trans-acc
+--BODY--
+State: 0 "start"
+ [t] 0 {0}
+ [2] 1 {0}
+ [2] 2 {0}
+State: 1 "GF !q"
+ [!1] 1 {1}
+ [1] 1 {0}
+State: 2 "FG p"
+ [0] 2 {1}
+ [!0] 3 {0}
+State: 3 "trap"
+ [t] 3 {0}
+--END--

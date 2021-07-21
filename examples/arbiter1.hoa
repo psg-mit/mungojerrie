@@ -1,0 +1,29 @@
+HOA: v1
+name: "G(!(token & critical) & (request -> F critical) & F !critical)"
+States: 5
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 3 "token" "request" "critical"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "Aa"
+ [!0&1&2] 0 {0}
+ [1&!2]   1 {0}
+ [!(0&2)&!1] 2 {0}
+ [0&2] 4 {0}
+State: 1 "Ab"
+ [!0&2] 0 {1}
+ [1&!2]   1 {0}
+ [!1&!2] 3 {0} 
+State: 2 "Ba"
+ [0&1&!2] 1 {0}
+ [0&!1&!2] 2 {0}
+ [!0|2] 4 {0}
+State: 3 "Bb"
+ [0&1&!2] 1 {0}
+ [0&!1&!2] 3 {0}
+ [!0|2] 4 {0}
+State: 4 "trap"
+ [t] 4 {0}
+--END--

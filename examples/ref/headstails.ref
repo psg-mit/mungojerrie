@@ -1,0 +1,20 @@
+Input File is ../mungojerrie/examples/headstails.prism
+@ 0.00498274 s: the environment has 14 nodes, 7 of which are decision nodes.
+@ 0.0101831 s: the terminal DBA has 3 states (1 trap).
+@ 0.0152009 s: the product has 28 nodes, 15 of which are decision nodes.
+@ 0.0152547 s: 1 WECs computed.
+@ 0.0152756 s: reachability completed.
+@ 0.0152782 s: probability of satisfaction: 0.25
+
+--------Sarsa(lambda)--------
+@ 0.625835 s: learning complete.
+Initial-state value estimate: 0.12925
+Total number of accepting edges seen: 504211
+Number of accepting episodes: 4997
+Number of trapped episodes  : 15003
+Number of steps: 579054
+Average total reward per episode: 0.24985
+Random seed used: 3937104353
+There were 4 unseen decision nodes reachable under learned strategy for tol 0.01.
+Probability for tol 0.01 is: 0.25
+@ 0.626586 s: end

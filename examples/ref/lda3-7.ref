@@ -1,0 +1,31 @@
+Input File is ../mungojerrie/examples/lda3-7.prism
+@ 0.00517829 s: the environment has 15 nodes, 10 of which are decision nodes.
+@ 0.325416 s: the NBA has 3 states (1 trap).
+@ 0.330497 s: the product has 16 nodes, 11 of which are decision nodes.
+@ 0.330627 s: strategy computed.
+@ 0.33063 s: probability of satisfaction: 0.5
+digraph "Pruned Product" {
+node [shape=circle];
+"title" [label="Pruned Product",shape=plaintext];
+"0_init" [style=invis]
+"0_init" -> 0
+0 [label="s0, 0\n", shape=box];
+2 [label="s2, 0\n", shape=box];
+4 [label="s3, 0\n", shape=box];
+7 [label="s6, 0\n", shape=box];
+10 [label="",width=0.25];
+12 [label="s8, 0\ntarget", shape=box];
+13 [label="s9, 0\n", shape=box];
+15 [label="s8, 1\ntarget", shape=box];
+0 -> 2 [label=" b(0) "];
+2 -> 4 [label=" d(0) "];
+4 -> 7 [label=" j(0) "];
+7 -> 10 [label=" k(0) "];
+10 -> 4 [label=" 0.333333(0) "];
+10 -> 12 [label=" 0.333333(0) "];
+10 -> 13 [label=" 0.333333(0) "];
+12 -> 15 [label="  m+1(0) "];
+13 -> 13 [label=" n(0) "];
+15 -> 15 [label=" m(1) "];
+}
+@ 0.331175 s: end

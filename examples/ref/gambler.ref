@@ -1,0 +1,64 @@
+Input File is ../mungojerrie/examples/gambler.prism
+@ 0.0059527 s: the environment has 20 nodes, 11 of which are decision nodes.
+@ 1.16647 s: the terminal DBA has 2 states (0 traps).
+@ 1.17222 s: the product has 21 nodes, 12 of which are decision nodes.
+@ 1.17368 s: strategy computed.
+@ 1.17369 s: probability of satisfaction: 0.5
+digraph "Pruned Product" {
+node [shape=circle];
+"title" [label="Pruned Product",shape=plaintext];
+"0_init" [style=invis]
+"0_init" -> 0
+0 [label="x5, 0\n", shape=box];
+1 [label="",width=0.25];
+2 [label="x6, 0\n", shape=box];
+3 [label="x4, 0\n", shape=box];
+4 [label="",width=0.25];
+5 [label="",width=0.25];
+6 [label="x7, 0\n", shape=box];
+7 [label="x3, 0\n", shape=box];
+8 [label="",width=0.25];
+9 [label="",width=0.25];
+10 [label="x8, 0\n", shape=box];
+11 [label="x2, 0\n", shape=box];
+12 [label="",width=0.25];
+13 [label="",width=0.25];
+14 [label="x9, 0\n", shape=box];
+15 [label="x1, 0\n", shape=box];
+16 [label="",width=0.25];
+17 [label="",width=0.25];
+18 [label="x10, 0\ngoal", shape=box];
+19 [label="x0, 0\nruin", shape=box];
+20 [label="x10, 1\ngoal", shape=box];
+0 -> 1 [label=" alpha(0) "];
+1 -> 2 [label=" 0.5(0) "];
+1 -> 3 [label=" 0.5(0) "];
+2 -> 4 [label=" alpha(0) "];
+3 -> 5 [label=" alpha(0) "];
+4 -> 6 [label=" 0.5(0) "];
+4 -> 0 [label=" 0.5(0) "];
+5 -> 0 [label=" 0.5(0) "];
+5 -> 7 [label=" 0.5(0) "];
+6 -> 8 [label=" alpha(0) "];
+7 -> 9 [label=" alpha(0) "];
+8 -> 10 [label=" 0.5(0) "];
+8 -> 2 [label=" 0.5(0) "];
+9 -> 3 [label=" 0.5(0) "];
+9 -> 11 [label=" 0.5(0) "];
+10 -> 12 [label=" alpha(0) "];
+11 -> 13 [label=" alpha(0) "];
+12 -> 14 [label=" 0.5(0) "];
+12 -> 6 [label=" 0.5(0) "];
+13 -> 7 [label=" 0.5(0) "];
+13 -> 15 [label=" 0.5(0) "];
+14 -> 16 [label=" alpha(0) "];
+15 -> 17 [label=" alpha(0) "];
+16 -> 18 [label=" 0.5(0) "];
+16 -> 10 [label=" 0.5(0) "];
+17 -> 11 [label=" 0.5(0) "];
+17 -> 19 [label=" 0.5(0) "];
+18 -> 20 [label=" beta(0) "];
+19 -> 19 [label=" beta(0) "];
+20 -> 20 [label=" beta(1) "];
+}
+@ 1.17432 s: end

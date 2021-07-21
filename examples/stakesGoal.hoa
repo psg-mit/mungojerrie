@@ -1,0 +1,15 @@
+HOA: v1
+name: "F goal"
+States: 3
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 1 "goal"
+properties: deterministic complete trans-acc explicit-labels
+--BODY--
+State: 0 "start"
+ [!0] 0
+ [ 0] 1 {0}
+State: 1 "goal"
+ [t] 1 {0}
+--END--

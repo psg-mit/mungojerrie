@@ -1,0 +1,63 @@
+// Max and Min play the following turn-based game:
+//   x and y are two base-10, two-digit numbers.
+//   Max chooses a digit d from 0-9 with repetitions allowed.
+//   Min assigns d to one unassigned digit of either x or y.
+// After four rounds, when all digits of x and y have been assigned,
+// the game terminates.  Max wins if x-y >= 40.
+
+smg
+
+player Max [d0], [d1], [d2], [d3], [d4], [d5], [d6], [d7], [d8], [d9], [loop] endplayer
+player Min [x1], [x0], [y1], [y0] endplayer
+
+formula r = x1 = -1 | x0 = -1 | y1 = -1 | y0 = -1;
+
+formula diff = (x1-y1)*10 + (x0-y0);
+
+label "l" = !r & diff >= 40;
+
+module play
+  d : [0..9];
+  x1 : [-1..9];
+  x0 : [-1..9];
+  y1 : [-1..9];
+  y0 : [-1..9];
+  
+  [d0] r -> (d' = 0);
+  [d1] r -> (d' = 1);
+  [d2] r -> (d' = 2);
+  [d3] r -> (d' = 3);
+  [d4] r -> (d' = 4);
+  [d5] r -> (d' = 5);
+  [d6] r -> (d' = 6);
+  [d7] r -> (d' = 7);
+  [d8] r -> (d' = 8);
+  [d9] r -> (d' = 9);
+
+  [x1] x1 = -1 -> (x1' = d);  
+  [x0] x0 = -1 -> (x0' = d);  
+  [y1] y1 = -1 -> (y1' = d);  
+  [y0] y0 = -1 -> (y0' = d);  
+endmodule
+
+module turn
+  t : [0..1] init 0;
+
+  [d0] t = 0 -> (t' = 1);
+  [d1] t = 0 -> (t' = 1);
+  [d2] t = 0 -> (t' = 1);
+  [d3] t = 0 -> (t' = 1);
+  [d4] t = 0 -> (t' = 1);
+  [d5] t = 0 -> (t' = 1);
+  [d6] t = 0 -> (t' = 1);
+  [d7] t = 0 -> (t' = 1);
+  [d8] t = 0 -> (t' = 1);
+  [d9] t = 0 -> (t' = 1);
+
+  [x1] t = 1 -> (t' = 0);
+  [x0] t = 1 -> (t' = 0);
+  [y1] t = 1 -> (t' = 0);
+  [y0] t = 1 -> (t' = 0);
+
+  [loop] !r -> true;
+endmodule

@@ -1,0 +1,17 @@
+Input File is ../mungojerrie/examples/twoModules.prism
+@ 0.00958361 s: the environment has 7 nodes, 6 of which are decision nodes.
+@ 0.0187616 s: the DPA has 2 states (0 traps) and 3 priorities.
+@ 0.0260642 s: the product has 9 nodes, 8 of which are decision nodes.
+@ 0.026136 s: strategy computed.
+@ 0.0261404 s: probability of satisfaction: 1
+digraph "Pruned Product" {
+node [shape=circle];
+"title" [label="Pruned Product",shape=plaintext];
+"0_init" [style=invis]
+"0_init" -> 0
+0 [label="x2y2, 0\n", shape=box];
+1 [label="x1y2, 0\n", shape=box];
+0 -> 1 [label=" _a1(1) "];
+1 -> 0 [label=" _a0(1) "];
+}
+@ 0.027278 s: end

@@ -1,0 +1,169 @@
+#! /bin/sh
+
+# A script to test mungojerrie.
+# Each item in argslist corresponds to one run.
+
+EXE=@EXEEXT@
+srcdir=@srcdir@
+HAVE_SLIM=@HAVE_SLIM@
+HAVE_SPOT=@HAVE_SPOT@
+HAVE_OWL=@HAVE_OWL@
+HAVE_LIBORTOOLS=@HAVE_LIBORTOOLS@
+
+# The separator IFS is set to a colon so that we can have spaces between
+# arguments.  Each entry consists of a model name, a list of arguments,
+# and an expected return value.
+OIFS=$IFS
+IFS=:
+argslist="\
+lda3-5,--model-check --dot-mc - --parity ${srcdir}/examples/lda.hoa,0:\
+counter,--model-check --dot-mc - --parity ${srcdir}/examples/counter.hoa,0:\
+twoModules,--model-check --dot-mc - --parity ${srcdir}/examples/twoModules.hoa,0:\
+badSyntax,,1:\
+mdp1,--model-check --parity ${srcdir}/examples/epsilon.hoa --hoa-automaton -,0:\
+mdp2,--model-check --define p=1 --define N=1 --dot-model - --parity ${srcdir}/examples/mdp2.hoa,0:\
+emptyrewards,--prism-model -,0:\
+morris,--model-check --dot-mc - --parity ${srcdir}/examples/morris.hoa,0:\
+grid5x5,--model-check --prism-mc - --parity ${srcdir}/examples/safegrid-small.hoa,0:\
+multiVars,--model-check --dot-mc - --parity ${srcdir}/examples/multiVars.hoa,0:\
+rewards,--prism-model -,0:\
+boolConst,--prism-model -,0:\
+ite,--model-check --dot-mc - --parity ${srcdir}/examples/ite.hoa --hoa-automaton -,0:\
+boolVars,--model-check --dot-mc - --parity ${srcdir}/examples/boolVars-rabin.hoa,0:\
+craps,--model-check --hoa-automaton - --parity ${srcdir}/examples/craps-mineven.hoa,0:\
+knuthYao,--model-check --hoa-automaton - --parity ${srcdir}/examples/knuthYao-maxeven.hoa,0:\
+knuthYaoMDP,--model-check --hoa-automaton - --parity ${srcdir}/examples/knuthYao-minodd.hoa,0:\
+formulae,--model-check --dot-mc - --parity ${srcdir}/examples/formulae.hoa,0:\
+renaming,--model-check --dot-mc - --parity ${srcdir}/examples/renaming.hoa,0:\
+fairCoin,--model-check --dot-mc - --parity ${srcdir}/examples/fairCoin.hoa --hoa-automaton -,0:\
+defaults,--model-check --dot-mc - --parity ${srcdir}/examples/defaults.hoa,0:\
+devious,--model-check -D Max=4 -D p=0.8 --dot-mc - --parity ${srcdir}/examples/devious.hoa,0:\
+sspPrune,--model-check --dot-mc - --parity ${srcdir}/examples/sspPrune.hoa,0:\
+globals,--model-check --parity ${srcdir}/examples/minOdd.hoa,1:\
+twoPairs,--model-check --dot-mc - --to-ldba --parity ${srcdir}/examples/twoPairs.hoa,0:\
+frozenSmall,--model-check --dot-model - --parity ${srcdir}/examples/frozen.hoa,0:\
+corridor,--seed 2619529310 --parity ${srcdir}/examples/corridor.hoa --model-check --learn Q --learn-stats --reward-type zeta-discount --discount 1 --save-learner-strategy -,0:\
+slalom,--seed 2432470887 --model-check --parity ${srcdir}/examples/slalom.hoa --learn Q --learn-stats --reward-type multi-discount --discount 1 --save-learner-strategy -,0:\
+sprague,--seed 1745701707 --model-check --parity ${srcdir}/examples/sprague.hoa --learn Q --learn-stats --reward-type reward-on-acc --discount 1 --save-learner-strategy -,0:\
+efron,--seed 488032145 --model-check --parity ${srcdir}/examples/unfair.hoa --learn DQ --learn-stats --discount 1 --ep-num 25000,0:\
+headstails,--seed 3937104353 --model-check --parity ${srcdir}/examples/HHbeforeTH.hoa --learn SL --discount 1 --learn-stats,0:\
+stakes4,--seed 336403878 --model-check --parity ${srcdir}/examples/stakesNoRuin.hoa --save-mc-strategy - --learn Q --learn-stats --reward-type pri-tracker --discount 1 --save-learner-strategy - --ep-length 50 --ep-number 5000 --epsilon 1e-11,0:\
+coprobp,--seed 1 --model-check --parity ${srcdir}/examples/coprobSafe.hoa --learn Q --learn-stats --discount 1 --ep-len 500 --alpha 0.2 --zeta 0.995,0:\
+shoot,--model-check --parity ${srcdir}/examples/robots3.hoa,0:\
+deferred,--seed 1 --model-check --dot-mc - --learn Q --learn-stats --parity ${srcdir}/examples/deferredGF.hoa --discount 1 --alpha 0.2 --zeta 0.8,0:\
+rrrew,--seed 1 -D p=0.6 --model-check --parity ${srcdir}/examples/rrrew.hoa --learn Q --learn-stats --reward-type prism --ep-length 80 --ep-number 20000 --discount 0.95 --save-learner-strategy -,0:\
+ratchet,--seed 3725829996 --model-check --parity ${srcdir}/examples/ratchet.hoa --learn Q --learn-stats --reward-type prism --ep-length 10 --ep-number 40000 --discount 0.99 --save-learner-strategy -,0:\
+ratchet2,--seed 3725829996 --model-check --parity ${srcdir}/examples/ratchet.hoa --learn Q --learn-stats --reward-type prism --ep-length 10 --ep-number 40000 --discount 1 --save-learner-strategy -,0"
+
+tcount=`IFS=:; set -f -- $argslist; echo $#`
+
+if test "x$HAVE_SPOT" = "x1"; then
+  argslist_spot=":\
+penney2,--model-check --ltl 'ahit R !bhit' --automaton-type dpa,0:\
+sum15,--model-check --ltl 'G !s15' --automaton-type dpa,0:\
+pursuit,--model-check --ltl '(G safe) & ((F G !trap1) -> (F G close))' --automaton-type dpa,0:\
+pursuit2,--model-check --ltl-file ${srcdir}/examples/pursuit2.ltl --automaton-type dpa --hoa-automaton -,0"
+
+  argslist=${argslist}${argslist_spot}
+  tcount_spot=`IFS=:; set -f -- $argslist_spot; echo $#`
+  tcount=`expr $tcount + $tcount_spot - 1`
+fi
+
+if test "x$HAVE_SLIM" = "x1"; then
+  argslist_slim=":\
+gambler,--model-check --dot-mc - --ltl 'F goal' --automaton-type slim,0:\
+qubit,--model-check --ltl '(G F Rzero) & (G F Rone)' --automaton-type slim --hoa-automaton -,0:\
+cgw,--model-check --ltl '(G safe) | (F G final)' --automaton-type slim,0:\
+strat1,--model-check --ltl-file ${srcdir}/examples/strat1.ltl --automaton-type slim,0:\
+arbiter1,--model-check --ltl 'G(!(token & critical) & (request -> F critical) & F !critical)' --automaton-type semidet --hoa-automaton -,0"
+
+  argslist=${argslist}${argslist_slim}
+  tcount_slim=`IFS=:; set -f -- $argslist_slim; echo $#`
+  tcount=`expr $tcount + $tcount_slim - 1`
+fi
+
+if test "x$HAVE_OWL" = "x1"; then
+  argslist_owl=":\
+lda3-7,--model-check --dot-mc - --ltl 'F G target' --automaton-type ldba,0:\
+threeWayDuel,--model-check --ltl 'F victory' --automaton-type ldba,0:\
+anothergrid,--model-check --ltl-file ${srcdir}/examples/anothergrid.ltl --automaton-type ldba,0"
+
+  argslist=${argslist}${argslist_owl}
+  tcount_owl=`IFS=:; set -f -- $argslist_owl; echo $#`
+  tcount=`expr $tcount + $tcount_owl - 1`
+fi
+
+if test "x$HAVE_LIBORTOOLS" = "x1"; then
+  argslist_ort=":\
+unfair,--model-check --parity ${srcdir}/examples/unfair.hoa --reach-with glop --ssp-with glop,0:\
+unreachable,--model-check --parity ${srcdir}/examples/unreachable.hoa --reach-with glop --ssp-with glop,0"
+
+  argslist=${argslist}${argslist_ort}
+  tcount_ort=`IFS=:; set -f -- $argslist_ort; echo $#`
+  tcount=`expr $tcount + $tcount_ort - 1`
+fi
+
+verbosity=1
+
+# Discard paths to example files and remove CPU times.
+sed_command='-r:-e:s|.*\/examples\/||:-e:s/[0-9][0-9]*\.?[0-9]* s//'
+
+echo TAP version 13
+echo 1..$tcount
+exitstatus=0
+count=0
+
+# Create FIFOs for communication between sed processes and diff.
+#fifodir=`mktemp -p ./Main -d fifodir-XXXX`
+fifodir=`mktemp -d "${TMPDIR:-/tmp}/fifodir.XXXXXXXXX"`
+tstfifo=$fifodir/tst_fifo
+outfifo=$fifodir/out_fifo
+mkfifo $tstfifo $outfifo
+# Create empty file.
+: > ./Main/differences
+
+for argres in $argslist
+do
+    IFS=, # split model name from arguments and expected value
+    set -- $argres
+    IFS=:
+    echo "# executing" "./mungojerrie$EXE -v $verbosity" \
+         "$2 ${srcdir}/examples/${1}.prism > ./Main/${1}.tst"
+    `eval "./mungojerrie$EXE -v $verbosity $2 ${srcdir}/examples/${1}.prism > ./Main/${1}.tst"`
+    result=$?
+    failed=`expr $result != 0`
+    # If mungojerrie completed successfully, compare this run's fitered output
+    # to the reference filtered output.
+    if test x$failed = x0; then
+        echo "# comparing" "./Main/${1}.tst to ${srcdir}/examples/ref/${1}.ref"
+        `sed ${sed_command} ./Main/${1}.tst > ${tstfifo} &\
+         sed ${sed_command} ${srcdir}/examples/ref/${1}.ref > ${outfifo} &\
+         diff -b ${tstfifo} ${outfifo} >> ./Main/differences`
+        failed=`expr $? != 0`
+    fi
+    exitstatus=`expr $exitstatus + $failed`
+    count=`expr $count + 1`
+    if test x$failed = x0 ; then
+        echo "ok $count $1"
+    else
+        if test x$3 != x0; then
+            echo "ok $count $1 (failed as expected)"
+        else
+            echo "not ok $count $1"
+        fi
+    fi
+done
+
+# Clean up and report.
+rm $tstfifo $outfifo
+rmdir $fifodir
+echo "# $exitstatus failed sub-tests out of $count"
+if test "x$exitstatus" = "x0"; then
+    rm ./Main/differences
+else
+    echo '# Check file "./Main/differences"'
+fi
+# Restore internal field separator.
+IFS=$OIFS
+
+exit 0

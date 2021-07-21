@@ -1,0 +1,28 @@
+Input File is ../mungojerrie/examples/twoPairs.prism
+@ 0.00496026 s: the environment has 8 nodes, 4 of which are decision nodes.
+@ 0.0102453 s: the NBA has 5 states (1 trap).
+@ 0.015308 s: the product has 28 nodes, 18 of which are decision nodes.
+@ 0.0154317 s: strategy computed.
+@ 0.0154351 s: probability of satisfaction: 1
+digraph "Pruned Product" {
+node [shape=circle];
+"title" [label="Pruned Product",shape=plaintext];
+"0_init" [style=invis]
+"0_init" -> 0
+0 [label="r0c0, 0\n", shape=box];
+1 [label="",width=0.25];
+3 [label="r1c0, 1\ngoal0", shape=box];
+4 [label="r0c1, 1\ngoal1", shape=box];
+7 [label="r1c0, 0\ngoal0", shape=box];
+10 [label="r0c1, 4\ngoal1", shape=box];
+14 [label="r1c0, 3\ngoal0", shape=box];
+0 -> 1 [label=" move(0) "];
+1 -> 3 [label=" 0.5(0) "];
+1 -> 4 [label=" 0.5(0) "];
+3 -> 7 [label=" rest(0) "];
+4 -> 10 [label="  rest+4(1) "];
+7 -> 14 [label="  rest+3(1) "];
+10 -> 10 [label=" rest(1) "];
+14 -> 14 [label=" rest(1) "];
+}
+@ 0.0158447 s: end

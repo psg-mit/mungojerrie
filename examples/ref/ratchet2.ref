@@ -1,0 +1,24 @@
+Input File is ../mungojerrie/examples/ratchet2.prism
+@ 0.00527353 s: the environment has 4 nodes, 3 of which are decision nodes.
+@ 0.0106492 s: the terminal DBA has 2 states (0 traps).
+@ 0.0162558 s: the product has 5 nodes, 4 of which are decision nodes.
+@ 0.0162921 s: 1 WECs computed.
+@ 0.0163002 s: reachability completed.
+@ 0.0163023 s: probability of satisfaction: 0.5
+
+--------QLearning--------
+@ 0.259478 s: learning complete.
+Initial-state value estimate: 1
+Total number of accepting edges seen: 0
+Number of accepting episodes: 0
+Number of steps: 400000
+Average total reward per episode: 1
+Random seed used: 3725829996
+State, Player, Action(s)
+"x0, 0, 0", 0, "a+0" & "b+0"
+"x1, 0, 0", 0, "a+1"
+"x1, 1, 0", 0, "a+1"
+"x2, 0, 0", 0, "a+0"
+There were 0 unseen decision nodes reachable under learned strategy for tol 0.01.
+Probability for tol 0.01 is: 0.5
+@ 0.260134 s: end

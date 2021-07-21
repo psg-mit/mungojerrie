@@ -1,0 +1,94 @@
+// Model of a traffic network similar to that of Sadigh et al.
+//
+// We use w,x,y,z instead of x1,x2,x3,x4 as link states to keep
+// the names of the global states shorter and more readable.
+//
+// Control action aij means "actuate links i and j."
+// The four possible control actions are a12, a14, a32, and a34.
+//
+// Saturating limits are assumed to be 2 throughout.
+
+mdp
+
+// Number of intervals for the queue of each link.
+const int C1 = 4;
+const int C2 = 5;
+const int C3 = 2;
+const int C4 = 2;
+// Encoding of control actions for module "action."
+const int act12 = 0;
+const int act14 = 1;
+const int act32 = 2;
+const int act34 = 3;
+
+label "p" = w<3 & x<3;
+label "q" = y=0;
+label "r" = z=0;
+label "s" = a=act12 | a=act32;
+
+module link1
+  w : [0..C1-1] init 0;
+  // green light
+  [a12] w<2 -> (w'=0);
+  [a12] w>=2 -> (w'=w-2);
+  [a14] w<2 & x+w<C2 -> (w'=0);
+  [a14] w>=2 & x+2<C2 -> (w'=w-2);
+  [a14] (w<2 & x+w>=C2) | (w>=2 & x+2>=C2) -> (w'=w-(C2-1-x));
+  // red light
+  [a32] w<3 -> 1/2 : (w'=w+1) + 1/2 : (w'=w);
+  [a32] w>=3 -> (w'=w);
+  [a34] w<3 -> 1/2 : (w'=w+1) + 1/2 : (w'=w);
+  [a34] w>=3 -> (w'=w);
+endmodule
+
+module link2
+  x : [0..C2-1] init 0;
+  // green light
+  [a12] w=0 & x<2 -> (x'=0);
+  [a12] w=0 & x>=2 -> (x'=x-2);
+  [a12] w>0 -> (x'=x);
+  [a32] y=0 & x<2 -> (x'=0);
+  [a32] y=0 & x>=2 -> (x'=x-2);
+  [a32] y=1 -> (x'=x);
+  // red light
+  [a14] w<2 & x+w<C2 -> (x'=w+x);
+  [a14] w>=2 & x+2<C2 -> (x'=x+2);
+  [a14] (w<2 & x+w>=C2) | (w>=2 & x+2>=C2) -> (x'=C2-1);
+  [a34] y=0 | x=C2-1 -> (x'=x);
+  [a34] y=1 & x<C2-1 -> (x'=x+1);
+endmodule
+
+module link3
+  y : [0..C3-1] init 0;
+  // green light  
+  [a32] true -> (y'=0);
+  [a34] y=0 | (y=1 & x<C2-1) -> (y'=0);
+  [a34] y=1 & x=C2-1 -> (y'=1);
+  // red light
+  [a12] y=0 -> 1/2 : (y'=1) + 1/2 : (y'=0);
+  [a12] y=1 -> (y'=1);
+  [a14] y=0 -> 1/2 : (y'=1) + 1/2 : (y'=0);
+  [a14] y=1 -> (y'=1);
+endmodule
+
+module link4
+  z : [0..C4-1] init 0;
+  // green light  
+  [a14] true -> (z'=0);
+  [a34] true -> (z'=0);
+  // red light
+  [a12] z=0 -> 1/2 : (z'=1) + 1/2 : (z'=0);
+  [a12] z=1 -> (z'=1);
+  [a32] z=0 -> 1/2 : (z'=1) + 1/2 : (z'=0);
+  [a32] z=1 -> (z'=1);
+endmodule
+
+module actions
+  a : [act12..act34] init act12;
+  // Save the control action in a state variable so that we
+  // can refer to it in atomic proposition "s."
+  [a12] true -> (a'=act12);
+  [a14] true -> (a'=act14);
+  [a32] true -> (a'=act32);
+  [a34] true -> (a'=act34);
+endmodule

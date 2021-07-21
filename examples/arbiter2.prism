@@ -1,0 +1,59 @@
+// Skeleton of a two-client arbiter.
+//
+// We want to compute a strategy that orchestrates arbiter and clients to
+// satisfy the property (G !(c1 & c2)) & (GF c1) & (GF c2).
+// We do not synthesize the arbiter, because the clients are not adversarial.
+// On the other hand, the arbiter still has to avoid many state/action
+// combinations to satisfy the specification.
+//
+// The grant_i and exit_i actions require synchronization between the arbiter
+// and one client.  The req action requires synchronization between the
+// clients.  This is somewhat unnatural, but prevents conniving clients from
+// never requesting at the same time.  The price that is paid is that no
+// client enters the waiting state when the other client is not idle.
+
+mdp
+
+// Client states.
+const int idle     = 0;
+const int waiting  = 1;
+const int critical = 2;
+const int exiting  = 3;
+
+// Transition probabilities.
+const double pwait = 1/8;
+const double pexit = 1/4;
+
+// Atomic propositions.
+label "r1" = c1=waiting;
+label "r2" = c2=waiting;
+label "c1" = c1=critical | c1=exiting;
+label "c2" = c2=critical | c2=exiting;
+
+// grantN and exitN are synchronized actions.  They cause the orderly
+// tranfer of the token from the arbiter to a client or vice versa.
+// drop and steal are non-synchronized actions.  They should not appear
+// in an optimal strategy.
+module arbiter
+  t : bool init true;
+
+  [grant1] true -> (t'=false);
+  [grant2] true -> (t'=false);
+  [drop]   true -> (t'=false);
+  [exit1]  true -> (t'=true);
+  [exit2]  true -> (t'=true);
+  [steal]  true -> (t'=true);
+endmodule
+
+module client1
+  c1 : [idle..exiting] init idle;
+
+  [req]    c1=idle     -> pwait : (c1'=waiting) + 1-pwait : true;
+  [grant1] c1=waiting  -> (c1'=critical);
+  [move1]  c1=critical -> pexit : (c1'=exiting) + 1-pexit : true;
+  [exit1]  c1=exiting  -> (c1'=idle);
+endmodule
+
+module client2=client1
+  [c1=c2, c2=c1, grant1=grant2, move1=move2, exit1=exit2]
+endmodule

@@ -1,0 +1,62 @@
+// An encoding of the game of tic-tac-toe.
+// Player 0 plays crosses.  Player 1 plays naughts.
+// We use int variables as bit vectors to store Boolean matrices. 
+// The first row of a matrix is in bits 0,1,2 of the int variable.
+// We use three matrices, even though two would be enough.  One matrix
+// stores the unoccupied entries of the board.  Each player has a matrix
+// for the positions that it has occupied.
+
+smg
+
+player P0 [c1], [c2], [c3], [c4], [c5], [c6], [c7], [c8], [c9] endplayer
+player P1 [n1], [n2], [n3], [n4], [n5], [n6], [n7], [n8], [n9], [loop] endplayer
+
+formula r1c = mod(c,8) = 7;
+formula r2c = mod(c,64) >= 56;
+formula r3c = c >= 448;
+formula c1c = mod(c,2) = 1  & mod(c,16) >= 8  & mod(c,128) >= 64;
+formula c2c = mod(c,4) >= 2 & mod(c,32) >= 16 & mod(c,256) >= 128;
+formula c3c = mod(c,8) >= 4 & mod(c,64) >= 8  & c >= 256;
+formula d1c = mod(c,2) = 1  & mod(c,32) >= 16 & c >= 256;
+formula d2c = mod(c,8) >= 4 & mod(c,32) >= 16 & mod(c,128) >= 64;
+
+formula r1n = mod(n,8) = 7;
+formula r2n = mod(n,64) >= 56;
+formula r3n = n >= 448;
+formula c1n = mod(n,2) = 1  & mod(n,16) >= 8  & mod(n,128) >= 64;
+formula c2n = mod(n,4) >= 2 & mod(n,32) >= 16 & mod(n,256) >= 128;
+formula c3n = mod(n,8) >= 4 & mod(n,64) >= 8  & n >= 256;
+formula d1n = mod(n,2) = 1  & mod(n,32) >= 16 & n >= 256;
+formula d2n = mod(n,8) >= 4 & mod(n,32) >= 16 & mod(n,128) >= 64;
+
+label "cw" = r1c | r2c | r3c | c1c | c2c | c3c | d1c | d2c;
+label "nw" = r1n | r2n | r3n | c1n | c2n | c3n | d1n | d2n;
+
+module play
+  p : [0..511] init 511; // bit vector of the positions still available
+  s : [0..1]   init 0;   // turn variable
+  c : [0..511] init 0;   // crosses
+  n : [0..511] init 0;   // naughts
+
+  [c1] s = 0 & mod(p,2)   >= 1   -> (s' = 1) & (p' = p - 1)   & (c' = c + 1);
+  [c2] s = 0 & mod(p,4)   >= 2   -> (s' = 1) & (p' = p - 2)   & (c' = c + 2);
+  [c3] s = 0 & mod(p,8)   >= 4   -> (s' = 1) & (p' = p - 4)   & (c' = c + 4);
+  [c4] s = 0 & mod(p,16)  >= 8   -> (s' = 1) & (p' = p - 8)   & (c' = c + 8);
+  [c5] s = 0 & mod(p,32)  >= 16  -> (s' = 1) & (p' = p - 16)  & (c' = c + 16);
+  [c6] s = 0 & mod(p,64)  >= 32  -> (s' = 1) & (p' = p - 32)  & (c' = c + 32);
+  [c7] s = 0 & mod(p,128) >= 64  -> (s' = 1) & (p' = p - 64)  & (c' = c + 64);
+  [c8] s = 0 & mod(p,256) >= 128 -> (s' = 1) & (p' = p - 128) & (c' = c + 128);
+  [c9] s = 0 & p          >= 256 -> (s' = 1) & (p' = p - 256) & (c' = c + 256);
+
+  [n1] s = 1 & mod(p,2)   >= 1   -> (s' = 0) & (p' = p - 1)   & (n' = n + 1);
+  [n2] s = 1 & mod(p,4)   >= 2   -> (s' = 0) & (p' = p - 2)   & (n' = n + 2);
+  [n3] s = 1 & mod(p,8)   >= 4   -> (s' = 0) & (p' = p - 4)   & (n' = n + 4);
+  [n4] s = 1 & mod(p,16)  >= 8   -> (s' = 0) & (p' = p - 8)   & (n' = n + 8);
+  [n5] s = 1 & mod(p,32)  >= 16  -> (s' = 0) & (p' = p - 16)  & (n' = n + 16);
+  [n6] s = 1 & mod(p,64)  >= 32  -> (s' = 0) & (p' = p - 32)  & (n' = n + 32);
+  [n7] s = 1 & mod(p,128) >= 64  -> (s' = 0) & (p' = p - 64)  & (n' = n + 64);
+  [n8] s = 1 & mod(p,256) >= 128 -> (s' = 0) & (p' = p - 128) & (n' = n + 128);
+  [n9] s = 1 & p          >= 256 -> (s' = 0) & (p' = p - 256) & (n' = n + 256);
+
+  [loop] p = 0 -> true;
+endmodule

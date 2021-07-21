@@ -1,0 +1,16 @@
+HOA: v1
+name: "G(c2 -> F c1)"
+States: 2
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 2 "c1" "c2"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "idle"
+ [!1] 0 {1}
+ [1] 1 {0}
+State: 1 "armed"
+ [!0] 1 {0}
+ [0] 0 {1}
+--END--

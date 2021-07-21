@@ -1,0 +1,33 @@
+// Markov chain to compute the probability of winning at a game of craps.
+
+mdp
+
+const int start      = 0;
+const int fourOrTen  = 1;
+const int fiveOrNine = 2;
+const int sixOrEight = 3;
+const int lose       = 4;
+const int win        = 5;
+
+label "win"  = state = win;
+label "lose" = state = lose;
+
+module craps
+  state : [start..win] init start;
+
+  [r] state=start      -> 4/36 : (state'=lose) +
+                          8/36 : (state'=win) +
+                          6/36 : (state'=fourOrTen) +
+                          8/36 : (state'=fiveOrNine) +
+                          10/36: (state'=sixOrEight);
+  [r] state=fourOrTen  -> 3/36 : (state'=win) +
+                          6/36 : (state'=lose) +
+                          27/36: true;
+  [r] state=fiveOrNine -> 4/36 : (state'=win) +
+                          6/36 : (state'=lose) +
+                          26/36: true;
+  [r] state=sixOrEight -> 5/36 : (state'=win) +
+                          6/36 : (state'=lose) +
+                          25/36: true;
+  [r] state=lose | state=win -> true;
+endmodule

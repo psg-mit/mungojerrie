@@ -1,0 +1,15 @@
+mdp
+
+const double p = 0.75;
+
+label "g" = s=1 | s=4;
+
+module avg
+  s : [0..4] init 0;
+
+  [a] s=0       -> p : (s'=1) + 1-p : (s'=2);
+  [b] s=0       -> (s'=3);
+  [c] s=1 | s=2 -> true;
+  [c] s=3       -> (s'=4);
+  [c] s=4       -> (s'=3);
+endmodule

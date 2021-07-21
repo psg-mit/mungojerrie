@@ -1,0 +1,49 @@
+// Model of the Three-Way duel puzzle.
+// Alice, Bob, and Carol take turns at shoooting at each other, with Alice
+// going first and Bob going second.
+// Alice hits with probability 1/3; Bob hist with probability 2/3,
+// and Carol is a sure shot.
+//
+// Which strategy gives Alice the greatest chance of survival?
+//
+// Note that she can intentionally miss and in fact this is her best choice.
+//
+// Optimal play guarantees Alice a probability of survival of 25/63.
+
+mdp
+
+const int sAbc = 0;
+const int saB = 1;
+const int saBc = 2;
+const int saC = 3;
+const int sB = 4;
+const int sAb = 5;
+const int sabC = 6;
+const int sC = 7;
+const int sA = 8;
+const int sAc = 9;
+
+label "victory" = state=sA;
+label "defeat" = state=sB | state=sC;
+
+module duel
+  state : [sAbc..sAc] init sAbc;
+
+  [shootB] state=sAbc -> 1/3 : (state'=saC) + 2/3 : (state'=saBc);
+  [shootC] state=sAbc -> 1/3 : (state'=saB) + 2/3 : (state'=saBc);
+  [miss]   state=sAbc -> (state'=saBc);
+
+  [shootA] state=saC  -> (state'=sC);
+
+  [shootA] state=saB  -> 2/3 : (state'=sB) + 1/3 : (state'=sAb);
+
+  [shootC] state=saBc -> 2/3 : (state'=sAb) + 1/3 : (state'=sabC);
+
+  [shootB] state=sAb  -> 1/3 : (state'=sA) + 2/3 : (state'=saB);
+
+  [shootB] state=sabC -> (state'=sAc);
+
+  [shootC] state=sAc  -> 1/3 : (state'=sA) + 2/3 : (state'=saC);
+
+  [idle]   state=sA | state=sB | state=sC   -> true;
+endmodule

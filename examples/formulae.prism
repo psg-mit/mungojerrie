@@ -1,0 +1,26 @@
+// Test for formula definitions.
+
+mdp
+
+const int one = 1;
+
+formula f = x - one;     // integer
+formula g = x=1 ? 2 : 1; // integer
+formula h = 1/2;         // double
+formula p = x=1;         // Boolean
+
+label "p" = p;
+label "q" = f=1;
+
+module m
+  x : [0..2] init 0;
+
+  [a] x=f -> (x'=x);                         // never enabled
+  [a] x=g -> (x'=one);                       // never enabled
+  [b] x=0 -> 1/2 : (x'=x+1) + 1/2 : (x'=-f); // same destination
+  [b] x!=0 -> (x'=0);
+endmodule
+
+rewards
+  [b] p : h;
+endrewards

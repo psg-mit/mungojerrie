@@ -1,0 +1,21 @@
+// Test for various syntax features, but mainly min and max functions.
+
+mdp
+
+const int n0 = -1;
+const int m0 = max(0);
+const int m1 = min(2,3);
+const double m2 = max(1.3,-4,3.5);
+const double m3 = min(-1,0);
+
+label "p" = x=m1;
+
+module m
+  x : [m0..m1] init 0;
+  [] true -> (x'=m1-x);
+endmodule
+
+rewards "the_rewards"
+  [] x=0 : log(m2,2);
+  [] x+n0>0 : m3;
+endrewards

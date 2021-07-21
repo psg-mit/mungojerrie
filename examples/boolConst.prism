@@ -1,0 +1,16 @@
+// Test of Boolean constants.
+
+mdp
+
+const bool any = true;
+const bool none = false;
+
+module m
+  x : [0..1] init 0;
+  [] any  -> (x'=1-x);
+  [] none -> (x'=x);
+endmodule
+
+rewards "goodies"
+  !none : 1/4;
+endrewards

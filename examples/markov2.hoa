@@ -1,0 +1,26 @@
+HOA: v1
+name: "clockwise cycle"
+States: 5
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 3 "frst" "scnd" "last"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "start"
+ [1 & !2] 1 {0}
+ [!1 & 2] 2 {0}
+ [(1 & 2) | (!1 & !2)] 0 {0}
+State: 1 "cw"
+ [0 & !2] 0 {0}
+ [!0 & 2] 3 {0}
+ [(0 & 2) | (!0 & !2)] 1 {0}
+State: 2 "ccw"
+ [0 & !1] 0 {0}
+ [!0 & 1] 4 {0}
+ [(0 & 1) | (!0 & !1)] 2 {0}
+State: 3 "win"
+ [t] 3 {1}
+State: 4 "lose"
+ [t] 4 {0}
+--END--

@@ -1,0 +1,16 @@
+// Morris's approximate counter.  See, for instance,
+// https://en.wikipedia.org/wiki/Approximate_counting_algorithm
+
+mdp
+
+const int modulus = pow(2,2);
+
+label "end" = cnt=modulus-1;
+
+module morris
+  cnt : [0..modulus-1] init 0;
+
+  [hit]   true -> 1/pow(2,cnt)   : (cnt'=mod(cnt+1,modulus)) +
+                  1-1/pow(2,cnt) : (cnt'=cnt);
+  [stand] true -> (cnt'=cnt);
+endmodule

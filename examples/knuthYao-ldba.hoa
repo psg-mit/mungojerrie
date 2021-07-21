@@ -1,0 +1,23 @@
+HOA: v1
+/* This property should be satisfied with probability 1/6 in
+ * the Knuth-Yao Markov chain, and with probability 1 in the
+ * MDP where the agent, upon reaching one of the "face" states,
+ * decides whether to stay or reset.
+ */
+name: "FG d6"
+States: 3
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 2 "d6" "epsilon"
+properties: complete colored trans-acc
+--BODY--
+State: 0 "start"
+ [t] 0 {0}
+ [1] 1 {0}
+State: 1 "G d6"
+ [0] 1 {1}
+ [!0] 2 {0}
+State: 2 "trap"
+ [t] 2 {0}
+--END--

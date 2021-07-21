@@ -1,0 +1,21 @@
+// Test for Boolean state variables.
+
+mdp
+
+label "p" = x & y;
+label "q" = !y & z=1;
+
+module m
+  x : bool init false;
+  y : bool init true;
+  z : [0..1] init 0;
+
+  [a] !x & !y -> (x'=!x) & (y'=x) & (z'= x ? 1 : 0);
+  [a] x       -> (x'=x) & (y'=!y) & (z'=1);
+  [a] !x & y  -> (x'=false) & (y'=z=1) & (z'=0);
+endmodule
+
+rewards "yay"
+  x & y : 0.75;
+  true  : 0.25;
+endrewards

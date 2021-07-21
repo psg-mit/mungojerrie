@@ -1,0 +1,61 @@
+// Example of cops and robbers game from Aigner and Fromme, with probability.
+// Each cop's move succeeds with probability pc, while each robber's move
+// (except sk) succeeds with probability pr.
+//
+// The "passive" bool constant lets the user control which version of the
+// game to play.
+
+smg
+
+const bool passive = true;
+const double pc = 1/2;
+const double pr = 1/2;
+
+label "caught" = !first & c=r;
+label "rin0" = !first & r=0 & !(c=0);
+
+module turn
+  t : bool init true;
+  first : bool init true;
+
+  [c0] true -> (t'=!t);
+  [c1] true -> (t'=!t);
+  [c2] true -> (t'=!t);
+  [c3] true -> (t'=!t);
+  [c4] true -> (t'=!t);
+  [r0] true -> (t'=!t) & (first'=false);
+  [r1] true -> (t'=!t) & (first'=false);
+  [r2] true -> (t'=!t) & (first'=false);
+  [r3] true -> (t'=!t) & (first'=false);
+  [r4] true -> (t'=!t) & (first'=false);
+  [sk] true -> (t'=!t) & (first'=false);
+endmodule
+
+module cop
+  c : [0..4] init 0;
+
+  [c0] t & (first | c=1 | c=2)       -> pc : (c'=0) + 1-pc : true;
+  [c1] t & (first | c=0 | c=2 | c=4) -> pc : (c'=1) + 1-pc : true;
+  [c2] t & (first | c=0 | c=1 | c=3) -> pc : (c'=2) + 1-pc : true;
+  [c3] t & (first | c=2 | c=4)       -> pc : (c'=3) + 1-pc : true;
+  [c4] t & (first | c=1 | c=3)       -> pc : (c'=4) + 1-pc : true;
+endmodule
+
+module robber
+  r : [0..4] init 3;
+
+  [r0] !t & (first | r=1 | r=2) & c!=0 -> pr : (r'=0) + 1-pr : true;
+  [r1] !t & (first | r=0 | r=2 | r=4)  -> pr : (r'=1) + 1-pr : true;
+  [r2] !t & (first | r=0 | r=1 | r=3)  -> pr : (r'=2) + 1-pr : true;
+  [r3] !t & (first | r=2 | r=4)        -> pr : (r'=3) + 1-pr : true;
+  [r4] !t & (first | r=1 | r=3)        -> pr : (r'=4) + 1-pr : true;
+  [sk] !t & !first & passive           -> true;
+endmodule
+
+player cop
+  [c0], [c1], [c2], [c3], [c4]
+endplayer
+
+player robber
+  [r0], [r1], [r2], [r3], [r4], [sk]
+endplayer

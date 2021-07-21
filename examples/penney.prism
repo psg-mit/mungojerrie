@@ -1,0 +1,96 @@
+// Model of Penney's game.  Two players choose distinct sequences of
+// heads and tails of length 3.  A fair coin is repeatedly tossed.  The winner
+// is the player whose sequence shows up first.
+//
+// If the first player picks randomly, the optimal strategy for
+// the second player secures victory with probability 71/96.
+
+mdp
+
+// Symbolic state names.
+const int empty     = 0;
+const int T         = 1;
+const int H         = 2;
+const int TT        = 3;
+const int TH        = 4;
+const int HT        = 5;
+const int HH        = 6;
+const int TTT       = 7;
+const int TTH       = 8;
+const int THT       = 9;
+const int THH       = 10;
+const int HTT       = 11;
+const int HTH       = 12;
+const int HHT       = 13;
+const int HHH       = 14;
+
+const double p = 1/2; // probability of tails in one coin toss
+
+formula q = 1-p;      // probability of heads
+
+label "ttt" = s=TTT;
+label "tth" = s=TTH;
+label "tht" = s=THT;
+label "thh" = s=THH;
+label "htt" = s=HTT;
+label "hth" = s=HTH;
+label "hht" = s=HHT;
+label "hhh" = s=HHH;
+
+label "ahit" = s=sa;
+label "bhit" = s=sb;
+
+module penney
+  s : [empty..HHH] init empty;
+  sa : [TTT..HHH];
+  sb : [TTT..HHH];
+
+  // The probabilistic player picks a sequence with uniform probability.
+  [pick] stage=0 -> 1/8 : (sa'=TTT) + 1/8 : (sa'=TTH) + 1/8 : (sa'=THT) +
+                    1/8 : (sa'=THH) + 1/8 : (sa'=HTT) + 1/8 : (sa'=HTH) +
+                    1/8 : (sa'=HHT) + 1/8 : (sa'=HHH);
+
+  // The agent picks one of the remaining sequences.
+  [chTTT] stage=1 & sa!=TTT -> (sb'=TTT);
+  [chTTH] stage=1 & sa!=TTH -> (sb'=TTH);
+  [chTHT] stage=1 & sa!=THT -> (sb'=THT);
+  [chTHH] stage=1 & sa!=THH -> (sb'=THH);
+  [chHTT] stage=1 & sa!=HTT -> (sb'=HTT);
+  [chHTH] stage=1 & sa!=HTH -> (sb'=HTH);
+  [chHHT] stage=1 & sa!=HHT -> (sb'=HHT);
+  [chHHH] stage=1 & sa!=HHH -> (sb'=HHH);
+
+  // The fair coin is repeatedly tossed.
+  [toss] s=empty -> p : (s'=T)  + q : (s'=H);
+  [toss] s=T     -> p : (s'=TT) + q : (s'=TH);
+  [toss] s=H     -> p : (s'=HT) + q : (s'=HH);
+  [toss] s=TT    -> p : (s'=TTT) + q : (s'=TTH);
+  [toss] s=TH    -> p : (s'=THT) + q : (s'=THH);
+  [toss] s=HT    -> p : (s'=HTT) + q : (s'=HTH);
+  [toss] s=HH    -> p : (s'=HHT) + q : (s'=HHH);
+  [toss] s=TTT   -> p : (s'=TTT) + q : (s'=TTH);
+  [toss] s=TTH   -> p : (s'=THT) + q : (s'=THH);
+  [toss] s=THT   -> p : (s'=HTT) + q : (s'=HTH);
+  [toss] s=THH   -> p : (s'=HHT) + q : (s'=HHH);
+  [toss] s=HTT   -> p : (s'=TTT) + q : (s'=TTH);
+  [toss] s=HTH   -> p : (s'=THT) + q : (s'=THH);
+  [toss] s=HHT   -> p : (s'=HTT) + q : (s'=HTH);
+  [toss] s=HHH   -> p : (s'=HHT) + q : (s'=HHH);
+endmodule
+
+module stage
+  stage : [0..2] init 0; // game stage
+
+  [pick]  stage=0 -> (stage'=1);
+
+  [chTTT] stage=1 -> (stage'=2);
+  [chTTH] stage=1 -> (stage'=2);
+  [chTHT] stage=1 -> (stage'=2);
+  [chTHH] stage=1 -> (stage'=2);
+  [chHTT] stage=1 -> (stage'=2);
+  [chHTH] stage=1 -> (stage'=2);
+  [chHHT] stage=1 -> (stage'=2);
+  [chHHH] stage=1 -> (stage'=2);
+
+  [toss]  stage=2 -> true;
+endmodule

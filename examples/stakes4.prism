@@ -1,0 +1,18 @@
+// Reduced gambler's ruin model in which the gambler chooses the stakes.
+// From Sutton and Barto.
+
+mdp
+
+const int Wealth = 2;   // initial wealth
+const double p   = 1/2; // probability of winning
+
+label "ruin" = x = 0;
+label "goal" = x = 4;
+
+module gambler
+  x : [0..4] init Wealth;
+
+  [b0] x=0 | x=4 -> true;
+  [b1] x>0 & x<4 -> p : (x'=x+1) + (1-p) : (x'=x-1);
+  [b2] x>1 & x<3 -> p : (x'=x+2) + (1-p) : (x'=x-2);
+endmodule

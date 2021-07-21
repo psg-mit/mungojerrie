@@ -1,0 +1,35 @@
+// Randomized mutual exclusion protocol from Baier and Katoen, p. 836.
+
+mdp
+
+const int nn = 0;
+const int wn = 1;
+const int nw = 2;
+const int cn = 3;
+const int nc = 4;
+const int ww = 5;
+const int cw = 6;
+const int wc = 7;
+
+// Label ci stands for "process i is in its critical section."
+// Likewise, wi stands for "process i is waiting."
+label "c1" = state=cn | state=cw;
+label "w1" = state=wn | state=ww | state=wc;
+label "c2" = state=nc | state=wc;
+label "w2" = state=nw | state=ww | state=cw;
+
+module randME
+  state : [nn..wc] init nn;
+
+  [req1]   state=nn -> (state'=wn);
+  [req2]   state=nn -> (state'=nw);
+  [enter1] state=wn -> (state'=cn);
+  [req2]   state=wn -> (state'=ww);
+  [enter2] state=nw -> (state'=nc);
+  [req1]   state=nw -> (state'=ww);
+  []       state=ww -> 0.5 : (state'=cw) + 0.5 : (state'=wc);
+  [rel1]   state=cn -> (state'=nn);
+  [rel2]   state=nc -> (state'=nn);
+  [rel1]   state=cw -> (state'=nw);
+  [rel2]   state=wc -> (state'=wn);
+endmodule

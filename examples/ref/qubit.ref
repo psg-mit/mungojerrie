@@ -1,0 +1,25 @@
+Input File is ../mungojerrie/examples/qubit.prism
+@ 0.00797796 s: the environment has 6 nodes, 4 of which are decision nodes.
+@ 0.671092 s: the DBA has 2 states (0 traps).
+HOA: v1
+name: "automaton"
+States: 2
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+properties: deterministic complete colored
+properties: trans-acc trans-labels explicit-labels
+AP: 2 "Rzero" "Rone"
+--BODY--
+State: 0 "0"
+  [!0] 0 {0}
+  [0] 1 {0}
+State: 1 "1"
+  [!1] 1 {0}
+  [1] 0 {1}
+--END--
+@ 0.676123 s: the product has 8 nodes, 6 of which are decision nodes.
+@ 0.676158 s: 1 WECs computed.
+@ 0.676168 s: reachability completed.
+@ 0.67617 s: probability of satisfaction: 1
+@ 0.676746 s: end

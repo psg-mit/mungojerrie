@@ -1,0 +1,25 @@
+// Example of deferred gratification.
+
+mdp
+
+const int Max = 8; // length of each chain
+
+formula p = br <=> (n=Max | n=0);
+
+label "p" = p;
+
+module pick
+  br : bool init false;
+
+  [a] n=0 -> true;
+  [b] n=0 -> (br'=true);
+
+endmodule
+
+module advance
+  n : [0..Max] init 0;
+
+  [a] n = 0 -> (n'=1);
+  [b] n = 0 -> (n'=1);
+  [c] n > 0 -> (n'= n<Max ? n+1 : n);
+endmodule

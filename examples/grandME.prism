@@ -1,0 +1,82 @@
+// Randomized mutual exclusion protocol from Baier and Katoen, p. 836.
+// Stochastic, turn-based game version.  One player controls the arbiter
+// and the other controls the clients.  The arbiter initiates the grant
+// actions, while the clients initiate request and release actions.
+// In case of simultaneous requests, the arbiter tosses a coin to decide
+// which client to serve.
+
+smg
+
+// Arbiter states.
+const int idle = 0;
+const int srv0 = 1;
+const int srv1 = 2;
+const int busy = 3;
+
+// Client states.
+const int n = 0; // non-critical
+const int w = 1; // waiting
+const int c = 2; // critical
+
+// Probability of serving client0 in case both clients are requesting.
+const double p = 1/2;
+
+label "c0" = c0=c;
+label "c1" = c1=c;
+label "w0" = c0=w;
+label "w1" = c1=w;
+
+formula grant0 = t & (a=idle & c0=w & c1=n | a=srv0);
+formula grant1 = t & (a=idle & c0=n & c1=w | a=srv1);
+formula choose = t & a=idle & c0=w & c1=w;
+formula release = !t & a=busy;
+
+module arbiter
+  a : [idle..busy] init idle;
+
+  [gnt0] grant0  -> (a'=busy);
+  [gnt1] grant1  -> (a'=busy);
+  [pick] choose  -> p : (a'=srv0) + 1-p : (a'=srv1);
+  [rel0] release -> (a'=idle);
+  [rel1] release -> (a'=idle);
+  [pass] t       -> true;
+endmodule
+
+// Enforce turn-based operation.  When t=true, it's the arbiter that
+// initiates transitions; otherwise it's the clients.  Both arbiter and
+// clients must be able to pass to avoid deadlocks.
+module turn
+  t : bool init false;
+
+  [reqb] true -> (t'=!t);
+  [req0] true -> (t'=!t);
+  [rel0] true -> (t'=!t);
+  [req1] true -> (t'=!t);
+  [rel1] true -> (t'=!t);
+  [skip] true -> (t'=!t);
+  [pick] true -> (t'=!t);
+  [gnt0] true -> (t'=!t);
+  [gnt1] true -> (t'=!t);
+  [pass] true -> (t'=!t);
+endmodule
+
+module client0
+  c0 : [n..c] init n;
+
+  [reqb] !t & c0=n -> (c0'=w);
+  [req0] !t & c0=n -> (c0'=w);
+  [gnt0]  t & c0=w -> (c0'=c);
+  [rel0] !t & c0=c -> (c0'=n);
+  [skip] !t        -> true;
+endmodule
+
+module client1 = client0 [c0 = c1, gnt0 = gnt1, req0 = req1, rel0 = rel1]
+endmodule
+
+player arbiter
+  [pick], [gnt0], [gnt1], [pass]
+endplayer
+
+player clients
+  [req0], [rel0], [req1], [rel1], [reqb], [skip]
+endplayer

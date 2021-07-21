@@ -1,0 +1,32 @@
+HOA: v1
+name: "GFM, but does not lead"
+States: 7
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 1 "p"
+properties: complete trans-acc explicit-labels
+--BODY--
+State: 0 "0"
+ [t] 0
+ [t] 1
+ [t] 3
+ [!0] 5 {0}
+State: 1 "1"
+ [!0] 1
+ [0] 2
+State: 2 "2"
+ [0] 2 {0}
+ [!0] 1
+State: 3 "3"
+ [0] 3
+ [!0] 4
+State: 4 "4"
+ [0] 3
+ [!0] 4 {0}
+State: 5 "5"
+ [0] 6
+ [!0] 0
+State: 6 "6"
+ [t] 6
+--END--

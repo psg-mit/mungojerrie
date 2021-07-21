@@ -1,0 +1,53 @@
+Input File is ../mungojerrie/examples/slalom.prism
+@ 0.00534966 s: the environment has 20 nodes, 20 of which are decision nodes.
+@ 0.0107618 s: the DBA has 5 states (1 trap).
+@ 0.0159151 s: the product has 38 nodes, 38 of which are decision nodes.
+@ 0.0159843 s: 4 WECs computed.
+@ 0.0160193 s: reachability completed.
+@ 0.0160222 s: probability of satisfaction: 1
+
+--------QLearning--------
+@ 0.282646 s: learning complete.
+Initial-state value estimate: 1
+Total number of accepting edges seen: 294458
+Number of accepting episodes: 0
+Number of trapped episodes  : 14750
+Number of steps: 309208
+Average total reward per episode: 0.147229
+Random seed used: 2432470887
+State, Player, Action(s)
+"r0c2, 0, 0", 0, "e+2"
+"r0c3, 2, 0", 0, "se+2"
+"r0c3, 3, 0", 0, "se+3"
+"r0c4, 2, 0", 0, "e+4" & "ne+4" & "se+4"
+"r0c4, 3, 0", 0, "e+4" & "ne+4" & "se+4"
+"r0c5, 1, 0", 0, "e+1" & "se+1"
+"r1c1, 0, 0", 0, "se+0"
+"r1c2, 0, 0", 0, "e+3" & "ne+3" & "se+3"
+"r1c3, 2, 0", 0, "e+2"
+"r1c3, 3, 0", 0, "e+3" & "ne+3" & "se+3"
+"r1c4, 1, 0", 0, "ne+1" & "se+1"
+"r1c4, 2, 0", 0, "e+4" & "ne+4" & "se+4"
+"r1c4, 3, 0", 0, "e+4" & "ne+4" & "se+4"
+"r1c5, 1, 0", 0, "e+4" & "ne+4" & "se+4"
+"r1c5, 2, 0", 0, "ne+2"
+"r2c0, 0, 0", 0, "e+0" & "ne+0"
+"r2c1, 0, 0", 0, "ne+0"
+"r2c2, 0, 0", 0, "se+3"
+"r2c3, 1, 0", 0, "se+1"
+"r2c3, 3, 0", 0, "e+3"
+"r2c4, 1, 0", 0, "e+4" & "ne+4" & "se+4"
+"r2c4, 2, 0", 0, "se+2"
+"r2c4, 3, 0", 0, "e+4" & "ne+4" & "se+4"
+"r2c5, 1, 0", 0, "e+1" & "ne+1"
+"r2c5, 2, 0", 0, "e+4" & "ne+4" & "se+4"
+"r3c1, 0, 0", 0, "e+0" & "ne+0"
+"r3c2, 0, 0", 0, "se+1"
+"r3c3, 1, 0", 0, "ne+1"
+"r3c3, 3, 0", 0, "se+3"
+"r3c4, 1, 0", 0, "e+4" & "ne+4" & "se+4"
+"r3c4, 3, 0", 0, "e+4" & "ne+4" & "se+4"
+"r3c5, 1, 0", 0, "se+1"
+There were 0 unseen decision nodes reachable under learned strategy for tol 0.01.
+Probability for tol 0.01 is: 1
+@ 0.283411 s: end

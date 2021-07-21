@@ -1,0 +1,29 @@
+// Test for parser.
+
+mdp
+
+const int xmin = 0;
+const int xmax = 7;
+const int xmid = (xmax+xmin) / 2;
+
+const double rhigh = 1e1;
+const double rlow = -rhigh;
+
+label "p" = x=xmax;
+label "q" = x=xmin;
+label "r" = x<xmax;
+label "s" = x>=xmid;
+
+module cnt
+  x : [xmin..xmax] init xmin;
+
+  [up]   x<xmax -> (x'=x+1);
+  [up]   x=xmax -> 1/2 : (x'=xmin) + 1/2 : (x'=xmax);
+  [down] x>xmin -> (x'=x-1);
+  [down] x=xmin -> 1/3 : (x'=xmax) + 2/3 : (x'=xmin);
+endmodule
+
+rewards
+  [up] x <= xmid : rlow;
+  [up] x > xmid  : rhigh;
+endrewards

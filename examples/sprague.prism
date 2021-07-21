@@ -1,0 +1,62 @@
+// Model of a Sprague-Grundy game played on a rectangular grid.
+// At each turn a player moves by k columns to the left and one row up,
+// or by k rows down and one column to the right, with 1 < k < 5.
+// From each position there are between 0 and 6 options.
+// The first player who cannot move loses.
+// Here the agent plays against the probabilistic player.
+
+mdp
+
+const int rows = 5;
+const int cols = 5;
+
+const int startr = rows - 1;
+const int startc = cols - 3;
+
+const bool first = true;
+
+label "victory" = row < 2 & col < 2 & !turn;
+label "defeat" = row < 2 & col < 2 & turn;
+
+module sprague
+  row : [0..rows-1] init startr;
+  col : [0..cols-1] init startc;
+  turn : bool init first;
+
+  [r2] row > 1 & col < cols-1 & turn ->
+       (row'=row-2) & (col'=col+1) & (turn'=false);
+  [r3] row > 2 & col < cols-1 & turn ->
+       (row'=row-3) & (col'=col+1) & (turn'=false);
+  [r4] row > 3 & col < cols-1 & turn ->
+       (row'=row-4) & (col'=col+1) & (turn'=false);
+       
+  [c2] col > 1 & row < rows-1 & turn ->
+       (row'=row+1) & (col'=col-2) & (turn'=false);
+  [c3] col > 2 & row < rows-1 & turn ->
+       (row'=row+1) & (col'=col-3) & (turn'=false);
+  [c4] col > 3 & row < rows-1 & turn ->
+       (row'=row+1) & (col'=col-4) & (turn'=false);
+
+  [pr] !turn & ((row>1 & col < cols-1) | (col>1 & row < rows-1))  ->
+       1/6 : (row'=(row>1 & col < cols-1) ? row-2 : row) &
+             (col'=(row>1 & col < cols-1) ? col+1 : col) &
+             (turn'=row>1 & col < cols-1) +
+       1/6 : (row'=(row>2 & col < cols-1) ? row-3 : row) &
+             (col'=(row>2 & col < cols-1) ? col+1 : col) &
+             (turn'=row>2 & col < cols-1) +
+       1/6 : (row'=(row>3 & col < cols-1) ? row-4 : row) &
+             (col'=(row>3 & col < cols-1) ? col+1 : col) &
+             (turn'=row>3 & col < cols-1) +
+       1/6 : (row'=(col>1 & row < rows-1) ? row+1 : row) &
+             (col'=(col>1 & row < rows-1) ? col-2 : col) &
+             (turn'=col>1 & row < rows-1) +
+       1/6 : (row'=(col>2 & row < rows-1) ? row+1 : row) &
+             (col'=(col>2 & row < rows-1) ? col-3 : col) &
+             (turn'=col>2 & row < rows-1) +
+       1/6 : (row'=(col>3 & row < rows-1) ? row+1 : row) &
+             (col'=(col>3 & row < rows-1) ? col-4 : col) &
+             (turn'=col>3 & row < rows-1);
+
+  [end] row < 2 & col < 2 -> true;
+
+endmodule

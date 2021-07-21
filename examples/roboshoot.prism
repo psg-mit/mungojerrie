@@ -1,0 +1,123 @@
+// A game in the style of "Synthesizing Strategy Improvement and Recursive
+// Algorithms for Solving 2.5 Player Parity Games"
+//
+// The row numbers grow going up.
+
+smg
+
+player R0 [ns0], [nd0], [es0], [ed0], [ss0], [sd0], [ws0], [wd0], [hlt] endplayer
+player R1 [ns1], [nd1], [es1], [ed1], [ss1], [sd1], [ws1], [wd1], [sht] endplayer
+
+const int N = 7;     // side of square grid
+const int M = 3;     // side of each zone
+const int i0 = 0;    // initial row and column of robot0
+const int i1 = N-1;  // initial row and column of robot1
+const int bi = 1;    // initial number of bullets
+
+const double p = 1/2;   // probability of completion of long moves
+const double q = 1 - p;
+const double d = 1/2;   // probability of destruction when shooting point blank
+
+formula hp = pow(d, pow((r0-r1)*(r0-r1)+(c0-c1)*(c0-c1),1/2));
+
+// The four corner zones:
+// Upper Left: 0  Upper Right: 1
+// Lower Left: 2  Lower Right: 3
+label "z00" = r0 > N-M-1 & c0 < M;
+label "z01" = r0 > N-M-1 & c0 > N-M-1;
+label "z02" = r0 < M   & c0 < M;
+label "z03" = r0 < M   & c0 > N-M-1;
+
+label "z10" = r1 > N-M-1 & c1 < M;
+label "z11" = r1 > N-M-1 & c1 > N-M-1;
+label "z12" = r1 < M   & c1 < M;
+label "z13" = r1 < M   & c1 > N-M-1;
+
+module robot0
+  r0 : [0..N-1] init i0;
+  c0 : [0..N-1] init i0;
+
+  [ns0] !h & r0<N-1 & (c0 != c1 | r0 + 1 != r1) -> (r0' = r0 + 1);
+  [ns0] !h & r0=N-1 | (c0 = c1 & r0 + 1 = r1)   -> true;
+
+  [nd0] !h & r0<N-2 & (c0 != c1 | (r0 + 1 != r1 & r0 + 2 != r1)) ->
+    p : (r0' = r0 + 2) + q : (r0' = r0 + 1);
+
+  [es0] !h & c0<N-1 & (r0 != r1 | c0 + 1 != c1) -> (c0' = c0 + 1);
+  [es0] !h & c0=N-1 | (r0 = r1 & c0 + 1 = c1)   -> true;
+
+  [ed0] !h & c0<N-2 & (r0 != r1 | (c0 + 1 != c1 & c0 + 2 != c1)) ->
+    p : (c0' = c0 + 2) + q : (c0' = c0 + 1);
+
+  [ss0] !h & r0>0 & (c0 != c1 | r0 - 1 != r1)   -> (r0' = r0 - 1);
+  [ss0] !h & r0=0 | (c0 = c1 & r0 - 1 = r1)     -> true;
+
+  [sd0] !h & r0>1 & (c0 != c1 | (r0 - 1 != r1 & r0 - 2 != r1)) ->
+    p : (r0' = r0 - 2) + q : (r0' = r0 - 1);
+
+  [ws0] !h & c0>0 & (r0 != r1 | c0 - 1 != c1)   -> (c0' = c0 - 1);
+  [ws0] !h & c0=0 | (r0 = r1 & c0 - 1 = c1)     -> true;
+
+  [wd0] !h & c0>1 & (r0 != r1 | (c0 - 1 != c1 & c0 - 2 != c1)) ->
+    p : (c0' = c0 - 2) + q : (c0' = c0 - 1);
+
+  [hlt] h -> true;
+endmodule
+
+module robot1
+  r1 : [0..N-1] init i1;
+  c1 : [0..N-1] init i1;
+  h : bool init false;   // robot0 has been hit
+
+  [ns1] r1<N-1 & (c1 != c0 | r1 + 1 != r0) -> (r1' = r1 + 1);
+  [ns1] r1=N-1 | (c1 = c0 & r1 + 1 = r0)   -> true;
+
+  [nd1] r1<N-2 & (c1 != c0 | (r1 + 1 != r0 & r1 + 2 != r0)) ->
+    p : (r1' = r1 + 2) + q : (r1' = r1 + 1);
+
+  [es1] c1<N-1 & (r1 != r0 | c1 + 1 != c0) -> (c1' = c1 + 1);
+  [es1] c1=N-1 | (r1 = r0 & c1 + 1 = c0)   -> true;
+
+  [ed1] c1<N-2 & (r1 != r0 | (c1 + 1 != c0 & c1 + 2 != c0)) ->
+    p : (c1' = c1 + 2) + q : (c1' = c1 + 1);
+
+  [ss1] r1>0 & (c1 != c0 | r1 - 1 != r0)   -> (r1' = r1 - 1);
+  [ss1] r1=0 | (c1 = c0 & r1 - 1 = r0)     -> true;
+
+  [sd1] r1>1 & (c1 != c0 | (r1 - 1 != r0 & r1 - 2 != r0)) ->
+    p : (r1' = r1 - 2) + q : (r1' = r1 - 1);
+
+  [ws1] c1>0 & (r1 != r0 | c1 - 1 != c0)   -> (c1' = c1 - 1);
+  [ws1] c1=0 | (r1 = r0 & c1 - 1 = c0)     -> true;
+
+  [wd1] c1>1 & (r1 != r0 | (c1 - 1 != c0 & c1 - 2 != c0)) ->
+    p : (c1' = c1 - 2) + q : (c1' = c1 - 1);
+
+  [sht] b > 0 -> hp : (h'=true) + 1-hp : true;
+
+endmodule
+
+module control
+  t : [0..1] init 0;   // turn
+  b : [0..bi] init bi; // remaining bullets
+
+  [ns0] t=0 -> (t'=1);
+  [nd0] t=0 -> (t'=1);
+  [es0] t=0 -> (t'=1);
+  [ed0] t=0 -> (t'=1);
+  [ss0] t=0 -> (t'=1);
+  [sd0] t=0 -> (t'=1);
+  [ws0] t=0 -> (t'=1);
+  [wd0] t=0 -> (t'=1);
+  [hlt] t=0 -> true;
+
+  [ns1] t=1 -> (t'=0);
+  [nd1] t=1 -> (t'=0);
+  [es1] t=1 -> (t'=0);
+  [ed1] t=1 -> (t'=0);
+  [ss1] t=1 -> (t'=0);
+  [sd1] t=1 -> (t'=0);
+  [ws1] t=1 -> (t'=0);
+  [wd1] t=1 -> (t'=0);
+  [sht] t=1 -> (t'=0) & (b' = b - 1);
+endmodule

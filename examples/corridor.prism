@@ -1,0 +1,23 @@
+// Model of short corridor from Chapter 13 of Sutton and Barto, 2nd ed..
+
+mdp
+
+const int N = 8;
+const int x0 = 0;
+const int goal = N-1;
+
+label "goal" = x=goal;
+
+formula moveleft  = x=0    ? x : x-1;
+formula moveright = x=goal ? x : x+1;
+
+module corridor
+  x : [0..goal] init x0;
+
+  [left]  true -> (x' = mod(x,2)=0 ? moveleft : moveright);
+  [right] true -> (x' = mod(x,2)=0 ? moveright : moveleft);
+endmodule
+
+rewards
+  x=goal : 1;
+endrewards

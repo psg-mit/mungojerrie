@@ -1,0 +1,20 @@
+// Simple grid-world example in which the strategy providing the highest
+// future utility does not give the highest probability of satisfying
+// the property G(!b & F g).  This claim holds under the assumption that
+// a constant positive reward is give for every accepting transition made.
+
+mdp
+
+const double p = 0.9;
+
+label "g" = s=1 | s=2;
+label "b" = s=3;
+
+module avg
+  s : [0..3] init 0;
+
+  [risky] s=0  -> p : (s'=2) + 1-p : (s'=3);
+  [safe]  s=0  -> (s'=1);
+  [reset] s>0  -> (s'=0);
+  [stay]  s!=1 -> true; // guard could be tightened to s=2
+endmodule

@@ -1,0 +1,24 @@
+// There are N boxes.  Initially each box contains M chocolates.
+// At each turn the agent picks a box.  If there are chocolates in
+// the chosen box, one of them is removed with probability p.
+
+mdp
+
+const int N = 5;
+const int M = 3;
+
+module pluck
+  b0 : [0..M] init M;
+  b1 : [0..M] init M;
+  b2 : [0..M] init M;
+  b3 : [0..M] init M;
+  b4 : [0..M] init M;
+
+  [a0] true -> (b0' = b0 > 0 ? b0-1 : b0);
+  [a1] true -> (b1' = b1 > 0 ? b1-1 : b1);
+  [a2] true -> (b2' = b2 > 0 ? b2-1 : b2);
+  [a3] true -> (b3' = b3 > 0 ? b3-1 : b3);
+  [a4] true -> (b4' = b4 > 0 ? b4-1 : b4);
+endmodule
+
+label "odd" = mod(b0+b1+b2+b3+b4,2) = 1;

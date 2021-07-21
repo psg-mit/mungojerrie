@@ -1,0 +1,23 @@
+HOA: v1
+name: "(F z00) & (F z01)"
+States: 4
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 2 "z00" "z01"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "s00"
+ [!0 & !1] 0 {0}
+ [ 0 & !1] 1 {0}
+ [!0 &  1] 2 {0}
+ [ 0 &  1] 3 {1}
+State: 1 "s10"
+ [!1] 1 {0}
+ [ 1] 3 {1}
+State: 2 "s01"
+ [!0] 2 {0}
+ [ 0] 3 {1}
+State: 3 "s11"
+ [t] 3 {1}
+--END--

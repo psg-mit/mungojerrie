@@ -1,0 +1,18 @@
+HOA: v1
+name: "!defeat U victory"
+States: 3
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 2 "victory" "defeat"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "start"
+ [!0 & !1] 0 {0}
+ [0 & !1] 2 {1}
+ [1] 1 {0}
+State: 1 "trap"
+ [t] 1 {0}
+State: 2 "goal"
+ [t] 2 {1}
+--END--

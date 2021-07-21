@@ -1,0 +1,17 @@
+Input File is ../mungojerrie/examples/emptyrewards.prism
+@ 0.00624262 s: the environment has 2 nodes, 2 of which are decision nodes.
+mdp
+
+const int s0 = 0; 
+const int s1 = 1; 
+
+module m
+  state : [0..1] init 0;
+  [_a0] state=s0 -> (state'=s1);
+  [_a0] state=s1 -> (state'=s0);
+endmodule
+rewards
+  [_a0] state=s0 : 0;
+  [_a0] state=s1 : 0;
+endrewards
+@ 0.00706811 s: end

@@ -1,0 +1,14 @@
+// Test for the use of TRUE as next state expression and default init values.
+
+mdp
+
+formula two = x=2;
+
+label "p" = two;
+
+module m
+  x : [0..3];
+
+  [a] two  -> true;
+  [a] !two -> 1/2 : (x'=0) + 1/4 : (x'=1) + 1/4 : (x'=mod(x+2,4));
+endmodule

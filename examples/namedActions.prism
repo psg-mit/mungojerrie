@@ -1,0 +1,20 @@
+// Test for process synchronization via names actions.
+
+mdp
+
+module sync
+  s : [0..3];
+
+  [a] true -> (s'=1);
+  [b] true -> (s'=2);
+  [c] true -> (s'=3);
+endmodule
+
+module mx
+  x : bool;
+
+  [a] true -> (x'=!x);
+endmodule
+
+module my=mx [x=y, a=b] endmodule
+module mz=mx [x=z, a=c] endmodule

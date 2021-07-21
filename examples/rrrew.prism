@@ -1,0 +1,18 @@
+mdp
+
+const double p = 0.9;
+
+label "g" = s=1 | s=2;
+
+module rr
+  s : [0..3] init 0;
+
+  [safe]  s=0       -> (s'=1);
+  [risky] s=0       -> p : (s'=2) + 1-p : (s'=3);
+  [reset] s=1 | s=2 -> (s'=0);
+  [stay]  s=2 | s=3 -> true;
+endmodule
+
+rewards
+  s=1 | s=2 : 1;
+endrewards

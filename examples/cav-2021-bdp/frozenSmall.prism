@@ -1,0 +1,78 @@
+// Small frozen lake MDP from OpenAI Gym.
+
+bdp
+
+label "start" = r=3 & c=0;
+label "goal"  = r=0 & c=3;
+label "trap"  = r=0 & c=0 | r=1 & c=3 | r=2 & (c=1 | c=3);
+label "branch"  = r=0 & c=0;
+label "final" = r=0 & c=3; 
+
+module grid
+  r : [0..3] init 3;
+  c : [0..3] init 0;
+  nature : [0..1] init 0;
+
+  [n] nature=0 & r<3 & c>0 & c<3 -> 1/3 : (r'=r+1) & (c'=c) +
+                         1/3 : (r'=r) & (c'=c-1) + 1/3 : (r'=r) & (c'=c+1);
+  [n] nature=0 & r=0 & c=0       ->  (nature' = 1);
+  [n] nature=0 & r=1 & c=0       -> 1/3 : (r'=r+1) & (c'=c) +
+                         1/3 : (r'=r) & (c'=c) + 1/3 : (r'=r) & (c'=c+1);
+  [n] nature=0 & r=2 & c=0       -> 1/3 : (r'=r+1) & (c'=c) +
+                         1/3 : (r'=r) & (c'=c) + 1/3 : (r'=r) & (c'=c+1);
+  [n] nature=0 & r=3 & c>0 & c<3 -> 1/3 : (r'=r) & (c'=c) +
+                         1/3 : (r'=r) & (c'=c-1) + 1/3 : (r'=r) & (c'=c+1);
+  [n] nature=0 & r=3 & c=0       -> 2/3 : (r'=r) & (c'=c) + 1/3 : (r'=r) & (c'=c+1);
+  [n] nature=0 & r=3 & c=3       -> 2/3 : (r'=r) & (c'=c) + 1/3 : (r'=r) & (c'=c-1);
+
+  [e] nature=0 & r>0 & r<3 & c<3 -> 1/3 : (r'=r) & (c'=c+1) +
+                         1/3 : (r'=r+1) & (c'=c) + 1/3 : (r'=r-1) & (c'=c);
+  [e] nature=0 & r=0 & c=0       ->  (nature' = 1);
+  [e] nature=0 & r=0 & c=1       -> 1/3 : (r'=r) & (c'=c+1) +
+                         1/3 : (r'=r+1) & (c'=c) + 1/3 : (r'=r) & (c'=c);
+  [e] nature=0 & r=0 & c=2       -> 1/3 : (r'=r) & (c'=c+1) +
+                         1/3 : (r'=r+1) & (c'=c) + 1/3 : (r'=r) & (c'=c);
+  [e] nature=0 & r>0 & r<3 & c=3 -> 1/3 : (r'=r) & (c'=c) +
+                         1/3 : (r'=r+1) & (c'=c) + 1/3 : (r'=r-1) & (c'=c);
+  [e] nature=0 & r=0 & c=3       -> 2/3 : (r'=r) & (c'=c) + 1/3 : (r'=r+1) & (c'=c);
+  [e] nature=0 & r=3 & c=3       -> 2/3 : (r'=r) & (c'=c) + 1/3 : (r'=r-1) & (c'=c);
+
+  [s] nature=0 & r>0 & c>0 & c<3 -> 1/3 : (r'=r-1) & (c'=c) +
+                         1/3 : (r'=r) & (c'=c-1) + 1/3 : (r'=r) & (c'=c+1);
+  [s] nature=0 & r>0 & c=0       -> 1/3 : (r'=r-1) & (c'=c) +
+                         1/3 : (r'=r) & (c'=c) + 1/3 : (r'=r) & (c'=c+1);
+  [s] nature=0 & r>0 & c=3       -> 1/3 : (r'=r-1) & (c'=c) +
+                         1/3 : (r'=r) & (c'=c-1) + 1/3 : (r'=r) & (c'=c);
+  [s] nature=0 & r=0 & c>0 & c<3 -> 1/3 : (r'=r) & (c'=c) +
+                         1/3 : (r'=r) & (c'=c-1) + 1/3 : (r'=r) & (c'=c+1);
+  [s] nature=0 & r=0 & c=0       ->  (nature' = 1);
+  [s] nature=0 & r=0 & c=3       -> 2/3 : (r'=r) & (c'=c) + 1/3 : (r'=r) & (c'=c-1);
+
+  [w] nature=0 & r>0 & r<3 & c>0 -> 1/3 : (r'=r) & (c'=c-1) +
+                         1/3 : (r'=r+1) & (c'=c) + 1/3 : (r'=r-1) & (c'=c);
+  [w] nature=0 & r=0 & c>0       -> 1/3 : (r'=r) & (c'=c-1) +
+                         1/3 : (r'=r+1) & (c'=c) + 1/3 : (r'=r) & (c'=c);
+  [w] nature=0 & r=3 & c>0       -> 1/3 : (r'=r) & (c'=c-1) +
+                         1/3 : (r'=r) & (c'=c) + 1/3 : (r'=r-1) & (c'=c);
+  [w] nature=0 & r>0 & r<3 & c=0 -> 1/3 : (r'=r) & (c'=c) +
+                         1/3 : (r'=r+1) & (c'=c) + 1/3 : (r'=r-1) & (c'=c);
+  [w] nature=0 & r=0 & c=0       ->  (nature' = 1);
+  [w] nature=0 & r=3 & c=0       -> 2/3 : (r'=r) & (c'=c) + 1/3 : (r'=r-1) & (c'=c);
+
+  [c1] nature = 1 -> (nature' = 0) & (r' = 0) & (c' = 3);
+endmodule
+
+player Pentity
+  [n], [e], [w], [s]     
+endplayer 
+
+player Pnature
+ [c1]
+endplayer 
+
+
+rewards
+  r=3 & c=0 : 1;
+  r=0 & c=3 : 0.0;
+  r=0 & c=0 : 1;
+endrewards

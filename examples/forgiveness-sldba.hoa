@@ -1,0 +1,22 @@
+HOA: v1
+name: "(FG x) | (GF y)"
+States: 4
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 2 "x" "y"
+properties: complete explicit-labels trans-acc
+--BODY--
+State: 0 "start"
+ [t] 0
+ [0] 1 {0}
+ [1] 2 {0}
+State: 1 "FG x"
+ [0] 1 {0}
+ [!0] 3
+State: 2 "GF y"
+ [1] 2 {0}
+ [!1] 2
+State: 3 "trap"
+ [t] 3
+--END--

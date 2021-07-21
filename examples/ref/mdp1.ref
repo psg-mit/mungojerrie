@@ -1,0 +1,31 @@
+Input File is ../mungojerrie/examples/mdp1.prism
+@ 0.00475187 s: the environment has 4 nodes, 3 of which are decision nodes.
+@ 0.00982717 s: the NBA with epsilon transitions has 4 states (1 trap).
+HOA: v1
+name: "automaton"
+States: 4
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+properties: complete colored
+properties: trans-acc trans-labels explicit-labels
+AP: 2 "q" "epsilon"
+--BODY--
+State: 0 "0"
+  [t] 0 {0}
+  [1] 1 {0}
+  [1] 2 {0}
+State: 1 "1"
+  [!0] 1 {1}
+  [0] 3 {0}
+State: 2 "2"
+  [0] 2 {1}
+  [!0] 3 {0}
+State: 3 "3"
+  [t] 3 {0}
+--END--
+@ 0.015305 s: the product has 14 nodes, 11 of which are decision nodes.
+@ 0.0153549 s: 2 WECs computed.
+@ 0.0153673 s: reachability completed.
+@ 0.0153695 s: probability of satisfaction: 1
+@ 0.0159587 s: end

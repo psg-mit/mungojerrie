@@ -1,0 +1,55 @@
+Input File is ../mungojerrie/examples/multiVars.prism
+@ 0.00678773 s: the environment has 17 nodes, 9 of which are decision nodes.
+@ 0.0142272 s: the DPA has 1 state (0 traps) and 3 priorities.
+@ 0.0211767 s: the product has 17 nodes, 9 of which are decision nodes.
+@ 0.0212896 s: strategy computed.
+@ 0.0212949 s: probability of satisfaction: 0
+digraph "Pruned Product" {
+node [shape=circle];
+"title" [label="Pruned Product",shape=plaintext];
+"0_init" [style=invis]
+"0_init" -> 0
+0 [label="x0y1, 0\np", shape=box];
+1 [label="x1y2, 0\n", shape=box];
+2 [label="",width=0.25];
+3 [label="x2y2, 0\nq", shape=box];
+4 [label="",width=0.25];
+5 [label="x1y3, 0\n", shape=box];
+6 [label="x0y2, 0\n", shape=box];
+7 [label="",width=0.25];
+8 [label="",width=0.25];
+9 [label="x2y3, 0\nq", shape=box];
+10 [label="x1y1, 0\n", shape=box];
+11 [label="",width=0.25];
+12 [label="",width=0.25];
+13 [label="x0y3, 0\n", shape=box];
+14 [label="x2y1, 0\n", shape=box];
+15 [label="",width=0.25];
+16 [label="",width=0.25];
+0 -> 1 [label=" a(2) "];
+1 -> 2 [label=" a(0) "];
+2 -> 1 [label=" 0.5(0) "];
+2 -> 3 [label=" 0.5(0) "];
+3 -> 4 [label=" a(1) "];
+4 -> 5 [label=" 0.5(0) "];
+4 -> 6 [label=" 0.5(0) "];
+5 -> 7 [label=" a(0) "];
+6 -> 8 [label=" a(0) "];
+7 -> 3 [label=" 0.5(0) "];
+7 -> 9 [label=" 0.5(0) "];
+8 -> 10 [label=" 0.5(0) "];
+8 -> 1 [label=" 0.5(0) "];
+9 -> 11 [label=" a(1) "];
+10 -> 12 [label=" a(0) "];
+11 -> 9 [label=" 0.5(0) "];
+11 -> 13 [label=" 0.5(0) "];
+12 -> 6 [label=" 0.5(0) "];
+12 -> 14 [label=" 0.5(0) "];
+13 -> 15 [label=" a(0) "];
+14 -> 16 [label=" a(0) "];
+15 -> 14 [label=" 0.5(0) "];
+15 -> 5 [label=" 0.5(0) "];
+16 -> 13 [label=" 0.5(0) "];
+16 -> 0 [label=" 0.5(0) "];
+}
+@ 0.0220408 s: end

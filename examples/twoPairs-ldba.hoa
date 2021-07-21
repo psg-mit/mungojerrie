@@ -1,0 +1,23 @@
+HOA: v1
+name: "(FG goal0 | FG goal1) & G !trap"
+States: 4
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 4 "goal0" "goal1" "trap" "epsilon"
+properties: complete colored explicit-labels trans-acc
+--BODY--
+State: 0 "start"
+ [!2] 0 {0}
+ [2] 3 {0}
+ [3] 1 {0}
+ [3] 2 {0}
+State: 1 "FG goal0 & G !trap"
+ [0&!2] 1 {1}
+ [!0|2] 3 {0}
+State: 2 "FG goal1 & G !trap"
+ [1&!2] 2 {1}
+ [!1|2] 3 {0}
+State: 3 "trap"
+ [t] 3 {0}
+--END--

@@ -1,0 +1,29 @@
+// What is the best strategy when playing rock, paper, scissors against an
+// opponent that plays:
+//
+// rock     with probability 0.6
+// paper    with probability 0.1
+// scissors with probability 0.3
+//
+// if the objective is to be the first to win N rounds?
+
+mdp
+
+const int N = 10; // number of rounds
+const double pR = 0.6;
+const double pP = 0.1;
+const double pS = 1 - (pR + pP);
+
+label "victory" = w = N;
+label "defeat"  = l = N;
+
+formula play = w < N & l < N;
+
+module rps
+  w : [0..N] init 0; // number of rounds won
+  l : [0..N] init 0; // number of rounds lost
+  [Ro] play -> pR : true + pP : (l'=l+1) + pS : (w'=w+1); 
+  [Pa] play -> pR : (w'=w+1) + pP : true + pS : (l'=l+1); 
+  [Sc] play -> pR : (l'=l+1) + pP : (w'=w+1) + pS : true;
+  [No] true -> true;
+endmodule

@@ -1,0 +1,71 @@
+// Example of cops and robbers game from Aigner and Fromme, Figure 1.
+// If the robber is allowed to pass (passive version of the game)
+// then the house-shaped graph is a robber-win, otherwise (active)
+// version of the game) it's a cop-win.  The house graph look like this:
+//
+//       0
+//      / \
+//     /   \
+//    1-----2
+//    |     |
+//    4-----3
+//
+// We use the "passive" bool constant to let the user control
+// which version of the game to play.
+// In the active version of the game, the optimal cop strategy is to
+// start in 0.  If the robber chooses 1 or 2, it's game over in one
+// move.  If the robber chooses 3 or 4, the cop moves to the opposite
+// corner of the lower rectangle and wins in two moves.
+
+smg
+
+const bool passive = true;
+
+label "caught" = !first & c=r;
+label "rin0" = !first & r=0 & !(c=0);
+
+module turn
+  t : bool init true;
+  first : bool init true;
+
+  [c0] true -> (t'=!t);
+  [c1] true -> (t'=!t);
+  [c2] true -> (t'=!t);
+  [c3] true -> (t'=!t);
+  [c4] true -> (t'=!t);
+  [r0] true -> (t'=!t) & (first'=false);
+  [r1] true -> (t'=!t) & (first'=false);
+  [r2] true -> (t'=!t) & (first'=false);
+  [r3] true -> (t'=!t) & (first'=false);
+  [r4] true -> (t'=!t) & (first'=false);
+  [sk] true -> (t'=!t) & (first'=false);
+endmodule
+
+module cop
+  c : [0..4] init 0;
+
+  [c0] t & (first | c=1 | c=2)       -> (c'=0);
+  [c1] t & (first | c=0 | c=2 | c=4) -> (c'=1);
+  [c2] t & (first | c=0 | c=1 | c=3) -> (c'=2);
+  [c3] t & (first | c=2 | c=4)       -> (c'=3);
+  [c4] t & (first | c=1 | c=3)       -> (c'=4);
+endmodule
+
+module robber
+  r : [0..4] init 0;
+
+  [r0] !t & (first | r=1 | r=2) & c!=0 -> (r'=0);
+  [r1] !t & (first | r=0 | r=2 | r=4)  -> (r'=1);
+  [r2] !t & (first | r=0 | r=1 | r=3)  -> (r'=2);
+  [r3] !t & (first | r=2 | r=4)        -> (r'=3);
+  [r4] !t & (first | r=1 | r=3)        -> (r'=4);
+  [sk] !t & !first & passive           -> true;
+endmodule
+
+player cop
+  [c0], [c1], [c2], [c3], [c4]
+endplayer
+
+player robber
+  [r0], [r1], [r2], [r3], [r4], [sk]
+endplayer

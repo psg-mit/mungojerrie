@@ -1,0 +1,69 @@
+//Branching Decision Process
+// p = 0.25
+// q = 0.2
+// r = 0.2
+// entities = {T, S, H} init T
+// T -(a1, 1)-> SSS
+// T -(a2, 6)-> \epsilon
+// S -(a1, 2)-> q : H + (1-q) : \epsilon
+// S -(a2, 1)-> p : S + (1-p) : \epsilon
+// H -(a1, 0.1)-> r : HH + (1-r) \epsilon
+
+
+bdp
+
+const double p = 0.25;
+const double q = 0.2;
+const double r = 0.2;
+
+const int N = 3;
+const int eps = 3;
+const int Tt = 0;
+const int Ss = 1;
+const int Hh = 2;
+
+const int idle = 0; //nature idle 
+const int active = 1; // nature active
+
+label "final" = entity = eps; // extinction
+
+module main
+  entity : [0..N] init Tt;
+  nature : [0..1] init idle;
+
+  [a1] entity=Tt & nature = idle  -> (nature' = active);
+  [a2] entity=Tt & nature = idle  -> (entity' = eps);
+  
+  [a1] entity=Ss & nature = idle  -> q: (entity' = Hh) + (1-q): (entity' = eps);
+  [a2] entity=Ss & nature = idle  -> p : (entity' = Ss) + (1-p) : (entity' = eps);
+
+  [a1] entity=Hh & nature = idle  -> r: (nature' = active) + (1-r): (entity' = eps);
+  [a2] entity=Hh & nature = idle  -> r: (nature' = active) + (1-r): (entity' = eps);
+
+  [step] (entity = eps) & (nature = idle) -> (entity' = eps); // sink 
+  
+  [c1] (nature = active) & (entity=Tt) -> (entity' = Ss) & (nature' = idle); 
+  [c2] (nature = active) & (entity=Tt) -> (entity' = Ss) & (nature' = idle); 
+  [c3] (nature = active) & (entity=Tt) -> (entity' = Ss) & (nature' = idle); 
+
+  [c1] (nature = active) & (entity=Hh) -> (entity' = Hh) & (nature' = idle); 
+  [c2] (nature = active) & (entity=Hh) -> (entity' = Hh) & (nature' = idle); 
+ 
+endmodule
+
+player Pentity
+  [a1], [a2], [step]
+endplayer
+
+player Pnature
+  [c1], [c2], [c3]
+endplayer
+
+rewards
+    [a1] entity=Tt : 1;
+    [a2] entity=Tt: 6;
+    [a1] entity=Ss : 2;
+    [a2] entity=Ss: 1;
+    [a1] entity=Hh : 0.1;
+    [a2] entity=Hh: 0.1;
+endrewards

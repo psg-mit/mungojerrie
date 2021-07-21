@@ -1,0 +1,40 @@
+Input File is ../mungojerrie/examples/sprague.prism
+@ 0.00551901 s: the environment has 21 nodes, 16 of which are decision nodes.
+@ 0.0110077 s: the terminal DBA has 3 states (1 trap).
+@ 0.0161247 s: the product has 26 nodes, 21 of which are decision nodes.
+@ 0.0161792 s: 3 WECs computed.
+@ 0.016222 s: reachability completed.
+@ 0.0162247 s: probability of satisfaction: 1
+
+--------QLearning--------
+@ 0.386717 s: learning complete.
+Initial-state value estimate: 34157.7
+Total number of accepting edges seen: 374885
+Number of accepting episodes: 0
+Number of trapped episodes  : 2932
+Number of steps: 541405
+Average total reward per episode: 18.7443
+Random seed used: 1745701707
+State, Player, Action(s)
+"row0col1turn0, 0, 0", 0, "end+2"
+"row0col1turn0, 2, 0", 0, "end+2"
+"row0col2turn0, 0, 0", 0, "pr+0"
+"row0col3turn0, 0, 0", 0, "pr+0"
+"row0col4turn1, 0, 0", 0, "c2+0"
+"row1col0turn0, 0, 0", 0, "end+2"
+"row1col0turn0, 2, 0", 0, "end+2"
+"row1col0turn1, 0, 0", 0, "end+1"
+"row1col1turn0, 0, 0", 0, "end+2"
+"row1col1turn0, 2, 0", 0, "end+2"
+"row1col1turn1, 0, 0", 0, "end+1"
+"row1col2turn0, 0, 0", 0, "pr+0"
+"row1col3turn0, 0, 0", 0, "pr+0"
+"row2col0turn1, 0, 0", 0, "r2+0"
+"row2col1turn1, 0, 0", 0, "r2+0"
+"row2col3turn0, 0, 0", 0, "pr+0"
+"row3col0turn1, 0, 0", 0, "r3+0"
+"row3col1turn1, 0, 0", 0, "r2+0"
+"row4col2turn1, 0, 0", 0, "r2+0"
+There were 0 unseen decision nodes reachable under learned strategy for tol 0.01.
+Probability for tol 0.01 is: 1
+@ 0.387432 s: end

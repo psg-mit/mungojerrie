@@ -1,0 +1,21 @@
+mdp
+
+// Grid dimensions.
+const int M = 4;
+const int N = 6;
+
+// Start position.
+const int srow = M/2;
+const int scol = 0;
+
+label "p" = (c=2 & r>0)   | (c=4 & r<M/2)  | (c=5 & r=M/2);
+label "q" = (c=2 & r<M-1) | (c=4 & r>=M/2) | (c=5 & r=M/2-1);
+
+module grid
+  r : [0..M-1] init srow;
+  c : [0..N-1] init scol;
+
+  [e]  true ->                     (c'=min(c+1,N-1));
+  [ne] true -> (r'=min(r+1,M-1)) & (c'=min(c+1,N-1));
+  [se] true -> (r'=max(0,r-1))   & (c'=min(c+1,N-1));
+endmodule

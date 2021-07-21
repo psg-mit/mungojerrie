@@ -1,0 +1,44 @@
+// Knuth and Yao's simulation of a fair die by a fair coin.
+// MDP based on the Probmela MC of Baier and Katoen, p. 838.
+
+mdp
+
+const int s0    = 0;
+const int s123  = 7;
+const int s456  = 8;
+const int s23   = 9;
+const int s123p = 10;
+const int s456p = 11;
+const int s45   = 12;
+
+label "d1" = state=1;
+label "d2" = state=2;
+label "d3" = state=3;
+label "d4" = state=4;
+label "d5" = state=5;
+label "d6" = state=6;
+
+module ky
+  state : [s0..s45] init s0;
+
+  [] state=s0     -> 0.5 : (state'=s123)  + 0.5 : (state'=s456);
+  [] state=s123   -> 0.5 : (state'=s123p) + 0.5 : (state'=s23);
+  [] state=s23    -> 0.5 : (state'=2)     + 0.5 : (state'=3);
+  [] state=s123p  -> 0.5 : (state'=s123)  + 0.5 : (state'=1);
+  [] state=s456   -> 0.5 : (state'=s456p) + 0.5 : (state'=s45);
+  [] state=s45    -> 0.5 : (state'=4)     + 0.5 : (state'=5);
+  [] state=s456p  -> 0.5 : (state'=s456)  + 0.5 : (state'=6);
+  [stand] state=1 -> (state'=1);
+  [stand] state=2 -> (state'=2);
+  [stand] state=3 -> (state'=3);
+  [stand] state=4 -> (state'=4);
+  [stand] state=5 -> (state'=5);
+  [stand] state=6 -> (state'=6);
+  [reset] state=1 -> (state'=s0);
+  [reset] state=2 -> (state'=s0);
+  [reset] state=3 -> (state'=s0);
+  [reset] state=4 -> (state'=s0);
+  [reset] state=5 -> (state'=s0);
+  [reset] state=6 -> (state'=s0);
+endmodule
+  

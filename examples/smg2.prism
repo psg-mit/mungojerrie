@@ -1,0 +1,22 @@
+// Figure 1 from "Synthesizing Strategy Improvement and Recursive
+// Algorithms for Solving 2.5 Player Parity Games"
+
+smg
+
+player P0 [e01], [e02], [loop] endplayer
+player P1 [e11], [e12] endplayer
+
+label "p0" = s=2;
+label "p1" = s=3;
+
+module play
+  s : [0..3] init 0;
+
+  [e01]  s=0 -> 0.55 : (s'=2) + 0.45 : (s'=3);
+  [e02]  s=0 -> (s'=1);
+
+  [e11]  s=1 -> 0.95 : (s'=2) + 0.05 : (s'=3);
+  [e12]  s=1 -> (s'=0);
+
+  [loop] s>1 -> true;
+endmodule

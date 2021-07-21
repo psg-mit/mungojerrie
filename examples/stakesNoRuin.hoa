@@ -1,0 +1,15 @@
+HOA: v1
+name: "G !ruin"
+States: 3
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 1 "ruin"
+properties: deterministic complete trans-acc explicit-labels
+--BODY--
+State: 0 "start"
+ [!0] 0 {0}
+ [ 0] 1
+State: 1 "trap"
+ [t] 1
+--END--

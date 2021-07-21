@@ -1,0 +1,52 @@
+// Two players roll a die one after the other.  They can roll the die at most
+// N times.  They keep the last result and the one with the higher value wins.
+// Based on the example on the PRISM website.
+
+smg
+
+player P0 [roll0], [again0], [done0], [loop] endplayer
+player P1 [roll1], [again1], [done1] endplayer
+
+const int N = 2;
+
+module player0
+  s0: [0..2] init 0;  // local state
+  i: [0..N-1] init 0; // loop counter
+  x: [0..6] init 0;   // die value (0: not rolled yet)
+
+  // Roll die.
+  [roll0] s0=0 -> 1/6: (x'=1)&(s0'=1) + 1/6: (x'=2)&(s0'=1) + 1/6: (x'=3)&(s0'=1)
+                + 1/6: (x'=5)&(s0'=1) + 1/6: (x'=5)&(s0'=1) + 1/6: (x'=6)&(s0'=1);
+  // Decide whether to roll again.
+  [again0] s0=1 & i<N-1 -> (i'=i+1)&(s0'=0);
+  [done0] s0=1 & i<N-1 -> (i'=i+1)&(s0'=2);
+  // Forced stop.
+  [done0] s0=1 & i=N-1 -> (s0'=2);
+  // Loop.
+  [loop] s0=2 -> true;
+endmodule
+
+module player1
+  s1: [0..3] init 0;  // local state
+  j: [0..N-1] init 0; // loop counter
+  y: [0..6] init 0;   // die value (0: not rolled yet)
+
+  // Start game (once Player 0 is done).
+  [done0] s1=0 -> (s1'=1);
+  // Roll die.
+  [roll1] s1=1 -> 1/6: (y'=1)&(s1'=2) + 1/6: (y'=2)&(s1'=2) + 1/6: (y'=3)&(s1'=2)
+                + 1/6: (y'=5)&(s1'=2) + 1/6: (y'=5)&(s1'=2) + 1/6: (y'=6)&(s1'=2);
+  // Decide whether to roll again.
+  [again1] s1=2 & j<N-1 -> (j'=j+1)&(s1'=1);
+  [done1] s1=2 & j<N-1 -> (j'=j+1)&(s1'=3);
+  // Forced stop.
+  [done1] s1=2 & j=N-1 -> (s1'=3);
+  // Loop.
+  [loop] s1=3 -> true;
+endmodule
+
+formula done = s0=2 & s1=3;
+label "done" = done;
+label "p0win" = done & x>y;
+label "p1win" = done & y>x;
+label "draw" = done & x=y;

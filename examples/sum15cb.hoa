@@ -1,0 +1,20 @@
+HOA: v1
+name: "!s15 U G f15"
+States: 3
+Start: 0
+acc-name: parity max odd 3
+Acceptance: 3 Fin(2) & (Inf(1) | Fin(0))
+AP: 2 "s15" "f15"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "start"
+ [!0 & !1] 0 {2}
+ [!0 &  1] 0 {1}
+ [ 0 & !1] 2 {2}
+ [ 0 &  1] 1 {1}
+State: 1 "s1"
+ [!1] 2 {2}
+ [ 1] 1 {1}
+State: 2 "trap"
+ [t] 2 {2}
+--END--

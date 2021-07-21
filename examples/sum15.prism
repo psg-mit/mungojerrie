@@ -1,0 +1,76 @@
+// Players take turn in selecting numbers between 1 and 9 without replacement.
+// The first player whose total is 15 wins.
+// If either player chooses a number n greater than 1, then with probability 1-p
+// the total of that player is increased by n-1, instead of n.
+
+smg
+
+const double p = 1/2;
+const double q = 1-p;
+
+player P0 [f1], [f2], [f3], [f4], [f5], [f6], [f7], [f8], [f9] endplayer
+player P1 [s1], [s2], [s3], [s4], [s5], [s6], [s7], [s8], [s9], [loop] endplayer
+
+label "f15" = t0 = 15;
+label "s15" = t1 = 15;
+
+module play
+  v : [0..511] init 511; // bit vector of the numbers still available
+  s : [0..1] init 0;     // turn variable
+  t0 : [0..45] init 0;   // total for P0
+  t1 : [0..45] init 0;   // total for P1
+
+  [f1] s = 0 & mod(v,2)   >= 1   -> (s' = 1) & (v' = v - 1)   & (t0' = t0 + 1);
+  [f2] s = 0 & mod(v,4)   >= 2   ->
+    p: (s' = 1) & (v' = v - 2)   & (t0' = t0 + 2) +
+    q: (s' = 1) & (v' = v - 2)   & (t0' = t0 + 1);
+  [f3] s = 0 & mod(v,8)   >= 4   ->
+    p : (s' = 1) & (v' = v - 4)   & (t0' = t0 + 3) +
+    q : (s' = 1) & (v' = v - 4)   & (t0' = t0 + 2);
+  [f4] s = 0 & mod(v,16)  >= 8   ->
+    p : (s' = 1) & (v' = v - 8)   & (t0' = t0 + 4) +
+    q : (s' = 1) & (v' = v - 8)   & (t0' = t0 + 3);
+  [f5] s = 0 & mod(v,32)  >= 16  ->
+    p : (s' = 1) & (v' = v - 16)  & (t0' = t0 + 5) +
+    q : (s' = 1) & (v' = v - 16)  & (t0' = t0 + 4);
+  [f6] s = 0 & mod(v,64)  >= 32  ->
+    p : (s' = 1) & (v' = v - 32)  & (t0' = t0 + 6) +
+    q : (s' = 1) & (v' = v - 32)  & (t0' = t0 + 5);
+  [f7] s = 0 & mod(v,128) >= 64  ->
+    p : (s' = 1) & (v' = v - 64)  & (t0' = t0 + 7) +
+    q : (s' = 1) & (v' = v - 64)  & (t0' = t0 + 6);
+  [f8] s = 0 & mod(v,256) >= 128 ->
+    p : (s' = 1) & (v' = v - 128) & (t0' = t0 + 8) +
+    q : (s' = 1) & (v' = v - 128) & (t0' = t0 + 7);
+  [f9] s = 0 & mod(v,512) >= 256 ->
+    p : (s' = 1) & (v' = v - 256) & (t0' = t0 + 9) +
+    q : (s' = 1) & (v' = v - 256) & (t0' = t0 + 8);
+
+  [s1] s = 1 & mod(v,2)   >= 1   -> (s' = 0) & (v' = v - 1)   & (t1' = t1 + 1);
+  [s2] s = 1 & mod(v,4)   >= 2   ->
+    p : (s' = 0) & (v' = v - 2)   & (t1' = t1 + 2) +
+    q : (s' = 0) & (v' = v - 2)   & (t1' = t1 + 1);
+  [s3] s = 1 & mod(v,8)   >= 4   ->
+    p : (s' = 0) & (v' = v - 4)   & (t1' = t1 + 3) +
+    q : (s' = 0) & (v' = v - 4)   & (t1' = t1 + 2);
+  [s4] s = 1 & mod(v,16)  >= 8   ->
+    p : (s' = 0) & (v' = v - 8)   & (t1' = t1 + 4) +
+    q : (s' = 0) & (v' = v - 8)   & (t1' = t1 + 3);
+  [s5] s = 1 & mod(v,32)  >= 16  ->
+    p : (s' = 0) & (v' = v - 16)  & (t1' = t1 + 5) +
+    q : (s' = 0) & (v' = v - 16)  & (t1' = t1 + 4);
+  [s6] s = 1 & mod(v,64)  >= 32  ->
+    p : (s' = 0) & (v' = v - 32)  & (t1' = t1 + 6) +
+    q : (s' = 0) & (v' = v - 32)  & (t1' = t1 + 5);
+  [s7] s = 1 & mod(v,128) >= 64  ->
+    p : (s' = 0) & (v' = v - 64)  & (t1' = t1 + 7) +
+    q : (s' = 0) & (v' = v - 64)  & (t1' = t1 + 6);
+  [s8] s = 1 & mod(v,256) >= 128 ->
+    p : (s' = 0) & (v' = v - 128) & (t1' = t1 + 8) +
+    q : (s' = 0) & (v' = v - 128) & (t1' = t1 + 7);
+  [s9] s = 1 & mod(v,512) >= 256 ->
+    p : (s' = 0) & (v' = v - 256) & (t1' = t1 + 9) +
+    q : (s' = 0) & (v' = v - 256) & (t1' = t1 + 8);
+
+  [loop] v = 0 -> true;
+endmodule

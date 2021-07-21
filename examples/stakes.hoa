@@ -1,0 +1,18 @@
+HOA: v1
+name: "!ruin U goal"
+States: 3
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 2 "goal" "ruin"
+properties: deterministic complete trans-acc explicit-labels
+--BODY--
+State: 0 "start"
+ [!0 & !1] 0
+ [0 & !1] 1 {0}
+ [1] 2
+State: 1 "goal"
+ [t] 1 {0}
+State: 2 "trap"
+ [t] 2
+--END--

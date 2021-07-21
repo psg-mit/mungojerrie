@@ -1,0 +1,20 @@
+HOA: v1
+name: "G(!(c1 & c2) & (F c1) & (F c2))"
+States: 3
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 2 "c1" "c2"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "start"
+ [!0] 0 {0}
+ [0&!1] 1 {0}
+ [0&1] 2 {0}
+State: 1 "seen"
+ [!0&1] 0 {1}
+ [!1] 1 {0}
+ [0&1] 2 {0}
+State: 2 "trap"
+ [t] 2 {0}
+--END--

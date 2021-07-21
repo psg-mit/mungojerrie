@@ -1,0 +1,19 @@
+HOA: v1
+name: "(FG !rescue) & (GF search)"
+States: 3
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 3 "rescue" "search" "epsilon"
+properties: complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "start"
+ [t] 0 {0}
+ [2] 1 {0}
+State: 1 "ok"
+ [0] 2 {0}
+ [!0 & !1] 1 {0}
+ [!0 & 1] 1 {1}
+State: 2 "trap"
+ [t] 2 {0}
+--END--

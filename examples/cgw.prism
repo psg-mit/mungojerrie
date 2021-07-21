@@ -1,0 +1,19 @@
+// Alcuin's cabbage, goat and wolf puzzle.
+
+mdp
+
+label "safe" = (farmer <=> goat) | ((goat ^ cabbage) & (goat ^ wolf));
+label "final" = farmer & cabbage & goat & wolf;
+
+module cgw
+  farmer  : bool init false;
+  cabbage : bool init false;
+  goat    : bool init false;
+  wolf    : bool init false;
+
+  [b] true               -> (farmer'=!farmer);
+  [c] farmer <=> cabbage -> (farmer'=!farmer) & (cabbage'=!cabbage);
+  [g] farmer <=> goat    -> (farmer'=!farmer) & (goat'=!goat);
+  [w] farmer <=> wolf    -> (farmer'=!farmer) & (wolf'=!wolf);
+  [r] true               -> true;
+endmodule

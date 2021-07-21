@@ -1,0 +1,17 @@
+Input File is ../mungojerrie/examples/formulae.prism
+@ 0.0064983 s: the environment has 2 nodes, 2 of which are decision nodes.
+@ 0.0133461 s: the DBA has 2 states (1 trap).
+@ 0.0214256 s: the product has 2 nodes, 2 of which are decision nodes.
+@ 0.0215499 s: strategy computed.
+@ 0.0215572 s: probability of satisfaction: 1
+digraph "Pruned Product" {
+node [shape=circle];
+"title" [label="Pruned Product",shape=plaintext];
+"0_init" [style=invis]
+"0_init" -> 0
+0 [label="x0, 0\n", shape=box];
+1 [label="x1, 0\np", shape=box];
+0 -> 1 [label=" b(1) "];
+1 -> 0 [label=" b,0.5\n(1) "];
+}
+@ 0.0229289 s: end

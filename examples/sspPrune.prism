@@ -1,0 +1,16 @@
+// Test for SSP edge pruning.
+
+mdp
+
+label "g" = s=6;
+
+module ssp
+  s : [0..7] init 0;
+
+  [right] s=0 -> (s'=1);
+  [wrong] s=0 -> (s'=3);
+  [a]     s=1 | s=3 | s=4 | s=5 -> (s'=s+1);
+  [b]     s=2 -> (s'=6);
+  [c]     s=3 -> 1/2 : (s'=6) + 1/2 : (s'=7);
+  [d]     s=6 | s=7 -> true;
+endmodule

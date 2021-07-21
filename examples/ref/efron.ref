@@ -1,0 +1,21 @@
+Input File is ../mungojerrie/examples/efron.prism
+@ 0.00606931 s: the environment has 99 nodes, 74 of which are decision nodes.
+@ 0.0126188 s: the DBA has 1 state (0 traps).
+@ 0.0184853 s: the product has 99 nodes, 74 of which are decision nodes.
+@ 0.0186385 s: 18 WECs computed.
+@ 0.0187469 s: reachability completed.
+@ 0.018753 s: probability of satisfaction: 0.666667
+
+--------DoubleQLearning--------
+@ 2.00054 s: learning complete.
+Initial-state value estimate Q1: 0.676073
+Initial-state value estimate Q2: 0.704912
+Initial-state value estimate: 0.690492
+Total number of accepting edges seen: 1448305
+Number of accepting episodes: 14680
+Number of steps: 1816625
+Average total reward per episode: 0.5872
+Random seed used: 488032145
+There were 0 unseen decision nodes reachable under learned strategy for tol 0.01.
+Probability for tol 0.01 is: 0.666667
+@ 2.00157 s: end

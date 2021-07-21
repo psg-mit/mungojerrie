@@ -1,0 +1,108 @@
+Input File is ../mungojerrie/examples/grid5x5.prism
+@ 0.00564355 s: the environment has 121 nodes, 25 of which are decision nodes.
+@ 0.0107685 s: the DBA has 3 states (1 trap).
+@ 0.0163321 s: the product has 327 nodes, 75 of which are decision nodes.
+@ 0.0247983 s: strategy computed.
+@ 0.0248139 s: probability of satisfaction: 1
+mdp
+
+const int l0_x_0 = 0; 
+const int l0_x_1 = 4; 
+const int l5_x_1 = 5; 
+const int l10_x_1 = 15; 
+const int l6_x_1 = 16; 
+const int l15_x_1 = 30; 
+const int l11_x_1 = 31; 
+const int l7_x_1 = 32; 
+const int l16_x_1 = 62; 
+const int l12_x_1 = 63; 
+const int l8_x_1 = 64; 
+const int l21_x_1 = 106; 
+const int l13_x_1 = 108; 
+const int l9_x_1 = 109; 
+const int l22_x_1 = 163; 
+const int l14_x_1 = 166; 
+const int l23_x_1 = 201; 
+const int l19_x_1 = 203; 
+const int l24_x_1 = 221; 
+const int l24_x_0 = 226; 
+const int l23_x_0 = 229; 
+const int l22_x_0 = 239; 
+const int l21_x_0 = 250; 
+const int l16_x_0 = 267; 
+const int l15_x_0 = 286; 
+const int l11_x_0 = 287; 
+const int l10_x_0 = 306; 
+const int l6_x_0 = 307; 
+const int l5_x_0 = 317; 
+const int l1_x_0 = 318; 
+
+label "start" = state=l0_x_0 | state=l0_x_1;
+label "goal" = state=l24_x_1 | state=l24_x_0;
+label "trap" = false;
+module m
+  state : [0..318] init 0;
+  [nw] state=l0_x_0 -> 0.2 : (state'=l0_x_1) + 0.8 : (state'=l5_x_1);
+  [nw] state=l0_x_1 -> 0.2 : (state'=l0_x_1) + 0.8 : (state'=l5_x_1);
+  [ne] state=l5_x_1 -> 0.2 : (state'=l5_x_1) + 0.4 : (state'=l10_x_1) + 0.4 : (state'=l6_x_1);
+  [ne] state=l10_x_1 -> 0.2 : (state'=l10_x_1) + 0.4 : (state'=l15_x_1) + 0.4 : (state'=l11_x_1);
+  [ne] state=l6_x_1 -> 0.2 : (state'=l6_x_1) + 0.4 : (state'=l11_x_1) + 0.4 : (state'=l7_x_1);
+  [se] state=l15_x_1 -> 0.2 : (state'=l15_x_1) + 0.4 : (state'=l16_x_1) + 0.4 : (state'=l10_x_1);
+  [ne] state=l11_x_1 -> 0.2 : (state'=l11_x_1) + 0.4 : (state'=l16_x_1) + 0.4 : (state'=l12_x_1);
+  [ne] state=l7_x_1 -> 0.2 : (state'=l7_x_1) + 0.4 : (state'=l12_x_1) + 0.4 : (state'=l8_x_1);
+  [nw] state=l16_x_1 -> 0.2 : (state'=l16_x_1) + 0.4 : (state'=l15_x_1) + 0.4 : (state'=l21_x_1);
+  [se] state=l12_x_1 -> 0.2 : (state'=l12_x_1) + 0.4 : (state'=l13_x_1) + 0.4 : (state'=l7_x_1);
+  [ne] state=l8_x_1 -> 0.2 : (state'=l8_x_1) + 0.4 : (state'=l13_x_1) + 0.4 : (state'=l9_x_1);
+  [ne] state=l21_x_1 -> 0.2 : (state'=l21_x_1) + 0.8 : (state'=l22_x_1);
+  [se] state=l13_x_1 -> 0.2 : (state'=l13_x_1) + 0.4 : (state'=l14_x_1) + 0.4 : (state'=l8_x_1);
+  [ne] state=l9_x_1 -> 0.2 : (state'=l9_x_1) + 0.8 : (state'=l14_x_1);
+  [ne] state=l22_x_1 -> 0.2 : (state'=l22_x_1) + 0.8 : (state'=l23_x_1);
+  [ne] state=l14_x_1 -> 0.2 : (state'=l14_x_1) + 0.8 : (state'=l19_x_1);
+  [ne] state=l23_x_1 -> 0.2 : (state'=l23_x_1) + 0.8 : (state'=l24_x_1);
+  [ne] state=l19_x_1 -> 0.2 : (state'=l19_x_1) + 0.8 : (state'=l24_x_1);
+  [nw] state=l24_x_1 -> 0.2 : (state'=l24_x_0) + 0.8 : (state'=l23_x_0);
+  [nw] state=l24_x_0 -> 0.2 : (state'=l24_x_0) + 0.8 : (state'=l23_x_0);
+  [nw] state=l23_x_0 -> 0.2 : (state'=l23_x_0) + 0.8 : (state'=l22_x_0);
+  [nw] state=l22_x_0 -> 0.2 : (state'=l22_x_0) + 0.8 : (state'=l21_x_0);
+  [se] state=l21_x_0 -> 0.2 : (state'=l21_x_0) + 0.4 : (state'=l22_x_0) + 0.4 : (state'=l16_x_0);
+  [sw] state=l16_x_0 -> 0.2 : (state'=l16_x_0) + 0.4 : (state'=l11_x_0) + 0.4 : (state'=l15_x_0);
+  [sw] state=l15_x_0 -> 0.2 : (state'=l15_x_0) + 0.8 : (state'=l10_x_0);
+  [sw] state=l11_x_0 -> 0.2 : (state'=l11_x_0) + 0.4 : (state'=l6_x_0) + 0.4 : (state'=l10_x_0);
+  [sw] state=l10_x_0 -> 0.2 : (state'=l10_x_0) + 0.8 : (state'=l5_x_0);
+  [sw] state=l6_x_0 -> 0.2 : (state'=l6_x_0) + 0.4 : (state'=l1_x_0) + 0.4 : (state'=l5_x_0);
+  [sw] state=l5_x_0 -> 0.2 : (state'=l5_x_0) + 0.8 : (state'=l0_x_0);
+  [sw] state=l1_x_0 -> 0.2 : (state'=l1_x_0) + 0.8 : (state'=l0_x_0);
+endmodule
+rewards
+  [nw] state=l0_x_0 : 0;
+  [nw] state=l0_x_1 : 0;
+  [ne] state=l5_x_1 : 0;
+  [ne] state=l10_x_1 : 0;
+  [ne] state=l6_x_1 : 0;
+  [se] state=l15_x_1 : 0;
+  [ne] state=l11_x_1 : 0;
+  [ne] state=l7_x_1 : 0;
+  [nw] state=l16_x_1 : 0;
+  [se] state=l12_x_1 : 0;
+  [ne] state=l8_x_1 : 0;
+  [ne] state=l21_x_1 : 0;
+  [se] state=l13_x_1 : 0;
+  [ne] state=l9_x_1 : 0;
+  [ne] state=l22_x_1 : 0;
+  [ne] state=l14_x_1 : 0;
+  [ne] state=l23_x_1 : 0;
+  [ne] state=l19_x_1 : 0;
+  [nw] state=l24_x_1 : 0;
+  [nw] state=l24_x_0 : 0;
+  [nw] state=l23_x_0 : 0;
+  [nw] state=l22_x_0 : 0;
+  [se] state=l21_x_0 : 0;
+  [sw] state=l16_x_0 : 0;
+  [sw] state=l15_x_0 : 0;
+  [sw] state=l11_x_0 : 0;
+  [sw] state=l10_x_0 : 0;
+  [sw] state=l6_x_0 : 0;
+  [sw] state=l5_x_0 : 0;
+  [sw] state=l1_x_0 : 0;
+endrewards
+@ 0.0255927 s: end

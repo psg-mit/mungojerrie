@@ -1,0 +1,22 @@
+HOA: v1
+name: "GF start & GF goal & G !trap" /* small, from Sadigh et al. (2014) */
+States: 3
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 3 "start" "goal" "trap"
+properties: deterministic complete colored trans-acc
+--BODY--
+State: 0 "init"
+ [!0 & !2] 0 {0}
+ [0 & 1 & !2] 0 {1}
+ [0 & !1 & !2] 1 {0}
+ [2] 2 {0}
+State: 1 "seen-s"
+ [!0 & 1 & !2] 0 {1}
+ [0 & 1 & !2] 1 {1}
+ [!1 & !2] 1 {0}
+ [2] 2 {0}
+State: 2 "trap"
+ [t] 2 {0}
+--END--

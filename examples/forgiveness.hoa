@@ -1,0 +1,21 @@
+HOA: v1
+name: "(FG x) | (GF y)"
+States: 3
+Start: 0
+acc-name: parity max odd 2
+Acceptance: 2 Inf(1) | Fin(0)
+AP: 2 "x" "y"
+properties: complete colored explicit-labels trans-acc
+--BODY--
+State: 0 "start"
+ [1] 0 {1}
+ [!1] 0 {0}
+ [0&!1] 1 {1}
+State: 1 "FG x"
+ [0&!1] 1 {1}
+ [1] 0 {1}
+ [!0&!1] 2 {0}
+State: 2 "jail"
+ [!1] 2 {0}
+ [1] 0 {1}
+--END--

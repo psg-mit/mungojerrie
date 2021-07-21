@@ -1,0 +1,20 @@
+// Simple MDP model.
+
+mdp
+
+label "p" = x = 0;
+label "q" = x = 0 | x = 2;
+
+module mdp1
+  x : [0..2] init 0;
+
+  [] x=0 -> 0.5 : (x'=1) + 0.5 : (x'=2);
+  [] x=1 -> (x'=1);
+  [] x=2 -> (x'=2);
+endmodule
+
+rewards
+  [] x=0 : 0;
+  [] x=1 : 0.5;
+  [] x=2 : 0.6;
+endrewards

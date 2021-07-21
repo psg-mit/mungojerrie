@@ -1,0 +1,8 @@
+Input File is ../mungojerrie/examples/anothergrid.prism
+@ 0.00661091 s: the environment has 180 nodes, 36 of which are decision nodes.
+@ 0.445696 s: the NBA has 7 states (1 trap).
+@ 0.45323 s: the product has 1192 nodes, 252 of which are decision nodes.
+@ 0.45537 s: 4 WECs computed.
+@ 0.457534 s: reachability completed.
+@ 0.457575 s: probability of satisfaction: 1
+@ 0.458354 s: end

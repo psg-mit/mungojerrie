@@ -1,0 +1,17 @@
+Input File is ../mungojerrie/examples/boolConst.prism
+@ 0.0051546 s: the environment has 2 nodes, 2 of which are decision nodes.
+mdp
+
+const int x0 = 0; 
+const int x1 = 1; 
+
+module m
+  state : [0..1] init 0;
+  [_a0] state=x0 -> (state'=x1);
+  [_a0] state=x1 -> (state'=x0);
+endmodule
+rewards
+  [_a0] state=x0 : 0.25;
+  [_a0] state=x1 : 0.25;
+endrewards
+@ 0.00602754 s: end

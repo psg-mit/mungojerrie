@@ -1,0 +1,16 @@
+mdp
+
+const int ncols = 3;
+
+label "goal" = r=1 & c=ncols/2;
+label "hwalls" = r!=1;
+
+module cliffs
+  r : [0..2] init 1;
+  c : [0..ncols-1] init 0;
+
+  [n] true -> (r'=min(r+1,2));
+  [e] true -> (c'=min(c+1,ncols-1));
+  [s] true -> (r'=max(0,r-1));
+  [w] true -> (c'=max(0,c-1));
+endmodule

@@ -1,0 +1,26 @@
+// von Neumann's fair coin from biased coin modeled as a
+// discrete-time Markov chain.
+
+mdp
+
+const double phead = 0.6;
+const double ptail = 1 - phead;
+
+const int start=0;
+const int hd1=1;
+const int tl1=2;
+const int head=3;
+const int tail=4;
+
+label "head" = state=head;
+label "tail" = state=tail;
+
+module faircoin
+  state : [start..tail] init start;
+
+  [toss] state=start -> phead : (state'=hd1)   + ptail : (state'=tl1);
+  [toss] state=hd1   -> phead : (state'=start) + ptail : (state'=head);
+  [toss] state=tl1   -> ptail : (state'=start) + phead : (state'=tail);
+  [done] state=head  -> (state'=head);
+  [done] state=tail  -> (state'=tail);
+endmodule

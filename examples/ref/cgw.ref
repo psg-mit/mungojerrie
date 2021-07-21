@@ -1,0 +1,8 @@
+Input File is ../mungojerrie/examples/cgw.prism
+@ 0.00564938 s: the environment has 16 nodes, 16 of which are decision nodes.
+@ 0.856329 s: the NBA has 13 states (1 trap).
+@ 0.862633 s: the product has 99 nodes, 99 of which are decision nodes.
+@ 0.862806 s: 3 WECs computed.
+@ 0.862906 s: reachability completed.
+@ 0.86291 s: probability of satisfaction: 1
+@ 0.863603 s: end

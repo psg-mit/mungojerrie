@@ -1,0 +1,27 @@
+Input File is ../mungojerrie/examples/devious.prism
+@ 0.00596332 s: the environment has 14 nodes, 13 of which are decision nodes.
+@ 0.0125287 s: the DBA has 1 state (0 traps).
+@ 0.0182568 s: the product has 14 nodes, 13 of which are decision nodes.
+@ 0.0183537 s: strategy computed.
+@ 0.0183587 s: probability of satisfaction: 1
+digraph "Pruned Product" {
+node [shape=circle];
+"title" [label="Pruned Product",shape=plaintext];
+"0_init" [style=invis]
+"0_init" -> 0
+0 [label="b0n0, 0\n", shape=box];
+1 [label="b1n0, 0\ng", shape=box];
+3 [label="b1n1, 0\n", shape=box];
+6 [label="b1n2, 0\n", shape=box];
+8 [label="b1n3, 0\n", shape=box];
+10 [label="b1n4, 0\n", shape=box];
+12 [label="b1n5, 0\ng", shape=box];
+0 -> 1 [label=" a(0) "];
+1 -> 3 [label=" d(1) "];
+3 -> 6 [label=" e(0) "];
+6 -> 8 [label=" g(0) "];
+8 -> 10 [label=" g(0) "];
+10 -> 12 [label=" g(0) "];
+12 -> 1 [label=" g(1) "];
+}
+@ 0.0191717 s: end

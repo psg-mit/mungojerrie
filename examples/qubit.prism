@@ -1,0 +1,18 @@
+// Qubit model from "Probabilistic Model Checking of Quantum Protocols"
+// by Gay, Nagarajan, and Papanikolaou
+
+mdp
+
+label "Rzero" = result = 0;
+label "Rone"  = result = 1;
+
+// State encoding:  |0> : 0,   |1> : 1,   |+> : 2,   |-> : 3
+module qubit
+  state  : [0..3];
+  result : [0..1]; // Result of measurement in standard basis.
+
+  [hadamard] true    -> (state' = mod(state+2,4));
+  [measure]  state<2 -> (result' = state);
+  [measure]  state>1 -> 1/2 : (state' = 0) & (result' = 0) +
+                        1/2 : (state' = 1) & (result' = 1);
+endmodule

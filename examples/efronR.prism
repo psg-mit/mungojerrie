@@ -1,0 +1,58 @@
+// Model of Efron's nontransitive-dice game -- reverse choice order.
+//
+// There are four dice labeled thus:
+//   d0: 3 3 3 3 3 3
+//   d1: 0 0 4 4 4 4
+//   d2: 1 1 1 5 5 5
+//   d3: 2 2 2 2 6 6
+//
+// These four dice are such that d0 < d1 < d2 < d3 < d0.
+//
+// Each player picks one of the dice.  Then players roll their dice.  The
+// winner is the one who rolls the higher number.  What's the best die to
+// choose, if one must choose first and the opponent then chooses randomly,
+// to maximize the probability of victory?
+
+mdp
+
+label "victory" = s=4 & rb>ra;
+label "defeat"  = s=4 & rb<ra;
+label "tie"     = s=4 & rb=ra; // should be impossible
+
+module game
+  da : [0..3]; // probabilistic opponent's choice
+  db : [0..3]; // player'c choice
+  ra : [0..6]; // opponent's roll
+  rb : [0..6]; // player's roll
+
+  // Player picks one of the four dice.
+  [ch0]  s=0 -> (db'=0);
+  [ch1]  s=0 -> (db'=1);
+  [ch2]  s=0 -> (db'=2);
+  [ch3]  s=0 -> (db'=3);
+  // Probabilistic opponent picks one of the remaining three dice.
+  [move] s=1 -> 1/3 : (da'=mod(db+1,4)) + 1/3 : (da'=mod(db+2,4)) + 1/3 : (da'=mod(db+3,4));
+  // Player rolls.
+  [move] s=2 & db=0 -> (rb'=3);
+  [move] s=2 & db=1 -> 2/3 : (rb'=4) + 1/3 : (rb'=0);
+  [move] s=2 & db=2 -> 1/2 : (rb'=5) + 1/2 : (rb'=1);
+  [move] s=2 & db=3 -> 1/3 : (rb'=6) + 2/3 : (rb'=2);
+  // Probabilitic opponent rolls.
+  [move] s=3 & da=0 -> (ra'=3);
+  [move] s=3 & da=1 -> 2/3 : (ra'=4) + 1/3 : (ra'=0);
+  [move] s=3 & da=2 -> 1/2 : (ra'=5) + 1/2 : (ra'=1);
+  [move] s=3 & da=3 -> 1/3 : (ra'=6) + 2/3 : (ra'=2);
+  // Endgame.
+  [move] s=4 -> true;
+endmodule
+
+module stage
+  s : [0..4] init 0; // game stage
+
+  [ch0]  s=0 -> (s'=1);
+  [ch1]  s=0 -> (s'=1);
+  [ch2]  s=0 -> (s'=1);
+  [ch3]  s=0 -> (s'=1);
+  [move] s<4 -> (s'=s+1);
+  [move] s=4 -> true;
+endmodule

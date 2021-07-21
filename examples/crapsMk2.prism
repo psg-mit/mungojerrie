@@ -1,0 +1,39 @@
+// Markov chain to compute the probability of winning at a game of craps.
+//
+// In this model the only given probabilities are those of the outcomes of
+// rolling one die.
+
+mdp
+
+const int roll  = 0;
+const int count = 1;
+const int lose  = 2;
+const int win   = 3;
+
+label "win" = state=win;
+
+formula dsum = da + db;
+
+module control
+  state : [roll..win] init roll;
+  target : [0..10] init 0;
+
+  [roll] state=roll -> (state'=count);
+  [cnt]  state=count & target=0 & (dsum=7 | dsum=11) -> (state'=win);
+  [cnt]  state=count & target=0 & (dsum<4 | dsum=12) -> (state'=lose);
+  [cnt]  state=count & target=0 & (dsum>3 & dsum<11 & dsum!=7) ->
+         (target'=dsum) & (state'=roll);
+  [cnt]  state=count & target!=0 & dsum=7 -> (state'=lose); 
+  [cnt]  state=count & target=dsum -> (state'=win);
+  [cnt]  state=count & target!=0 & dsum!=7 & target!=dsum -> (state'=roll);
+  [none] state=win | state=lose -> true;
+endmodule
+
+module dieA
+  da : [1..6] init 1;
+
+  [roll] true -> 1/6 : (da'=1) + 1/6 : (da'=2) + 1/6 : (da'=3) +
+                 1/6 : (da'=4) + 1/6 : (da'=5) + 1/6 : (da'=6);
+endmodule
+
+module dieB=dieA [da=db] endmodule

@@ -1,0 +1,13 @@
+HOA: v1
+name: "FG !p1"
+States: 1
+Start: 0
+acc-name: parity max odd 3
+Acceptance: 3 Fin(2) & (Inf(1) | Fin(0))
+AP: 1 "p1"
+properties: deterministic complete colored trans-acc explicit-labels
+--BODY--
+State: 0 "only"
+ [!0] 0 {1}
+ [ 0] 0 {2}
+--END--
