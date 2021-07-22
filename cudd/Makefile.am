@@ -4,15 +4,15 @@ AM_CXXFLAGS = -std=c++11 $(AM_CFLAGS)
 noinst_LIBRARIES = libutil.a libst.a libmtr.a libepd.a libcudd.a libobj.a
 
 libutil_a_SOURCES = cpu_stats.c cpu_time.c datalimit.c \
-  prtime.c safe_mem.c ucbqsort.c util.h cstringstream.c cstringstream.h
+  prtime.c safe_mem.c ucbqsort.c util.h cstringstream.c
 
-libst_a_SOURCES = st.h st.c
+libst_a_SOURCES = st.c
 
-libmtr_a_SOURCES = mtrBasic.c mtrGroup.c mtr.h mtrInt.h
+libmtr_a_SOURCES = mtrBasic.c mtrGroup.c
 
-libepd_a_SOURCES = epd.c epdInt.h epd.h
+libepd_a_SOURCES = epd.c
 
-libcudd_a_SOURCES = cudd.h cuddInt.h \
+libcudd_a_SOURCES = \
   cuddAPI.c cuddAddAbs.c cuddAddApply.c cuddAddFind.c cuddAddIte.c \
   cuddAddInv.c cuddAddNeg.c cuddAddWalsh.c cuddAndAbs.c \
   cuddAnneal.c cuddApa.c cuddApprox.c cuddBddAbs.c cuddBddCorr.c \
@@ -29,7 +29,18 @@ libcudd_a_SOURCES = cudd.h cuddInt.h \
   cuddZddPort.c cuddZddReord.c cuddZddSetop.c cuddZddSymm.c \
   cuddZddUtil.c
 
-libobj_a_SOURCES = cuddObj.cc cuddObj.hh
+libobj_a_SOURCES = cuddObj.cc 
+
+include_HEADERS = \
+  st.h \
+  cudd.h \
+  cuddInt.h \
+  cuddObj.hh \
+  epdInt.h \
+  epd.h \
+  mtr.h \
+  mtrInt.h \
+  cstringstream.h
 
 check_PROGRAMS = testmtr testcudd testextra testobj
 check_SCRIPTS = test_mtr.test test_cudd.test

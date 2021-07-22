@@ -1,16 +1,17 @@
 Pparser_sources = \
-  Pparser/Pwrapper.hh \
   Pparser/Pparser.yy \
   Pparser/Pscanner.ll \
-  Pparser/Past.hh \
-  Pparser/Pdriver.hh \
   Pparser/Pdriver.cc
 
-mungojerrie_SOURCES += $(Pparser_sources)
+Pparser_headers = \
+  Pparser/Pwrapper.hh \
+  Pparser/Past.hh \
+  Pparser/Pdriver.hh
+
+libmungojerrie_la_SOURCES += $(Pparser_sources)
 BUILT_SOURCES += Pparser/Pparser.hh Pparser/Pparser.cc
 
-testModel_SOURCES += $(Pparser_sources)
-testProduct_SOURCES += $(Pparser_sources)
+include_HEADERS += $(Pparser_headers)
 
 AM_LFLAGS = -o$(LEX_OUTPUT_ROOT).c
 AM_CPPFLAGS += -I$(srcdir)/Pparser -IPparser

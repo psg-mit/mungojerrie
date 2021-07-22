@@ -1,11 +1,14 @@
 Model_sources = \
-  Model/Model.hh \
   Model/Model.cc \
   Model/ModelCheck.cc \
-  Model/ModelGames.cc \
+  Model/ModelGames.cc
+
+Model_headers = \
+  Model/Model.hh \
   Model/ModelOptions.hh
 
-mungojerrie_SOURCES += $(Model_sources)
+libmungojerrie_la_SOURCES += $(Model_sources)
+include_HEADERS += $(Model_headers)
 
 AM_CPPFLAGS += -I$(srcdir)/Model -IModel
 
@@ -13,13 +16,10 @@ check_PROGRAMS += testModel testProduct
 TESTS += testModel testProduct
 
 testModel_SOURCES = \
-  Model/testModel.cc \
-  $(Model_sources) \
-  $(LTS_sources) \
-  $(Util_sources)
+  Model/testModel.cc
 
 testProduct_SOURCES = \
-  Model/testProduct.cc \
-  $(Model_sources) \
-  $(LTS_sources) \
-  $(Util_sources)
+  Model/testProduct.cc
+
+testModel_LDADD = libmungojerrie.la
+testProduct_LDADD = libmungojerrie.la

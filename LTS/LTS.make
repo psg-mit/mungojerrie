@@ -1,12 +1,15 @@
 LTS_sources = \
-  LTS/LTS.hh \
   LTS/LTS.cc \
-  LTS/Parity.hh \
   LTS/Parity.cc \
-  LTS/Stree.hh \
   LTS/Stree.cc
 
-mungojerrie_SOURCES += $(LTS_sources)
+LTS_headers = \
+  LTS/LTS.hh \
+  LTS/Parity.hh \
+  LTS/Stree.hh
+
+libmungojerrie_la_SOURCES += $(LTS_sources)
+include_HEADERS += $(LTS_headers)
 
 AM_CPPFLAGS += -I$(srcdir)/LTS -ILTS
 
@@ -14,9 +17,7 @@ check_PROGRAMS += testLTS
 TESTS += testLTS
 
 testLTS_SOURCES = \
-  LTS/testLTS.cc \
-  $(LTS_sources) \
-  $(Util_sources)
+  LTS/testLTS.cc
 
 testLTS_LDADD = cudd/libobj.a cudd/libcudd.a cudd/libepd.a cudd/libmtr.a \
-  cudd/libst.a cudd/libutil.a
+  cudd/libst.a cudd/libutil.a libmungojerrie.la

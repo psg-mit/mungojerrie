@@ -69,6 +69,7 @@ AC_ARG_WITH([owl],
   ],
   [want_owl="yes"])
 
+
 # Checks for programs.
 # Set our own default (instead of "-g -O2") unless CXXFLAGS is already defined.
 : ${CXXFLAGS="-g -O3"}
@@ -92,6 +93,9 @@ if test -z "$DOXYGEN"; then
 fi
 AM_CONDITIONAL([HAVE_DOXYGEN],[test -n "$DOXYGEN"])
 AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([Doxyfile])])
+
+LT_INIT
+AM_PROG_LIBTOOL
 
 # Checks for libraries.
 AX_BOOST_BASE(

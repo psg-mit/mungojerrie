@@ -1,9 +1,14 @@
 SUBDIRS = cudd
 ACLOCAL_AMFLAGS = -I m4
 bin_PROGRAMS = mungojerrie
+lib_LTLIBRARIES = libmungojerrie.la
 
 mungojerrie_SOURCES =
+libmungojerrie_la_SOURCES =
 BUILT_SOURCES =
+
+include_HEADERS =
+
 AM_CPPFLAGS = @AM_CPPFLAGS@
 check_PROGRAMS =
 check_SCRIPTS =
@@ -15,7 +20,7 @@ DISTCLEANFILES =
 TEST_LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) \
   $(top_srcdir)/build-aux/tap-driver.sh
 
-LDADD = $(BOOST_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIB) \
+libmungojerrie_la_LIBADD = $(BOOST_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIB) \
   cudd/libobj.a cudd/libcudd.a cudd/libepd.a cudd/libmtr.a \
   cudd/libst.a cudd/libutil.a \
   $(OR_TOOLS_LDFLAGS) $(OR_TOOLS_LIB) \
@@ -31,7 +36,6 @@ do_subst = sed \
   -e 's,[@]HAVE_OWL[@],$(HAVE_OWL),g' \
   -e 's,[@]HAVE_LIBORTOOLS[@],$(HAVE_LIBORTOOLS),g'
 
-include $(top_srcdir)/Main/Main.make
 include $(top_srcdir)/Util/Util.make
 include $(top_srcdir)/LTS/LTS.make
 include $(top_srcdir)/Model/Model.make
@@ -39,6 +43,10 @@ include $(top_srcdir)/Pparser/Pparser.make
 include $(top_srcdir)/Hparser/Hparser.make
 include $(top_srcdir)/Gym/Gym.make
 include $(top_srcdir)/Learners/Learners.make
+
+mungojerrie_LDADD = libmungojerrie.la
+
+include $(top_srcdir)/Main/Main.make
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) -I$(top_srcdir)/cudd -DUSE_GLOP $(OR_TOOLS_CPPFLAGS)
 
@@ -53,7 +61,7 @@ dist-hook:
 
 if HAVE_DOXYGEN
 
-html/index.html: Doxyfile README.md $(mungojerrie_SOURCES) $(testSet_SOURCES) $(testLTS_SOURCES) $(testModel_SOURCES) $(testProduct_SOURCES)
+html/index.html: Doxyfile README.md $(mungojerrie_SOURCES) $(libmungojerrie_la_SOURCES) $(testSet_SOURCES) $(testLTS_SOURCES) $(testModel_SOURCES) $(testProduct_SOURCES)
 	@if $(AM_V_P); then dest='2>&1'; else dest='> /dev/null 2>&1'; fi; \
 	eval "$(DOXYGEN) $< $${dest}"
 

@@ -1,10 +1,13 @@
 Util_sources = \
-  Util/Set.hh \
-  Util/State.hh \
-  Util/Util.hh \
   Util/Util.cc
 
-mungojerrie_SOURCES += $(Util_sources)
+Util_headers = \
+  Util/Set.hh \
+  Util/State.hh \
+  Util/Util.hh
+
+libmungojerrie_la_SOURCES += $(Util_sources)
+include_HEADERS += $(Util_headers)
 
 AM_CPPFLAGS += -I$(srcdir)/Util -IUtil
 
@@ -12,14 +15,11 @@ check_PROGRAMS += testSet testUtil
 TESTS += testSet testUtil
 
 testSet_SOURCES = \
-  Util/testSet.cc \
-  Util/Set.hh
+  Util/testSet.cc
 
-testSet_LDADD =
+testSet_LDADD = libmungojerrie.la
 
 testUtil_SOURCES = \
-  Util/testUtil.cc \
-  Util/Util.hh \
-  Util/Util.cc
+  Util/testUtil.cc
 
-testUtil_LDADD =
+testUtil_LDADD = libmungojerrie.la

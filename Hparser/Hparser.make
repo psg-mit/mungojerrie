@@ -1,6 +1,8 @@
 Hparser_sources = \
+  Hparser/Hparser.cc
+
+Hparser_headers = \
   Hparser/Hparser.hh \
-  Hparser/Hparser.cc \
   Hparser/cpphoafparser/ast/atom_acceptance.hh \
   Hparser/cpphoafparser/ast/atom_label.hh \
   Hparser/cpphoafparser/ast/boolean_expression.hh \
@@ -22,10 +24,7 @@ Hparser_sources = \
   Hparser/cpphoafparser/util/acceptance_repository_standard.hh \
   Hparser/cpphoafparser/util/implicit_edge_helper.hh
 
-mungojerrie_SOURCES += $(Hparser_sources)
-testLTS_SOURCES += $(Hparser_sources)
-testModel_SOURCES += $(Hparser_sources)
-testProduct_SOURCES += $(Hparser_sources)
+libmungojerrie_la_SOURCES += $(Hparser_sources)
+include_HEADERS += $(Hparser_headers)
 
 AM_CPPFLAGS += -I$(srcdir)/Hparser -IHparser
-
