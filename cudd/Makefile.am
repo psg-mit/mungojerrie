@@ -1,18 +1,18 @@
 AM_CFLAGS =
 AM_CXXFLAGS = -std=c++11 $(AM_CFLAGS)
 
-noinst_LIBRARIES = libutil.a libst.a libmtr.a libepd.a libcudd.a libobj.a
+noinst_LTLIBRARIES = libutil.la libst.la libmtr.la libepd.la libcudd.la libobj.la
 
-libutil_a_SOURCES = cpu_stats.c cpu_time.c datalimit.c \
+libutil_la_SOURCES = cpu_stats.c cpu_time.c datalimit.c \
   prtime.c safe_mem.c ucbqsort.c util.h cstringstream.c
 
-libst_a_SOURCES = st.c
+libst_la_SOURCES = st.c
 
-libmtr_a_SOURCES = mtrBasic.c mtrGroup.c
+libmtr_la_SOURCES = mtrBasic.c mtrGroup.c
 
-libepd_a_SOURCES = epd.c
+libepd_la_SOURCES = epd.c
 
-libcudd_a_SOURCES = \
+libcudd_la_SOURCES = \
   cuddAPI.c cuddAddAbs.c cuddAddApply.c cuddAddFind.c cuddAddIte.c \
   cuddAddInv.c cuddAddNeg.c cuddAddWalsh.c cuddAndAbs.c \
   cuddAnneal.c cuddApa.c cuddApprox.c cuddBddAbs.c cuddBddCorr.c \
@@ -29,7 +29,7 @@ libcudd_a_SOURCES = \
   cuddZddPort.c cuddZddReord.c cuddZddSetop.c cuddZddSymm.c \
   cuddZddUtil.c
 
-libobj_a_SOURCES = cuddObj.cc 
+libobj_la_SOURCES = cuddObj.cc 
 
 include_HEADERS = \
   st.h \
@@ -46,16 +46,16 @@ check_PROGRAMS = testmtr testcudd testextra testobj
 check_SCRIPTS = test_mtr.test test_cudd.test
 
 testmtr_SOURCES = testmtr.c
-testmtr_LDADD = libmtr.a libutil.a
+testmtr_LDADD = libmtr.la libutil.la
 
 testcudd_SOURCES = testcudd.c
-testcudd_LDADD = libcudd.a libst.a libepd.a $(testmtr_LDADD)
+testcudd_LDADD = libcudd.la libst.la libepd.la $(testmtr_LDADD)
 
 testextra_SOURCE = testextra.c
 testextra_LDADD = $(testcudd_LDADD)
 
 testobj_SOURCES = testobj.cc
-testobj_LDADD = libobj.a $(testcudd_LDADD)
+testobj_LDADD = libobj.la $(testcudd_LDADD)
 
 dist_check_DATA = test.groups r7x8.1.mat
 EXTRA_DIST = test_mtr.test.in test_cudd.test.in

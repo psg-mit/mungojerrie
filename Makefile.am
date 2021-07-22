@@ -21,8 +21,8 @@ TEST_LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) \
   $(top_srcdir)/build-aux/tap-driver.sh
 
 libmungojerrie_la_LIBADD = $(BOOST_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIB) \
-  cudd/libobj.a cudd/libcudd.a cudd/libepd.a cudd/libmtr.a \
-  cudd/libst.a cudd/libutil.a \
+  cudd/libobj.la cudd/libcudd.la cudd/libepd.la cudd/libmtr.la \
+  cudd/libst.la cudd/libutil.la \
   $(OR_TOOLS_LDFLAGS) $(OR_TOOLS_LIB) \
   $(BOOST_SERIALIZATION_LIB) \
   $(BOOST_FILESYSTEM_LIB) \
