@@ -49,6 +49,7 @@ mungojerrie_LDADD = libmungojerrie.la
 include $(top_srcdir)/Main/Main.make
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS) -I$(top_srcdir)/cudd -DUSE_GLOP $(OR_TOOLS_CPPFLAGS)
+AM_CXXFLAGS += $(OPENMP_CXXFLAGS)
 
 TESTS += $(check_SCRIPTS)
 CLEANFILES += $(check_SCRIPTS)

@@ -217,7 +217,7 @@ GymAction getRandomAction(vector<GymAction> const & actions,
     return actions[Util::sample_discrete_distribution(dist)];
 }
 
-void Learner::SarsaLambda(double lambda, bool replacingTrace, unsigned int numEpisodes,
+std::map<double, double> Learner::SarsaLambda(double lambda, bool replacingTrace, unsigned int numEpisodes,
                        double alpha, double linearAlphaDecay, double discount, 
                        double epsilon, double linearExploreDecay, double initValue)
 {
@@ -377,21 +377,25 @@ void Learner::SarsaLambda(double lambda, bool replacingTrace, unsigned int numEp
   if (saveStratFilename != "") {
     gym.saveStrat(Q, saveStratFilename);
   }
-  if (dotLearn) {
-    gym.printDotLearn(Q, dotLearnFilename);
-  } else if (prismLearn) {
-    gym.printPrismLearn(Q, prismLearnFilename);
-  } else {
-    auto probs = gym.getProbabilityOfSat(Q, statsOn);
-    for (auto it : probs)
-      cout << "Probability for tol " << it.first << " is: " << it.second << endl;
-  }
   if (saveQFilename != "") {
     gym.saveQ(Q, "SarsaLambda", saveQFilename);
   }
+  if (dotLearn) {
+    gym.printDotLearn(Q, dotLearnFilename);
+  }
+  if (prismLearn) {
+    gym.printPrismLearn(Q, prismLearnFilename);
+  }
+
+  auto probs = gym.getProbabilityOfSat(Q, statsOn);
+  if (verbosity > Verbosity::Informative) {
+    for (auto it : probs)
+      cout << "Probability for tol " << it.first << " is: " << it.second << endl;
+  }
+  return probs;
 }
 
-void Learner::DoubleQLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay, 
+std::map<double, double> Learner::DoubleQLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay, 
                               double discount, double epsilon, double linearExploreDecay, double initValue)
 {
   if (isBDP)
@@ -573,21 +577,25 @@ void Learner::DoubleQLearning(unsigned int numEpisodes, double alpha, double lin
   if (saveStratFilename != "") {
     gym.saveStrat(Qsum, saveStratFilename);
   }
-  if (dotLearn) {
-    gym.printDotLearn(Qsum, dotLearnFilename);
-  } else if (prismLearn) {
-    gym.printPrismLearn(Qsum, prismLearnFilename);
-  } else {
-    auto probs = gym.getProbabilityOfSat(Qsum, statsOn);
-    for (auto it : probs)
-      cout << "Probability for tol " << it.first << " is: " << it.second << endl;
-  }
   if (saveQFilename != "") {
     gym.saveQ(Q1, Q2, "DoubleQLearning", saveQFilename);
   }
+  if (dotLearn) {
+    gym.printDotLearn(Qsum, dotLearnFilename);
+  }
+  if (prismLearn) {
+    gym.printPrismLearn(Qsum, prismLearnFilename);
+  }
+  
+  auto probs = gym.getProbabilityOfSat(Qsum, statsOn);
+  if (verbosity > Verbosity::Informative) {
+    for (auto it : probs)
+      cout << "Probability for tol " << it.first << " is: " << it.second << endl;
+  }
+  return probs;
 }
 
-void Learner::QLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay,
+std::map<double, double> Learner::QLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay,
                         double discount, double epsilon, double linearExploreDecay, double initValue)
 {
   Qtype Q;
@@ -798,27 +806,31 @@ void Learner::QLearning(unsigned int numEpisodes, double alpha, double linearAlp
     else 
       gym.saveStrat(Q, saveStratFilename);
   }
-  
+  if (saveQFilename != "") {
+    gym.saveQ(Q, "QLearning", saveQFilename);
+  }
+
   if (dotLearn) {
     gym.printDotLearn(Q, dotLearnFilename);
-  } else if (prismLearn) {
+  }
+  if (prismLearn) {
     gym.printPrismLearn(Q, prismLearnFilename);
+  }
+
+  if (isBDP) {
+    cout << "Total cost (Q-value) from the initial state is: ";
+    auto info = gym.reset();
+    if (Q.find(info.observation) == Q.end())
+      cout << initValue << endl;
+    else
+      cout << Q[info.observation][(getMinAction(info.observation, Q, info.player))] << endl;
+    return {}; // TODO(camyang): what to do here?
   } else {
-    if (isBDP) {
-      cout << "Total cost (Q-value) from the initial state is: ";
-      auto info = gym.reset();
-      if (Q.find(info.observation) == Q.end())
-        cout << initValue << endl;
-      else
-        cout << Q[info.observation][(getMinAction(info.observation, Q, info.player))] << endl;
-    } else {
-      auto probs = gym.getProbabilityOfSat(Q, statsOn);
+    auto probs = gym.getProbabilityOfSat(Q, statsOn);
+    if (verbosity > Verbosity::Informative) {
       for (auto it : probs)
         cout << "Probability for tol " << it.first << " is: " << it.second << endl;
     }
-  }
-  
-  if (saveQFilename != "") {
-    gym.saveQ(Q, "QLearning", saveQFilename);
+    return probs;
   }
 }

@@ -42,6 +42,7 @@
 
 #include <fstream>
 #include <stdexcept>
+#include <omp.h>
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #include <boost/filesystem.hpp>
@@ -561,6 +562,83 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
                             discount, explore, linearExploreDecay, initValue);
   }
 }
+
+template <typename T>
+static void check_set_option(CommandLineOptions const & options, std::string field_name, T expected, T& set)
+{
+  if (options.options().count(field_name)) {
+    cerr << "Warning: ignoring command line option " << 
+    field_name << " and setting it to " << expected << endl;
+  }
+  set = expected;
+}
+
+void estimatePACProbability(CommandLineOptions const & options, Model const & model, Parity const & objective)
+{
+
+  GymOptions gymOptions;
+  gymOptions.episodeLength = options.options()["ep-length"].as<unsigned int>();
+  gymOptions.zeta = options.options()["zeta"].as<double>();
+  gymOptions.tolerance = options.options()["tolerance"].as<vector<double>>();
+  gymOptions.priEpsilon = options.options()["pri-epsilon"].as<double>();
+  gymOptions.gammaB = options.options()["gammaB"].as<double>();
+  gymOptions.rewardType = options.getRewardType();
+  gymOptions.noResetOnAcc = options.options().count("no-reset-on-acc");
+  gymOptions.terminalUpdateOnTimeLimit = options.options().count("terminal-update-on-time-limit");
+  gymOptions.p1NotStrategic = options.options().count("player-1-not-strategic");
+  gymOptions.concatActionsInCSV = options.options().count("concat-actions-in-csv");
+  Gym gym(model, objective, gymOptions);
+
+  LearnerOptions learnerOptions;
+
+  learnerOptions.isBDP = model.isBDP();
+  learnerOptions.dotLearn = false;
+  if (learnerOptions.dotLearn) learnerOptions.dotLearnFilename = options.options()["dot-learn"].as<string>();
+  else learnerOptions.dotLearnFilename ="-";
+
+  learnerOptions.prismLearn = (bool) options.options().count("prism-learn");
+  if (learnerOptions.prismLearn) learnerOptions.prismLearnFilename = options.options()["prism-learn"].as<string>();
+  else learnerOptions.prismLearnFilename = "-";
+
+  check_set_option<Verbosity::Level>(options, "verbosityLevel", 
+    (Verbosity::Level) 0, learnerOptions.verbosity);
+  check_set_option<bool>(options, "learn-stats", false, learnerOptions.statsOn);
+  check_set_option<string>(options, "save-q", "", learnerOptions.saveQFilename);
+  check_set_option<string>(options, "load-q", "", learnerOptions.loadQFilename);
+  check_set_option<double>(options, "checkpoint-freq", 0, learnerOptions.checkpointFreq);
+  check_set_option<string>(options, "save-learner-strategy", "", learnerOptions.saveStratFilename);
+  check_set_option<bool>(options, "progress-bar", false, learnerOptions.progressBar);
+
+  Learner learner(gym, learnerOptions);
+
+  unsigned int episodeNumber = options.options()["ep-number"].as<unsigned int>();
+  double discount = options.options()["discount"].as<double>();
+  double explore = options.options()["explore"].as<double>();
+  double alpha = options.options()["alpha"].as<double>();
+  double initValue = options.options()["init-value"].as<double>();
+  double linearAlphaDecay = options.options()["linear-lr-decay"].as<double>();
+  double linearExploreDecay = options.options()["linear-explore-decay"].as<double>();
+
+  unsigned int num_samples = options.options()["est-pac-probability-num-samples"].as<unsigned int>();
+  
+  #pragma omp parallel default(shared) firstprivate(learner)
+  {
+    if (options.options().count("seed")) {
+      unsigned int tid = omp_get_thread_num();
+      Util::seed_urng(options.options()["seed"].as<unsigned int>() + tid);
+    } else {
+      Util::seed_urng();
+    }
+
+    #pragma omp for
+    for(unsigned int i = 0; i < num_samples; i++) {
+      auto probs = learner.QLearning(episodeNumber, alpha, linearAlphaDecay, 
+        discount, explore, linearExploreDecay, initValue);
+
+    }
+  }
+}
+
 
 void printObjectiveStats(Parity const & objective)
 {

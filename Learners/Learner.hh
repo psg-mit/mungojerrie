@@ -87,7 +87,7 @@ public:
    *  to over the course of learning. Negative values indicate no decay. 
    *  @param initValue The value to initialize the Q-table to.
    */
-  void SarsaLambda(double lambda, bool replacingTrace, unsigned int numEpisodes,
+  std::map<double, double> SarsaLambda(double lambda, bool replacingTrace, unsigned int numEpisodes,
                 double alpha, double linearAlphaDecay, double discount, 
                 double epsilon, double linearExploreDecay, double initValue);
   /** @brief Runs the Double Q-learning algorithm. 
@@ -103,7 +103,7 @@ public:
    *  to over the course of learning. Negative values indicate no decay. 
    *  @param initValue The value to initialize the Q-table to.
    */
-  void DoubleQLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay, 
+  std::map<double, double> DoubleQLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay, 
                        double discount, double epsilon, double linearExploreDecay, double initValue);
   /** @brief Runs the Q-learning algorithm. 
    *  @param numEpisodes The number of episodes to train for.
@@ -118,7 +118,7 @@ public:
    *  to over the course of learning. Negative values indicate no decay. 
    *  @param initValue The value to initialize the Q-table to.
    */
-  void QLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay, 
+  std::map<double, double> QLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay, 
                  double discount, double epsilon, double linearExploreDecay, double initValue);
 private:
   Gym gym;

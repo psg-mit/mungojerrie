@@ -86,6 +86,8 @@ AC_LANG([C++])
 : ${AM_CXXFLAGS="-Wall -Wextra -std=c++14 -pedantic"}
 : ${AM_CFLAGS="-Wall -Wextra -std=c11 -pedantic"}
 
+AC_OPENMP
+
 # Building documentation requires doxygen.
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
 if test -z "$DOXYGEN"; then
