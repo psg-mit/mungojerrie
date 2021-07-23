@@ -181,7 +181,7 @@ int main(int argc, char * argv[])
         }
       }
       if (options.learnEnabled()) {
-        if (options.options().count("est-pac-probability-num-samples")) {
+        if (options.options()["est-pac-probability-num-samples"].as<unsigned int>() > 0) {
           estimatePACProbability(options, model, objective);
         } else {
           doLearning(options, model, objective);
@@ -193,7 +193,7 @@ int main(int argc, char * argv[])
         if (options.options().count("prism-learn")) {
           cerr << "Warning: --prism-learn specified without --learn. Nothing to generate." << endl;
         }
-        if (options.options().count("est-pac-probability-num-samples")) {
+        if (options.options()["est-pac-probability-num-samples"].as<unsigned int>() > 0) {
           cerr << "Warning: --est-pac-probability-num-samples specified without --learn. Nothing to generate." << endl;
         }
       }
