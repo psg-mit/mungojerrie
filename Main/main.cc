@@ -80,6 +80,10 @@ void doModelChecking(CommandLineOptions const & options, Model const & prod);
  */
 void doLearning(CommandLineOptions const & options, Model const & model, Parity const & objective);
 /**
+ * @brief Estimates the PAC bound of the specified learning algorithm.
+ */
+void estimatePACProbability(CommandLineOptions const & options, Model const & model, Parity const & objective);
+/**
  * @brief Print statistics for the objective automaton.
  */
 void printObjectiveStats(Parity const & automaton);
@@ -176,15 +180,21 @@ int main(int argc, char * argv[])
           status = 1;
         }
       }
-      // Learn.
       if (options.learnEnabled()) {
-        doLearning(options, model, objective);
+        if (options.options().count("est-pac-probability-num-samples")) {
+          estimatePACProbability(options, model, objective);
+        } else {
+          doLearning(options, model, objective);
+        }
       } else {
         if (options.options().count("dot-learn")) {
           cerr << "Warning: --dot-learn specified without --learn. Nothing to generate." << endl;
         }
         if (options.options().count("prism-learn")) {
           cerr << "Warning: --prism-learn specified without --learn. Nothing to generate." << endl;
+        }
+        if (options.options().count("est-pac-probability-num-samples")) {
+          cerr << "Warning: --est-pac-probability-num-samples specified without --learn. Nothing to generate." << endl;
         }
       }
     } else {
