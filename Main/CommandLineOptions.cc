@@ -213,6 +213,10 @@ CommandLineOptions::CommandLineOptions() : visible("mungojerrie Usage: \
      "Select learner [none, Q, DQ, SL]. Algorithms are Q-learning, "
      "Double Q-learning, and Sarsa(lambda).")
 
+    ("est-pac-probability-num-samples",
+     value<unsigned int>()->default_value(0),
+     "Number of samples for estimating PAC bound, where <=0 means don't estimate.")
+
     ("reward-type",
      value<std::string>()->default_value("default-type")->notifier(&checkRewardType),
      "Select reward function [default-type, prism, zeta-reach, zeta-acc, zeta-discount, "
