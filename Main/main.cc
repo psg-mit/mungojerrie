@@ -585,16 +585,21 @@ static void check_set_option(CommandLineOptions const & options, std::string fie
 
 void estimatePACProbability(CommandLineOptions const & options)
 {
+  omp_lock_t initlock;
+  omp_init_lock(&initlock);
+  
   #pragma omp parallel
   {
     Cudd mgr;
     ModelOptions modelOptions;
     options.fillModelOptions(modelOptions);
+    omp_set_lock(&initlock);
     Model model(mgr, options.inputFile(), options.verbosity(),
                 modelOptions);
     Parity objective{mgr};
     getAutomaton(mgr, options, objective);
-        
+    omp_unset_lock(&initlock);
+    
     GymOptions gymOptions;
     gymOptions.episodeLength = options.options()["ep-length"].as<unsigned int>();
     gymOptions.zeta = options.options()["zeta"].as<double>();
