@@ -652,7 +652,7 @@ void estimatePACProbability(CommandLineOptions const & options)
       Util::seed_urng();
     }
 
-    #pragma omp for
+    #pragma omp for nowait
     for(unsigned int i = 0; i < num_samples; i++) {
       auto probs = learner.QLearning(episodeNumber, alpha, linearAlphaDecay, 
         discount, explore, linearExploreDecay, initValue);
