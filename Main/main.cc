@@ -583,29 +583,32 @@ static void check_set_option(CommandLineOptions const & options, std::string fie
   set = expected;
 }
 
-void estimatePACProbability(CommandLineOptions const & options)
+void estimatePACProbability(CommandLineOptions const & options, Model const & model, Parity const & objective)
 {
   omp_lock_t initlock;
   omp_init_lock(&initlock);
   
   std::map<double, int> within_eps_counts;
 
-  const double pac_target_prob;
+  ModelOptions modelOptions;
+  options.fillModelOptions(modelOptions);
+  
+  double pac_target_prob;
   {
     Model prod(model, objective, modelOptions);
     auto prob = prod.getProbabilityOfSat();
     pac_target_prob = prob.find(prod.getInitial())->second;
   }
 
-  const double pac_epsilon = options.options()["pac_epsilon"];
+  unsigned int num_samples = options.options()["est-pac-probability-num-samples"].as<unsigned int>();
+
+  const double pac_epsilon = options.options()["pac_epsilon"].as<double>();
 
   #pragma omp parallel shared(within_eps_counts)
   {
     Cudd mgr;
-    ModelOptions modelOptions;
-    options.fillModelOptions(modelOptions);
     omp_set_lock(&initlock);
-    Model model(mgr, options.inputFile(), options.verbosity(),
+    Model model(mgr, options.inputFile(), Verbosity::Silent,
                 modelOptions);
     Parity objective{mgr};
     getAutomaton(mgr, options, objective);
@@ -653,8 +656,6 @@ void estimatePACProbability(CommandLineOptions const & options)
     double initValue = options.options()["init-value"].as<double>();
     double linearAlphaDecay = options.options()["linear-lr-decay"].as<double>();
     double linearExploreDecay = options.options()["linear-explore-decay"].as<double>();
-
-    unsigned int num_samples = options.options()["est-pac-probability-num-samples"].as<unsigned int>();
     
     if (options.options().count("seed")) {
       unsigned int tid = omp_get_thread_num();
@@ -668,8 +669,8 @@ void estimatePACProbability(CommandLineOptions const & options)
       auto probs = learner.QLearning(episodeNumber, alpha, linearAlphaDecay, 
         discount, explore, linearExploreDecay, initValue);
       for (auto it : probs) {
-        if(abs(it->second - pac_target_prob) < pac_epsilon) {
-          int& cnt = within_eps_counts[it->first];
+        if(abs(it.second - pac_target_prob) < pac_epsilon) {
+          int& cnt = within_eps_counts[it.first];
           #pragma omp atomic
             cnt += 1;
         }
