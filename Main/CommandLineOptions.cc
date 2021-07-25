@@ -217,6 +217,10 @@ CommandLineOptions::CommandLineOptions() : visible("mungojerrie Usage: \
      value<unsigned int>()->default_value(0),
      "Number of samples for estimating PAC bound, where <=0 means don't estimate.")
 
+    ("pac_epsilon",
+     value<double>()->default_value(1e-3),
+     "The epsilon for estimating PAC probability.")
+
     ("reward-type",
      value<std::string>()->default_value("default-type")->notifier(&checkRewardType),
      "Select reward function [default-type, prism, zeta-reach, zeta-acc, zeta-discount, "

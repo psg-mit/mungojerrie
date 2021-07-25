@@ -588,7 +588,18 @@ void estimatePACProbability(CommandLineOptions const & options)
   omp_lock_t initlock;
   omp_init_lock(&initlock);
   
-  #pragma omp parallel
+  std::map<double, int> within_eps_counts;
+
+  const double pac_target_prob;
+  {
+    Model prod(model, objective, modelOptions);
+    auto prob = prod.getProbabilityOfSat();
+    pac_target_prob = prob.find(prod.getInitial())->second;
+  }
+
+  const double pac_epsilon = options.options()["pac_epsilon"];
+
+  #pragma omp parallel shared(within_eps_counts)
   {
     Cudd mgr;
     ModelOptions modelOptions;
@@ -656,10 +667,18 @@ void estimatePACProbability(CommandLineOptions const & options)
     for(unsigned int i = 0; i < num_samples; i++) {
       auto probs = learner.QLearning(episodeNumber, alpha, linearAlphaDecay, 
         discount, explore, linearExploreDecay, initValue);
-
+      for (auto it : probs) {
+        if(abs(it->second - pac_target_prob) < pac_epsilon) {
+          int& cnt = within_eps_counts[it->first];
+          #pragma omp atomic
+            cnt += 1;
+        }
+      }
     }
   }
-  
+  for (auto it : within_eps_counts) {
+    std::cout << it->first << ":" << (it->second / num_samples) << std::endl;
+  }
 }
 
 
