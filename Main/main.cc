@@ -576,10 +576,10 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
 template <typename T>
 static void check_set_option(CommandLineOptions const & options, std::string field_name, T expected, T& set)
 {
-  if (options.options().count(field_name)) {
-    cerr << "Warning: ignoring command line option " << 
-    field_name << " and setting it to " << expected << endl;
-  }
+  // if (options.options().count(field_name)) {
+  //   cerr << "Warning: ignoring command line option " << 
+  //   field_name << " and setting it to " << expected << endl;
+  // }
   set = expected;
 }
 
