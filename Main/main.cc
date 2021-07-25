@@ -678,7 +678,7 @@ void estimatePACProbability(CommandLineOptions const & options, Model const & mo
     }
   }
   for (auto it : within_eps_counts) {
-    std::cout << it->first << ":" << (it->second / num_samples) << std::endl;
+    std::cout << it.first << ":" << (it.second / num_samples) << std::endl;
   }
 }
 
