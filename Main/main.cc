@@ -82,7 +82,7 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
 /**
  * @brief Estimates the PAC bound of the specified learning algorithm.
  */
-void estimatePACProbability(CommandLineOptions const & options, Model const & model, Parity const & objective);
+void estimatePACProbability(CommandLineOptions options, Model const & model, Parity const & objective);
 /**
  * @brief Print statistics for the objective automaton.
  */
@@ -590,7 +590,7 @@ void estimatePACProbability(CommandLineOptions options, Model const & model, Par
   
   std::map<double, int> within_eps_counts;
 
-  options.verbosity = Verbosity::Silent;
+  options.options()["verbosityLevel"].as<Verbosity::Level> = Verbosity::Silent;
 
   ModelOptions modelOptions;
   options.fillModelOptions(modelOptions);
