@@ -590,7 +590,7 @@ void estimatePACProbability(CommandLineOptions options, Model const & model, Par
   
   std::map<double, int> within_eps_counts;
 
-  options.options().at("verbosityLevel").value() = Verbosity::Silent;
+  options.verbosity() = Verbosity::Silent;
 
   ModelOptions modelOptions;
   options.fillModelOptions(modelOptions);

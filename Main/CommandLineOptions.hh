@@ -85,8 +85,9 @@ public:
   /**
    * @brief Convert verbosity to enumerated type.
    */
-  Verbosity::Level verbosity() const { return (Verbosity::Level) verbosityLevel;
-}
+  Verbosity::Level verbosity() const { return (Verbosity::Level) verbosityLevel; }
+
+  Verbosity::Level& verbosity() { return (Verbosity::Level) verbosityLevel; }
 
   ModelOptions::ReachType reachSolver() const {
     if (varMap["reach-with"].as<std::string>() == std::string("glop"))
