@@ -583,16 +583,17 @@ static void check_set_option(CommandLineOptions const & options, std::string fie
   set = expected;
 }
 
-void estimatePACProbability(CommandLineOptions const & options, Model const & model, Parity const & objective)
+void estimatePACProbability(CommandLineOptions options, Model const & model, Parity const & objective)
 {
   omp_lock_t initlock;
   omp_init_lock(&initlock);
   
   std::map<double, int> within_eps_counts;
 
+  options.verbosity = Verbosity::Silent;
+
   ModelOptions modelOptions;
   options.fillModelOptions(modelOptions);
-  modelOptions.verbosity = Verbosity::Silent;
 
   double pac_target_prob;
   {
