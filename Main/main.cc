@@ -82,7 +82,7 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
 /**
  * @brief Estimates the PAC bound of the specified learning algorithm.
  */
-void estimatePACProbability(CommandLineOptions const & options);
+void estimatePACProbability(CommandLineOptions const & options, Model const & model, Parity const & objective);
 /**
  * @brief Print statistics for the objective automaton.
  */
@@ -182,7 +182,7 @@ int main(int argc, char * argv[])
       }
       if (options.learnEnabled()) {
         if (options.options()["est-pac-probability-num-samples"].as<unsigned int>() > 0) {
-          estimatePACProbability(options);
+          estimatePACProbability(options, model, objective);
         } else {
           doLearning(options, model, objective);
         }
