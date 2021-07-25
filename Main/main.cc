@@ -592,7 +592,8 @@ void estimatePACProbability(CommandLineOptions const & options, Model const & mo
 
   ModelOptions modelOptions;
   options.fillModelOptions(modelOptions);
-  
+  modelOptions.verbosity = Verbosity::Silent;
+
   double pac_target_prob;
   {
     Model prod(model, objective, modelOptions);
@@ -678,7 +679,7 @@ void estimatePACProbability(CommandLineOptions const & options, Model const & mo
     }
   }
   for (auto it : within_eps_counts) {
-    std::cout << it.first << ":" << (it.second / num_samples) << std::endl;
+    std::cout << it.first << ":" << (((double)it.second) / num_samples) << std::endl;
   }
 }
 
