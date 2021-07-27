@@ -108,22 +108,22 @@ int main(int argc, char * argv[])
     Cudd mgr;
     ModelOptions modelOptions;
     options.fillModelOptions(modelOptions);
-    Model model(mgr, options.inputFile(), options.verbosity(),
+    Model model(mgr, options.inputFile(), options.verbosity,
                 modelOptions);
-    if (options.verbosity() > Verbosity::Silent) {
+    if (options.verbosity > Verbosity::Silent) {
       Util::printElapsedTag();
 
       cout << " the environment has " << model.numNodes() << " nodes, "
            << model.numDecisionNodes() << " of which are decision nodes." << endl;
 
-      if (options.verbosity() > Verbosity::Terse) {
+      if (options.verbosity > Verbosity::Terse) {
         for (auto & nodeC : model.getNodeCounts()) {
           Util::printElapsedTag();
           cout << " player " << nodeC.first << " controls " << nodeC.second << " nodes." << endl;
         }
       }
 
-      if (options.verbosity() > Verbosity::Informative) {
+      if (options.verbosity > Verbosity::Informative) {
         cout << model;
       }
     }
@@ -158,12 +158,12 @@ int main(int argc, char * argv[])
           if (options.options().count("prism-product")) {
             prod.printPrism("m", options.options()["prism-product"].as<string>());
           }
-          if (options.verbosity() > Verbosity::Silent) {
+          if (options.verbosity > Verbosity::Silent) {
             Util::printElapsedTag();
             cout << " the product has " << prod.numNodes() << " nodes, "
                  << prod.numDecisionNodes() << " of which are decision nodes."
                  << endl;
-            if (options.verbosity() > Verbosity::Informative && !model.isGame()) {
+            if (options.verbosity > Verbosity::Informative && !model.isGame()) {
               auto pMECs = prod.getMECs();
               auto pWECs = prod.getWECs();
               cout << "Product MECs: " << pMECs << endl;
@@ -219,7 +219,7 @@ int main(int argc, char * argv[])
     status = 1;
   }
 
-  if (options.verbosity() > Verbosity::Silent) {
+  if (options.verbosity > Verbosity::Silent) {
     Util::printElapsedTag();
     cout << " end" << endl;
   }
@@ -236,7 +236,7 @@ int getOptions(int argc, char * argv[], CommandLineOptions & options)
     return 1;
   }
 
-  if (options.verbosity() > Verbosity::Terse) {
+  if (options.verbosity > Verbosity::Terse) {
     // Echo command line.
     cout << "#";
     for (int i = 0; i != argc; ++i)
@@ -250,10 +250,10 @@ void getAutomaton(Cudd & mgr, CommandLineOptions const & options, Parity & objec
 {
   if (options.options().count("parity")) {
     string parityFile = options.options()["parity"].as<string>();
-    if (options.verbosity() > Verbosity::Terse) {
+    if (options.verbosity > Verbosity::Terse) {
       cout << "Parity automaton file is " << parityFile << endl;
     }
-    objective = Parity(mgr, parityFile, options.verbosity());
+    objective = Parity(mgr, parityFile, options.verbosity);
   } else if (options.options().count("ltl") ||
              options.options().count("ltl-file")) {
     string automatonType = options.options()["automaton-type"].as<string>();
@@ -288,7 +288,7 @@ void getAutomaton(Cudd & mgr, CommandLineOptions const & options, Parity & objec
                   "--mj-automaton-type", "slim",
                   "--disable-greeting-message", "true", "--mj-quiet", "true",
                   bp::std_out > pipe_stream);
-      objective = Parity(mgr, pipe_stream, options.verbosity());
+      objective = Parity(mgr, pipe_stream, options.verbosity);
       c.wait();
       // Check the return value just to be safe.  In case of error, 
       // normally the HOA parser throws before this point is reached.
@@ -322,7 +322,7 @@ void getAutomaton(Cudd & mgr, CommandLineOptions const & options, Parity & objec
                   "--mj-automaton-type", "semi-deterministic",
                   "--disable-greeting-message", "true", "--mj-quiet", "true",
                   bp::std_out > pipe_stream);
-      objective = Parity(mgr, pipe_stream, options.verbosity());
+      objective = Parity(mgr, pipe_stream, options.verbosity);
       c.wait();
       // Check the return value just to be safe.  In case of error, 
       // normally the HOA parser throws before this point is reached.
@@ -346,7 +346,7 @@ void getAutomaton(Cudd & mgr, CommandLineOptions const & options, Parity & objec
       }
       bp::ipstream pipe_stream;
       bp::child c(OWL_PATH, command, ltlFormula, bp::std_out > pipe_stream);
-      objective = Parity(mgr, pipe_stream, options.verbosity());
+      objective = Parity(mgr, pipe_stream, options.verbosity);
       c.wait();
       // Check the return value just to be safe.  In case of error, 
       // normally the HOA parser throws before this point is reached.
@@ -372,7 +372,7 @@ void getAutomaton(Cudd & mgr, CommandLineOptions const & options, Parity & objec
       bp::child c(SPOT_PATH, command, ltlFormula,
                   "--colored-parity=max odd", "--deterministic", "--hoaf=t",
                   bp::std_out > pipe_stream);
-      objective = Parity(mgr, pipe_stream, options.verbosity());
+      objective = Parity(mgr, pipe_stream, options.verbosity);
       c.wait();
       // Check the return value just to be safe.  In case of error, 
       // normally the HOA parser throws before this point is reached.
@@ -388,19 +388,19 @@ void getAutomaton(Cudd & mgr, CommandLineOptions const & options, Parity & objec
   if (options.options().count("to-dpa") && !objective.hasEpsilonTransitions() &&
       !objective.isDeterministic()) {
     objective = objective.determinize();
-    if (options.verbosity() > Verbosity::Terse) {
+    if (options.verbosity > Verbosity::Terse) {
       Util::printElapsedTag();
       cout << " after determinization: " << objective.numStates()
            << " states" << endl;
     }
     unsigned maxPriority = objective.minimumIndex();
-    if (options.verbosity() > Verbosity::Terse) {
+    if (options.verbosity > Verbosity::Terse) {
       Util::printElapsedTag();
       cout << " after index reduction: " << maxPriority + 1
            << " priorities" << endl;
     }
     objective.stateMinimization();
-    if (options.verbosity() > Verbosity::Terse) {
+    if (options.verbosity > Verbosity::Terse) {
       Util::printElapsedTag();
       cout << " after state minimization: " << objective.numStates()
            << " states" << endl;
@@ -409,10 +409,10 @@ void getAutomaton(Cudd & mgr, CommandLineOptions const & options, Parity & objec
   if (options.options().count("to-ldba")) {
     objective = objective.toLDPW();
   }
-  if (options.verbosity() > Verbosity::Silent) {
+  if (options.verbosity > Verbosity::Silent) {
     Util::printElapsedTag();
     printObjectiveStats(objective);
-    if (options.verbosity() > Verbosity::Informative) {
+    if (options.verbosity > Verbosity::Informative) {
       cout << objective << endl;
     }
   }
@@ -429,13 +429,13 @@ void doModelChecking(CommandLineOptions const & options, Model const & prod)
   if (options.options().count("dot-mc") || 
       options.options().count("prism-mc") ||
       options.options().count("save-mc-strategy") ||
-      options.verbosity() > Verbosity::Informative) {
+      options.verbosity > Verbosity::Informative) {
       auto strategyResult = prod.getStrategy();
       
       if (strategyResult.strategy.size() == 0) return;
       // Problem does not have an optimal solution
 
-    if (options.verbosity() > Verbosity::Silent) {
+    if (options.verbosity > Verbosity::Silent) {
       Util::printElapsedTag();
       cout << " strategy computed." << endl;
       Util::printElapsedTag();
@@ -465,7 +465,7 @@ void doModelChecking(CommandLineOptions const & options, Model const & prod)
     if (options.options().count("prism-mc")) {
       prunedProd.printPrism("m", options.options()["prism-mc"].as<string>());
     }
-    if (options.verbosity() > Verbosity::Informative) {
+    if (options.verbosity > Verbosity::Informative) {
       cout << "Vals: " << strategyResult.vals << endl;
       cout << "Strategy: " << strategyResult.strategy << endl;
       set<Node> pTarget;
@@ -479,7 +479,7 @@ void doModelChecking(CommandLineOptions const & options, Model const & prod)
         cout << "Initial node included in player attractor to WECs." << endl;
     }
   } else {
-    if (options.verbosity() > Verbosity::Silent) {
+    if (options.verbosity > Verbosity::Silent) {
       
       auto prob = prod.getProbabilityOfSat();
       
@@ -529,7 +529,7 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
   if (learnerOptions.prismLearn) learnerOptions.prismLearnFilename = options.options()["prism-learn"].as<string>();
   else learnerOptions.prismLearnFilename = "-";
 
-  learnerOptions.verbosity = options.verbosity();
+  learnerOptions.verbosity = options.verbosity;
   learnerOptions.statsOn = (bool) options.options().count("learn-stats");
   learnerOptions.saveQFilename = options.options()["save-q"].as<string>();
   learnerOptions.loadQFilename = options.options()["load-q"].as<string>();
@@ -548,7 +548,7 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
   double linearExploreDecay = options.options()["linear-explore-decay"].as<double>();
 
   if (options.SLEnabled()) {
-    if (options.verbosity() > Verbosity::Silent) {
+    if (options.verbosity > Verbosity::Silent) {
       cout << endl << "--------Sarsa(lambda)--------" << endl;
     }
     double lambda = options.options()["lambda"].as<double>();
@@ -557,7 +557,7 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
                      discount, explore, linearExploreDecay, initValue); 
   }
   if (options.QEnabled()) {
-    if (options.verbosity() > Verbosity::Silent) {
+    if (options.verbosity > Verbosity::Silent) {
       cout << endl << "--------QLearning--------" << endl;
     }
     learner.QLearning(episodeNumber, alpha, linearAlphaDecay, 
@@ -565,7 +565,7 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
 
   }
   if (options.DQEnabled()) {
-    if (options.verbosity() > Verbosity::Silent) {
+    if (options.verbosity > Verbosity::Silent) {
       cout << endl << "--------DoubleQLearning--------" << endl;
     }
     learner.DoubleQLearning(episodeNumber, alpha, linearAlphaDecay, 
@@ -576,10 +576,10 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
 template <typename T>
 static void check_set_option(CommandLineOptions const & options, std::string field_name, T expected, T& set)
 {
-  // if (options.options().count(field_name)) {
-  //   cerr << "Warning: ignoring command line option " << 
-  //   field_name << " and setting it to " << expected << endl;
-  // }
+  if (options.options().count(field_name)) {
+    cerr << "Warning: ignoring command line option " << 
+    field_name << " and setting it to " << expected << endl;
+  }
   set = expected;
 }
 
@@ -590,10 +590,42 @@ void estimatePACProbability(CommandLineOptions options, Model const & model, Par
   
   std::map<double, int> within_eps_counts;
 
-  options.verbosity() = Verbosity::Silent;
+  options.verbosity = Verbosity::Silent;
 
   ModelOptions modelOptions;
   options.fillModelOptions(modelOptions);
+
+  GymOptions gymOptions;
+  gymOptions.episodeLength = options.options()["ep-length"].as<unsigned int>();
+  gymOptions.zeta = options.options()["zeta"].as<double>();
+  gymOptions.tolerance = options.options()["tolerance"].as<vector<double>>();
+  gymOptions.priEpsilon = options.options()["pri-epsilon"].as<double>();
+  gymOptions.gammaB = options.options()["gammaB"].as<double>();
+  gymOptions.rewardType = options.getRewardType();
+  gymOptions.noResetOnAcc = options.options().count("no-reset-on-acc");
+  gymOptions.terminalUpdateOnTimeLimit = options.options().count("terminal-update-on-time-limit");
+  gymOptions.p1NotStrategic = options.options().count("player-1-not-strategic");
+  gymOptions.concatActionsInCSV = options.options().count("concat-actions-in-csv");
+
+  LearnerOptions learnerOptions;
+
+  learnerOptions.isBDP = model.isBDP();
+  learnerOptions.dotLearn = false;
+  if (learnerOptions.dotLearn) learnerOptions.dotLearnFilename = options.options()["dot-learn"].as<string>();
+  else learnerOptions.dotLearnFilename ="-";
+
+  learnerOptions.prismLearn = (bool) options.options().count("prism-learn");
+  if (learnerOptions.prismLearn) learnerOptions.prismLearnFilename = options.options()["prism-learn"].as<string>();
+  else learnerOptions.prismLearnFilename = "-";
+
+  check_set_option<Verbosity::Level>(options, "verbosityLevel", 
+    (Verbosity::Level) 0, learnerOptions.verbosity);
+  check_set_option<bool>(options, "learn-stats", false, learnerOptions.statsOn);
+  check_set_option<string>(options, "save-q", "", learnerOptions.saveQFilename);
+  check_set_option<string>(options, "load-q", "", learnerOptions.loadQFilename);
+  check_set_option<double>(options, "checkpoint-freq", 0, learnerOptions.checkpointFreq);
+  check_set_option<string>(options, "save-learner-strategy", "", learnerOptions.saveStratFilename);
+  check_set_option<bool>(options, "progress-bar", false, learnerOptions.progressBar);
 
   double pac_target_prob;
   {
@@ -615,39 +647,8 @@ void estimatePACProbability(CommandLineOptions options, Model const & model, Par
     Parity objective{mgr};
     getAutomaton(mgr, options, objective);
     omp_unset_lock(&initlock);
-    
-    GymOptions gymOptions;
-    gymOptions.episodeLength = options.options()["ep-length"].as<unsigned int>();
-    gymOptions.zeta = options.options()["zeta"].as<double>();
-    gymOptions.tolerance = options.options()["tolerance"].as<vector<double>>();
-    gymOptions.priEpsilon = options.options()["pri-epsilon"].as<double>();
-    gymOptions.gammaB = options.options()["gammaB"].as<double>();
-    gymOptions.rewardType = options.getRewardType();
-    gymOptions.noResetOnAcc = options.options().count("no-reset-on-acc");
-    gymOptions.terminalUpdateOnTimeLimit = options.options().count("terminal-update-on-time-limit");
-    gymOptions.p1NotStrategic = options.options().count("player-1-not-strategic");
-    gymOptions.concatActionsInCSV = options.options().count("concat-actions-in-csv");
+
     Gym gym(model, objective, gymOptions);
-
-    LearnerOptions learnerOptions;
-
-    learnerOptions.isBDP = model.isBDP();
-    learnerOptions.dotLearn = false;
-    if (learnerOptions.dotLearn) learnerOptions.dotLearnFilename = options.options()["dot-learn"].as<string>();
-    else learnerOptions.dotLearnFilename ="-";
-
-    learnerOptions.prismLearn = (bool) options.options().count("prism-learn");
-    if (learnerOptions.prismLearn) learnerOptions.prismLearnFilename = options.options()["prism-learn"].as<string>();
-    else learnerOptions.prismLearnFilename = "-";
-
-    check_set_option<Verbosity::Level>(options, "verbosityLevel", 
-      (Verbosity::Level) 0, learnerOptions.verbosity);
-    check_set_option<bool>(options, "learn-stats", false, learnerOptions.statsOn);
-    check_set_option<string>(options, "save-q", "", learnerOptions.saveQFilename);
-    check_set_option<string>(options, "load-q", "", learnerOptions.loadQFilename);
-    check_set_option<double>(options, "checkpoint-freq", 0, learnerOptions.checkpointFreq);
-    check_set_option<string>(options, "save-learner-strategy", "", learnerOptions.saveStratFilename);
-    check_set_option<bool>(options, "progress-bar", false, learnerOptions.progressBar);
 
     Learner learner(gym, learnerOptions);
 
@@ -680,7 +681,7 @@ void estimatePACProbability(CommandLineOptions options, Model const & model, Par
     }
   }
   for (auto it : within_eps_counts) {
-    std::cout << it.first << ":" << (((double)it.second) / num_samples) << std::endl;
+    std::cout << "Probability for tol " << it.first << " is: " << (((double)it.second) / num_samples) << std::endl;
   }
 }
 

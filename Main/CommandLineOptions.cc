@@ -430,7 +430,7 @@ int CommandLineOptions::parseCommandLineOptions(int argc, char * argv[]) {
 
 void CommandLineOptions::fillModelOptions(ModelOptions & m) const
 {
-  m.verbosity = verbosity();
+  m.verbosity = verbosity;
   m.reachSolver = reachSolver();
   m.sspSolver = sspSolver();
   m.epsilon = options()["epsilon"].as<double>();

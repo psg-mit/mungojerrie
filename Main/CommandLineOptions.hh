@@ -82,13 +82,6 @@ public:
    */
   std::string const & inputFile() const { return inputFileName; }
 
-  /**
-   * @brief Convert verbosity to enumerated type.
-   */
-  Verbosity::Level verbosity() const { return (Verbosity::Level) verbosityLevel; }
-
-  Verbosity::Level& verbosity() { return (Verbosity::Level) verbosityLevel; }
-
   ModelOptions::ReachType reachSolver() const {
     if (varMap["reach-with"].as<std::string>() == std::string("glop"))
       return ModelOptions::ReachType::glop;
@@ -160,6 +153,14 @@ public:
       throw(std::runtime_error("Reward type invalid.")); 
   }
 
+  /**
+   * @brief Verbosity (integer and enum values).
+   */
+  union {
+    int verbosityLevel;
+    Verbosity::Level verbosity;
+  };
+
 private:
   boost::program_options::options_description visible;
   boost::program_options::options_description hidden;
@@ -174,10 +175,6 @@ private:
    */
   std::string inputFileName;
 
-  /**
-   * @brief Verbosity (integer value).
-   */
-  int verbosityLevel;
 
 };
 
