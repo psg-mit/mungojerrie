@@ -42,7 +42,9 @@
 
 #include <fstream>
 #include <stdexcept>
+#include <limits>
 #include <omp.h>
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #include <boost/filesystem.hpp>
@@ -181,7 +183,7 @@ int main(int argc, char * argv[])
         }
       }
       if (options.learnEnabled()) {
-        if (options.options()["est-pac-probability-num-samples"].as<unsigned int>() > 0) {
+        if (options.options().count("est-pac")) {
           estimatePACProbability(options, model, objective);
         } else {
           doLearning(options, model, objective);
@@ -583,12 +585,50 @@ static void check_set_option(CommandLineOptions const & options, std::string fie
   set = expected;
 }
 
+static inline double estimate_std(int within_eps_count, int num_samples) {
+  double p = ((double)within_eps_count) / num_samples;
+  return sqrt(p * (1 - p) / num_samples);
+}
+
+static inline double estimate_max_std(const std::map<double, int>& within_eps_counts, int num_samples) {
+  if(within_eps_counts.size() == 0) {
+    return std::numeric_limits<double>::max();
+  }
+  double max_var = 0;
+  for (auto it : within_eps_counts) {
+    double var = estimate_std(it.second, num_samples);
+    max_var = max(var, max_var);
+  }
+  return max_var;
+}
+
+static inline void _sync_counters(std::map<double, int>& within_eps_counts, 
+                                  std::map<double, int>& within_eps_counts_priv, 
+                                  std::map<double, int>& within_eps_counts_view,
+                                  int& num_samples, 
+                                  int& num_samples_priv, 
+                                  int& num_samples_view) 
+{
+  #pragma omp critical 
+  {
+    for (auto it : within_eps_counts_priv) {
+      within_eps_counts[it.first] += within_eps_counts_priv[it.first];
+      within_eps_counts_view[it.first] = within_eps_counts[it.first];
+      within_eps_counts_priv[it.first] = 0;
+    }
+    num_samples += num_samples_priv;
+    num_samples_view = num_samples;
+    num_samples_priv = 0;
+  }
+}
+
 void estimatePACProbability(CommandLineOptions options, Model const & model, Parity const & objective)
 {
   omp_lock_t initlock;
   omp_init_lock(&initlock);
   
   std::map<double, int> within_eps_counts;
+  int num_samples = 0;
 
   options.verbosity = Verbosity::Silent;
 
@@ -634,12 +674,18 @@ void estimatePACProbability(CommandLineOptions options, Model const & model, Par
     pac_target_prob = prob.find(prod.getInitial())->second;
   }
 
-  unsigned int num_samples = options.options()["est-pac-probability-num-samples"].as<unsigned int>();
+  unsigned int pac_min_samples = options.options()["est-pac-probability-min-samples"].as<unsigned int>();
+  double pac_max_std = options.options()["est-pac-max-std"].as<double>();
 
   const double pac_epsilon = options.options()["pac_epsilon"].as<double>();
 
-  #pragma omp parallel shared(within_eps_counts)
+  const unsigned int sync_interval = 4;
+
+  #pragma omp parallel shared(within_eps_counts, num_samples)
   {
+    const int num_threads = omp_get_num_threads();
+    unsigned int pac_min_samples_per_thread = (pac_min_samples + num_threads - 1) / num_threads;
+
     Cudd mgr;
     omp_set_lock(&initlock);
     Model model(mgr, options.inputFile(), Verbosity::Silent,
@@ -667,21 +713,36 @@ void estimatePACProbability(CommandLineOptions options, Model const & model, Par
       Util::seed_urng();
     }
 
-    #pragma omp for nowait
-    for(unsigned int i = 0; i < num_samples; i++) {
+    unsigned int i = 0;
+    std::map<double, int> within_eps_counts_priv;
+    std::map<double, int> within_eps_counts_view;
+    int num_samples_priv = 0;
+    int num_samples_view = 0;
+    while(i < pac_min_samples_per_thread || estimate_max_std(within_eps_counts_view, num_samples_view) > pac_max_std) {
       auto probs = learner.QLearning(episodeNumber, alpha, linearAlphaDecay, 
         discount, explore, linearExploreDecay, initValue);
       for (auto it : probs) {
         if(abs(it.second - pac_target_prob) < pac_epsilon) {
-          int& cnt = within_eps_counts[it.first];
-          #pragma omp atomic
-            cnt += 1;
+          within_eps_counts_priv[it.first] += 1;
+          within_eps_counts_view[it.first] += 1;
         }
+        num_samples_priv += 1;
+        num_samples_view += 1;
       }
+      if (i >= pac_min_samples_per_thread && (i + 1) % sync_interval == 0) {
+        _sync_counters(within_eps_counts, within_eps_counts_priv, within_eps_counts_view, 
+          num_samples, num_samples_priv, num_samples_view);
+      }
+      i += 1;
     }
+    _sync_counters(within_eps_counts, within_eps_counts_priv, within_eps_counts_view, 
+          num_samples, num_samples_priv, num_samples_view);
   }
+  std::cout << "Target probability is: " << pac_target_prob << std::endl;
+  std::cout << "Finished with " << num_samples << " number of samples" << std::endl;
   for (auto it : within_eps_counts) {
-    std::cout << "Probability for tol " << it.first << " is: " << (((double)it.second) / num_samples) << std::endl;
+    double est_std = estimate_std(it.second, num_samples);
+    std::cout << "PAC Probability for tol " << it.first << " is: " << (((double)it.second) / num_samples) << "±" << est_std << std::endl;
   }
 }
 

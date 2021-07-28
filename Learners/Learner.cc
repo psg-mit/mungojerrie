@@ -388,7 +388,7 @@ std::map<double, double> Learner::SarsaLambda(double lambda, bool replacingTrace
   }
 
   auto probs = gym.getProbabilityOfSat(Q, statsOn);
-  if (verbosity > Verbosity::Informative) {
+  if (verbosity >= Verbosity::Informative) {
     for (auto it : probs)
       cout << "Probability for tol " << it.first << " is: " << it.second << endl;
   }
@@ -588,7 +588,7 @@ std::map<double, double> Learner::DoubleQLearning(unsigned int numEpisodes, doub
   }
   
   auto probs = gym.getProbabilityOfSat(Qsum, statsOn);
-  if (verbosity > Verbosity::Informative) {
+  if (verbosity >= Verbosity::Informative) {
     for (auto it : probs)
       cout << "Probability for tol " << it.first << " is: " << it.second << endl;
   }
@@ -827,7 +827,7 @@ std::map<double, double> Learner::QLearning(unsigned int numEpisodes, double alp
     return {}; // TODO(camyang): what to do here?
   } else {
     auto probs = gym.getProbabilityOfSat(Q, statsOn);
-    if (verbosity > Verbosity::Informative) {
+    if (verbosity >= Verbosity::Informative) {
       for (auto it : probs)
         cout << "Probability for tol " << it.first << " is: " << it.second << endl;
     }

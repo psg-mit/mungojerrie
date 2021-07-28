@@ -213,9 +213,15 @@ CommandLineOptions::CommandLineOptions() : visible("mungojerrie Usage: \
      "Select learner [none, Q, DQ, SL]. Algorithms are Q-learning, "
      "Double Q-learning, and Sarsa(lambda).")
 
-    ("est-pac-probability-num-samples",
+    ("est-pac", "Enable estimation of PAC probability.")
+
+    ("est-pac-probability-min-samples",
      value<unsigned int>()->default_value(0),
-     "Number of samples for estimating PAC bound, where <=0 means don't estimate.")
+     "Number of samples for estimating PAC bound.")
+
+    ("est-pac-max-std",
+     value<double>()->default_value(1e-3),
+     "Maximum tolerable standard deviation for the estimation.")
 
     ("pac_epsilon",
      value<double>()->default_value(1e-3),
