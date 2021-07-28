@@ -45,6 +45,10 @@
 #include <algorithm>
 #include "Util.hh"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 using namespace std;
 
 namespace Util {
@@ -103,7 +107,11 @@ namespace Util {
   {
     using Device = random_device;
     thread_local static Device rdev{};
+#ifdef _OPENMP
     prngSeed = rdev();
+#elif
+    prngSeed = rdev() + omp_get_thread_num();
+#endif
     urng().seed(prngSeed);
   }
 
