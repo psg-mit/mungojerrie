@@ -267,6 +267,11 @@ CommandLineOptions::CommandLineOptions() : visible("mungojerrie Usage: \
      "Decays the learning rate linearly to specified value over the course of learning. "
      "Negative values turns decay off.")
 
+    ("kkt-lr-decay",
+     value<double>()->default_value(-1, "-1 (off)"),
+     "Decays the learning rate by k / (k + t). "
+     "Negative values turns decay off.")
+
     ("linear-explore-decay",
      value<double>()->default_value(-1, "-1 (off)"),
      "Decays learning epsilon linearly to specified value over the course of learning. "
@@ -293,6 +298,10 @@ CommandLineOptions::CommandLineOptions() : visible("mungojerrie Usage: \
 
     ("learn-stats",
      "Prints statistics for the learning agent")
+
+    ("export-mdp",
+     value<std::string>()->value_name("filename")->default_value(""),
+     "Exports MDP to [filename].")
 
     ("progress-bar",
      "Turns on progress bar for learning.")

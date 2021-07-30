@@ -785,6 +785,52 @@ pair<Node, Priority> Model::getSuccessor(Node state, Action action) const
   return make_pair(dest, prior);
 }
 
+map<pair<Node, Priority>, double> Model::getSuccessorsNoProb(Node state, Action action) const
+{
+  auto const & it = attributes.find(state);
+  if (it == attributes.end())
+    throw logic_error("Node does not exist.");
+  
+  auto const & d = it->second.outEdges;
+  Node dest;
+  Priority prior;
+  bool found = false;
+  for (auto i : d) {
+    if (transitions[i].action == action) {
+      dest = transitions[i].destination;
+      prior = transitions[i].priority;
+      found = true;
+      break;
+    }
+  }
+  if (!found)
+    throw logic_error("Action does not exist out of node.");
+
+  vector<pair<pair<Node, Priority>, double>> rv{{{dest, prior}, 1.}};
+
+  int size = rv.size();
+  for(int i = 0; i < size;) {
+    auto e = rv[i];
+    auto destAttr = attributes.find(e.first.first)->second;
+    if(destAttr.player == probPlayer) {
+      rv.erase(rv.begin() + i);
+      size--;
+      for (auto j : destAttr.outEdges) {
+        rv.push_back({{transitions[j].destination, transitions[j].priority}, e.second * transitions[j].probability});
+        size++;
+      }
+    } else {
+      i++;
+    }
+  }
+
+  map<pair<Node, Priority>, double> rv1;
+  for(auto e : rv) {
+    rv1.insert({e.first, e.second});
+  }
+  return rv1;
+}
+
 map<Node, double> Model::getSuccessors(Node state, Action action) const
 {
   map<Node, double> rv;

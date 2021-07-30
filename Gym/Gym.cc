@@ -451,6 +451,176 @@ Gym::GymInfo Gym::reset(void)
   return rv;
 }
 
+std::vector<std::pair<double, Gym::GymInfo>> Gym::transitions(GymAction action) const
+{
+  Node oldNode = modelState;
+  State oldState = autoState;
+  std::map<std::pair<Node, Priority>, double> _modelStates = {{{modelState, 0}, 1.0}};
+  State _autoState = autoState;
+
+  auto oldLetter = model.getNodeLetter(oldNode);
+  Priority priority = 0;
+
+  if (action.second == invalidState) {
+    _autoState = action.first.second;
+    priority = automaton.getPriority(oldState, oldLetter, _autoState);
+    _modelStates = model.getSuccessorsNoProb(modelState, action.first.first);
+  } else {
+    _autoState = action.second;
+  }
+
+  std::vector<std::pair<double, Gym::GymInfo>> rvs;
+
+  for(auto modelStateAndProb : _modelStates) {
+    auto _modelState = modelStateAndProb.first.first;
+    // std::cout << "xx" << model.getNodeName(_modelState) << std::endl;
+
+    double modelStateProb = modelStateAndProb.second;
+
+    Gym::GymInfo rv;
+    rv.observation = {_modelState, _autoState};
+    rv.letter = model.getNodeLetter(_modelState);
+    rv.done = false;
+    rv.player = model.getNodePlayer(_modelState);
+    rv.actions = {};
+    auto autoSuccessors = automaton.getSuccessors(autoState, rv.letter);
+    for (auto mAction : model.getActions(_modelState)){
+      for (State successor : autoSuccessors)
+        rv.actions.emplace_back(std::pair<Action, State>{mAction, successor}, invalidState);
+    }
+    for (auto aState : automaton.getEpsilonSuccessors(autoState))
+      rv.actions.emplace_back(invalidAction, aState);
+
+    // Create transitions
+    if (rewardType == GymOptions::GymRewardTypes::prism) {
+      if (action.second == invalidState) {
+        rv.reward = model.getActionStateReward(oldNode, action.first.first);
+      } else {
+        rv.reward = 0.0;
+      }
+      if (episodeStep + 1 >= episodeLength) {
+          rv.done = true;
+          if (noTerminalUpdate)
+            rv.terminationOverride = true;
+      }
+      rvs.emplace_back(1.0 * modelStateProb, rv);
+    } else if (traps.find(autoState) != traps.end()) {
+      rv.done = true;
+      rv.reward = 0.0;
+      rv.observation = terminalState;
+      rvs.emplace_back(1.0 * modelStateProb, rv);
+    } else if (rewardType != GymOptions::GymRewardTypes::parity && 
+               rewardType != GymOptions::GymRewardTypes::pri_tracker) {
+      if (priority == 0) {
+        if (episodeStep + 1 >= episodeLength) {
+          rv.done = true;
+          if (noTerminalUpdate)
+            rv.terminationOverride = true;
+        }
+        rv.reward = 0.0;
+        rvs.emplace_back(1.0 * modelStateProb, rv);
+      } else if (priority == 1) {
+        if (rewardType == GymOptions::GymRewardTypes::zeta_reach ||
+            rewardType == GymOptions::GymRewardTypes::zeta_acc) {
+          {
+            Gym::GymInfo rv1 = rv;
+            rv1.observation = terminalState;
+            if (rewardType == GymOptions::GymRewardTypes::zeta_reach)
+              rv1.reward = 1.0;
+            else if (rewardType == GymOptions::GymRewardTypes::zeta_acc)
+              rv1.reward = 1.0-zeta;
+            rv1.done = true;
+            rvs.emplace_back(zeta * modelStateProb, rv1);
+          }
+          {
+            Gym::GymInfo rv2 = rv;
+            if (rewardType == GymOptions::GymRewardTypes::zeta_reach)
+              rv2.reward = 0.0;
+            else if (rewardType == GymOptions::GymRewardTypes::zeta_acc)
+              rv2.reward = 1.0-zeta;
+            if (episodeStep + 1 >= episodeLength) {
+              rv2.done = true;
+              if (noTerminalUpdate)
+                rv2.terminationOverride = true;
+            }
+            rvs.emplace_back((1-zeta) * modelStateProb, rv2);
+          }
+        } else if (rewardType == GymOptions::GymRewardTypes::zeta_discount ||
+                   rewardType == GymOptions::GymRewardTypes::reward_on_acc ||
+                   rewardType == GymOptions::GymRewardTypes::multi_discount) {
+          if (episodeStep + 1 >= episodeLength) {
+            rv.done = true;
+            if (noTerminalUpdate)
+              rv.terminationOverride = true;
+          }
+          if (rewardType == GymOptions::GymRewardTypes::zeta_discount) {
+            rv.reward = 1.0;
+            rv.discountOverride = true;
+            rv.discount = zeta;
+          } else if (rewardType == GymOptions::GymRewardTypes::reward_on_acc) {
+            rv.reward = 1.0;
+          } else if (rewardType == GymOptions::GymRewardTypes::multi_discount) {
+            rv.reward = 1 - gammaB;
+            rv.discountOverride = true;
+            rv.discount = gammaB;        
+          }
+          rvs.emplace_back(1.0 * modelStateProb, rv);
+        }
+      } else {
+        throw(invalid_argument("Priorities greater than 1 are not supported for this reward type."));
+      }
+    } else if (rewardType == GymOptions::GymRewardTypes::parity) {
+      double epsilonPow = pow(1-zeta, 1.0+(maxPriority-priority));
+      {
+        Gym::GymInfo rv1 = rv;
+        rv1.observation = terminalState;
+        rv1.reward = priority % 2;
+        rv1.done = true;
+        rvs.emplace_back((1-epsilonPow) * modelStateProb, rv1);
+      }
+      {
+        Gym::GymInfo rv2 = rv;
+        rv2.reward = 0.0;
+        rvs.emplace_back(epsilonPow * modelStateProb, rv2);
+      }
+    } else if (rewardType == GymOptions::GymRewardTypes::pri_tracker) {
+      // rv.reward = 0.0;
+      // if (trackerState == 0) {
+      //   int sample = Util::sample_discrete_distribution({zeta, 1.0-zeta});
+      //   if (sample) {
+      //     trackerState = 1+floor(priority/2);
+      //   }
+      // } else {
+      //   if (priority == 1+2*(trackerState-1)) {
+      //     int sample = Util::sample_discrete_distribution({zeta, 1.0-zeta});
+      //     if (sample) {
+      //       rv.observation = terminalState;
+      //       rv.reward = 1.0;
+      //       rv.done = true;
+      //       acceptingEps++;
+      //     } else if (resetOnAcc)
+      //       episodeStep = 0;
+      //   } else if (priority > 1+2*(trackerState-1)) {
+      //     trackerState = 1+floor(priority/2);
+      //   } else {
+      //     if (++episodeStep >= episodeLength) {
+      //       rv.done = true;
+      //       if (noTerminalUpdate)
+      //         rv.terminationOverride = true;
+      //     }
+      //   }
+      // }
+      // if (!rv.done)
+      //   rv.observation.trackerState = trackerState;
+      throw(invalid_argument("pri_tracker not implemented"));
+    }
+  
+  }
+
+  return rvs;
+}
+
+
 Gym::GymInfo Gym::step(GymAction action)
 {
   numSteps++;
@@ -806,5 +976,86 @@ void Gym::saveStratBDP(Qtype & Q, std::string filename) const
 
   if (filename != "-") {
     of.close();
+  }
+}
+
+void Gym::saveMDP(std::string filename, double discount) const {
+  std::map<GymObservation, int> states;
+  std::map<GymObservation, std::vector<GymAction>> state_actions;
+  std::map<GymObservation, bool> state_done;
+
+  Gym gym = *this;
+  Gym::GymInfo info = gym.reset();
+  state_actions.insert({info.observation, info.actions});
+  state_done.insert({info.observation, info.done});
+
+  std::queue<GymObservation> to_process;
+  to_process.push(info.observation);
+
+  while(!to_process.empty()) {
+    GymObservation state = to_process.front();
+    to_process.pop();
+    // std::cout << " ggg" << std::endl;
+    if(!states.count(state)) {
+      states.insert({state, states.size()});
+      if (!state_done[state]) {
+        // std::cout << gym.getModel().getNodeName(state.first) << " fff" << std::endl;
+        gym.modelState = state.first;
+        gym.autoState = state.second;
+        for (auto act : state_actions[state]) {
+          for(auto transition : gym.transitions(act)) {
+            to_process.push(transition.second.observation);
+            // std::cout << "add" << (transition.second.done) << std::endl;
+            state_actions.insert({transition.second.observation, transition.second.actions});
+            state_done.insert({transition.second.observation, transition.second.done});
+          }
+        }
+      }
+    }
+  }
+  
+  // Output MDP to file
+  streambuf * buf;
+  ofstream of;
+
+  if (filename == "-") {
+    buf = cout.rdbuf();
+  } else {
+    of.open(filename);
+    if (!of.is_open())
+      throw logic_error("Cannot open file " + filename + ".");
+    buf = of.rdbuf();
+  }
+
+  ostream ofs(buf);
+
+  ofs << "states: " << states.size() << std::endl;
+  ofs << "initial: " << states[gym.reset().observation] << std::endl;
+  ofs << "transitions:" << std::endl;
+  for(auto state : states) {
+    GymObservation obs = state.first;
+    if(state_done[obs]) {
+      ofs << state.second << " terminal" << std::endl;
+    } else {
+      gym.modelState = obs.first;
+      gym.autoState = obs.second;
+      for(auto act : state_actions[obs]) {
+        for(auto transition : gym.transitions(act)) {
+          auto nextInfo = transition.second;
+          ofs << state.second << " ";
+          ofs << " act: ";
+          if (act.first == invalidAction) { // Epsilon action
+            ofs << "epsilon" << act.second;
+          } else {
+            ofs << "\"" << model.getActionName(act.first.first);
+            ofs << "+" << act.first.second << "\"";
+          }
+          ofs << " next: " << states[nextInfo.observation] << 
+          " probability: " << transition.first <<
+          " reward: " << transition.second.reward <<
+          " discount: " << (transition.second.discountOverride ? transition.second.discount : discount) << std::endl;
+        }
+      }
+    }
   }
 }

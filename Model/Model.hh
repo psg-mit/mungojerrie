@@ -243,6 +243,9 @@ public:
   std::pair<Node, Priority> getSuccessor(Node state, Action action) const;
   /** @brief Returns a the decision node successors of state with probabilities. */
   std::map<Node, double> getSuccessors(Node state, Action action) const;
+  /** @brief Returns the decision node successors of state with probabilities. */
+  std::map<std::pair<Node, Priority>, double> getSuccessorsNoProb(Node state, Action action) const;
+
   /** @brief Returns reward from transition from a node enabled by an action. */
   Reward getActionStateReward(Node state, Action action) const;
   /** @brief Stream insertion operator overload. */

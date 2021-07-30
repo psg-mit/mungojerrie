@@ -218,7 +218,7 @@ GymAction getRandomAction(vector<GymAction> const & actions,
 }
 
 std::map<double, double> Learner::SarsaLambda(double lambda, bool replacingTrace, unsigned int numEpisodes,
-                       double alpha, double linearAlphaDecay, double discount, 
+                       double alpha, double linearAlphaDecay, double kktAlphaDecay, double discount, 
                        double epsilon, double linearExploreDecay, double initValue)
 {
   if (isBDP)
@@ -331,7 +331,12 @@ std::map<double, double> Learner::SarsaLambda(double lambda, bool replacingTrace
       A = aPrime;
     }
 
-    alpha -= alphaDecay;
+    if (kktAlphaDecay > 0) {
+      alpha = kktAlphaDecay / (kktAlphaDecay + episode);
+    } else {
+      alpha -= alphaDecay;
+    }
+
     if (alpha < 0)
       alpha = 0.0;
     epsilon -= exploreDecay;
@@ -395,7 +400,7 @@ std::map<double, double> Learner::SarsaLambda(double lambda, bool replacingTrace
   return probs;
 }
 
-std::map<double, double> Learner::DoubleQLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay, 
+std::map<double, double> Learner::DoubleQLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay, double kktAlphaDecay,
                               double discount, double epsilon, double linearExploreDecay, double initValue)
 {
   if (isBDP)
@@ -522,7 +527,12 @@ std::map<double, double> Learner::DoubleQLearning(unsigned int numEpisodes, doub
       S = sPrime;
     }
 
-    alpha -= alphaDecay;
+    if (kktAlphaDecay > 0) {
+      alpha = kktAlphaDecay / (kktAlphaDecay + episode);
+    } else {
+      alpha -= alphaDecay;
+    }
+
     if (alpha < 0)
       alpha = 0.0;
     epsilon -= exploreDecay;
@@ -595,7 +605,7 @@ std::map<double, double> Learner::DoubleQLearning(unsigned int numEpisodes, doub
   return probs;
 }
 
-std::map<double, double> Learner::QLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay,
+std::map<double, double> Learner::QLearning(unsigned int numEpisodes, double alpha, double linearAlphaDecay, double kktAlphaDecay,
                         double discount, double epsilon, double linearExploreDecay, double initValue)
 {
   Qtype Q;
@@ -749,7 +759,12 @@ std::map<double, double> Learner::QLearning(unsigned int numEpisodes, double alp
       S = sPrime; 
     }
     
-    alpha -= alphaDecay;
+    if (kktAlphaDecay > 0) {
+      alpha = kktAlphaDecay / (kktAlphaDecay + episode);
+    } else {
+      alpha -= alphaDecay;
+    }
+
     if (alpha < 0)
       alpha = 0.0;
     epsilon -= exploreDecay;

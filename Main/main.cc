@@ -520,6 +520,10 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
   gymOptions.concatActionsInCSV = options.options().count("concat-actions-in-csv");
   Gym gym(model, objective, gymOptions);
 
+  if (options.options()["export-mdp"].as<string>() != "") {
+    gym.saveMDP(options.options()["export-mdp"].as<string>(), options.options()["discount"].as<double>());
+  }
+
   LearnerOptions learnerOptions;
 
   learnerOptions.isBDP = model.isBDP();
@@ -547,6 +551,8 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
   double alpha = options.options()["alpha"].as<double>();
   double initValue = options.options()["init-value"].as<double>();
   double linearAlphaDecay = options.options()["linear-lr-decay"].as<double>();
+  double kktAlphaDecay = options.options()["kkt-lr-decay"].as<double>();
+
   double linearExploreDecay = options.options()["linear-explore-decay"].as<double>();
 
   if (options.SLEnabled()) {
@@ -555,14 +561,14 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
     }
     double lambda = options.options()["lambda"].as<double>();
     bool replacingTrace = (bool) options.options().count("replacing-trace");
-    learner.SarsaLambda(lambda, replacingTrace, episodeNumber, alpha, linearAlphaDecay, 
+    learner.SarsaLambda(lambda, replacingTrace, episodeNumber, alpha, linearAlphaDecay, kktAlphaDecay,
                      discount, explore, linearExploreDecay, initValue); 
   }
   if (options.QEnabled()) {
     if (options.verbosity > Verbosity::Silent) {
       cout << endl << "--------QLearning--------" << endl;
     }
-    learner.QLearning(episodeNumber, alpha, linearAlphaDecay, 
+    learner.QLearning(episodeNumber, alpha, linearAlphaDecay, kktAlphaDecay,
                       discount, explore, linearExploreDecay, initValue);
 
   }
@@ -570,7 +576,7 @@ void doLearning(CommandLineOptions const & options, Model const & model, Parity 
     if (options.verbosity > Verbosity::Silent) {
       cout << endl << "--------DoubleQLearning--------" << endl;
     }
-    learner.DoubleQLearning(episodeNumber, alpha, linearAlphaDecay, 
+    learner.DoubleQLearning(episodeNumber, alpha, linearAlphaDecay, kktAlphaDecay,
                             discount, explore, linearExploreDecay, initValue);
   }
 }
@@ -704,6 +710,7 @@ void estimatePACProbability(CommandLineOptions options, Model const & model, Par
     double alpha = options.options()["alpha"].as<double>();
     double initValue = options.options()["init-value"].as<double>();
     double linearAlphaDecay = options.options()["linear-lr-decay"].as<double>();
+    double kktAlphaDecay = options.options()["kkt-lr-decay"].as<double>();
     double linearExploreDecay = options.options()["linear-explore-decay"].as<double>();
     
     if (options.options().count("seed")) {
@@ -719,7 +726,7 @@ void estimatePACProbability(CommandLineOptions options, Model const & model, Par
     int num_samples_priv = 0;
     int num_samples_view = 0;
     while(i < pac_min_samples_per_thread || estimate_max_std(within_eps_counts_view, num_samples_view) > pac_max_std) {
-      auto probs = learner.QLearning(episodeNumber, alpha, linearAlphaDecay, 
+      auto probs = learner.QLearning(episodeNumber, alpha, linearAlphaDecay, kktAlphaDecay,
         discount, explore, linearExploreDecay, initValue);
       for (auto it : probs) {
         if(abs(it.second - pac_target_prob) < pac_epsilon) {

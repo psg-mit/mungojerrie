@@ -198,6 +198,8 @@ public:
   Model QtoModel(Qtype const & Q, double tolerance, bool p1strategic, bool statsOn, double priEpsilon=0.001) const;
   /** @brief Resets environment. */ 
   GymInfo reset(void);
+  /** @brief Environment transition. */
+  std::vector<std::pair<double, Gym::GymInfo>> transitions(GymAction action) const;
   /** @brief Takes step in environment according to action. */
   GymInfo step(GymAction);
   /** @brief Returns a reference to model. */
@@ -222,9 +224,11 @@ public:
   void loadQ(Qtype & Q1, Qtype & Q2, std::string saveType, std::string filename) const;
   /** @brief Saves mixed strategy from Q-table to CSV file for all visited states. */
   void saveStrat(Qtype & Q, std::string filename) const;
-   /** @brief Saves mixed strategy from Q-table to file for all visited states. */
+  /** @brief Saves mixed strategy from Q-table to file for all visited states. */
   void saveStratBDP(Qtype & Q, std::string filename) const;
-  
+  /** @brief Saves the gym as an MDP.*/
+  void saveMDP(std::string filename, double discount) const;
+
 private:
   /** @brief Computes an ID from model and automaton.
    *  @details Provides a soft check that the same
