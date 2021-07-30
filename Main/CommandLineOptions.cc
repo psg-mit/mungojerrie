@@ -223,7 +223,7 @@ CommandLineOptions::CommandLineOptions() : visible("mungojerrie Usage: \
      value<double>()->default_value(1e-3),
      "Maximum tolerable standard deviation for the estimation.")
 
-    ("pac_epsilon",
+    ("est-pac-epsilon",
      value<double>()->default_value(1e-3),
      "The epsilon for estimating PAC probability.")
 

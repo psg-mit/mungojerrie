@@ -195,8 +195,8 @@ int main(int argc, char * argv[])
         if (options.options().count("prism-learn")) {
           cerr << "Warning: --prism-learn specified without --learn. Nothing to generate." << endl;
         }
-        if (options.options()["est-pac-probability-num-samples"].as<unsigned int>() > 0) {
-          cerr << "Warning: --est-pac-probability-num-samples specified without --learn. Nothing to generate." << endl;
+        if (options.options()["est-pac-probability-min-samples"].as<unsigned int>() > 0) {
+          cerr << "Warning: --est-pac-probability-min-samples specified without --learn. Nothing to generate." << endl;
         }
       }
     } else {
@@ -677,7 +677,7 @@ void estimatePACProbability(CommandLineOptions options, Model const & model, Par
   unsigned int pac_min_samples = options.options()["est-pac-probability-min-samples"].as<unsigned int>();
   double pac_max_std = options.options()["est-pac-max-std"].as<double>();
 
-  const double pac_epsilon = options.options()["pac_epsilon"].as<double>();
+  const double pac_epsilon = options.options()["est-pac-epsilon"].as<double>();
 
   const unsigned int sync_interval = 4;
 
