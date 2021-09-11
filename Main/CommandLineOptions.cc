@@ -216,7 +216,7 @@ CommandLineOptions::CommandLineOptions() : visible("mungojerrie Usage: \
     ("est-pac", "Enable estimation of PAC probability.")
 
     ("est-pac-probability-min-samples",
-     value<unsigned int>()->default_value(0),
+     value<unsigned int>()->default_value(10),
      "Number of samples for estimating PAC bound.")
 
     ("est-pac-max-std",

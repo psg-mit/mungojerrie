@@ -720,16 +720,36 @@ void estimatePACProbability(CommandLineOptions options, Model const & model, Par
       Util::seed_urng();
     }
 
+    std::function<std::map<double, double> (Learner)> learn_f;
+
+    if (options.SLEnabled()) {
+      double lambda = options.options()["lambda"].as<double>();
+      bool replacingTrace = (bool) options.options().count("replacing-trace");
+      learn_f = [=](auto learner){return learner.SarsaLambda(lambda, replacingTrace, episodeNumber, alpha, linearAlphaDecay, kktAlphaDecay,
+                       discount, explore, linearExploreDecay, initValue);};
+    } else if (options.QEnabled()) {
+      learn_f = [=](auto learner){return learner.QLearning(episodeNumber, alpha, linearAlphaDecay, kktAlphaDecay,
+                        discount, explore, linearExploreDecay, initValue);};
+
+    } else if (options.DQEnabled()) {
+      learn_f = [=](auto learner){return learner.DoubleQLearning(episodeNumber, alpha, linearAlphaDecay, kktAlphaDecay,
+                              discount, explore, linearExploreDecay, initValue);};
+    }
+
     unsigned int i = 0;
     std::map<double, int> within_eps_counts_priv;
     std::map<double, int> within_eps_counts_view;
+    for(auto it : gymOptions.tolerance) {
+      within_eps_counts_priv[it] = 0;
+      within_eps_counts_view[it] = 0;
+    }
+
     int num_samples_priv = 0;
     int num_samples_view = 0;
     while(i < pac_min_samples_per_thread || estimate_max_std(within_eps_counts_view, num_samples_view) > pac_max_std) {
-      auto probs = learner.QLearning(episodeNumber, alpha, linearAlphaDecay, kktAlphaDecay,
-        discount, explore, linearExploreDecay, initValue);
+      auto probs = learn_f(learner);
       for (auto it : probs) {
-        if(abs(it.second - pac_target_prob) < pac_epsilon) {
+        if(abs(it.second - pac_target_prob) <= pac_epsilon) {
           within_eps_counts_priv[it.first] += 1;
           within_eps_counts_view[it.first] += 1;
         }
