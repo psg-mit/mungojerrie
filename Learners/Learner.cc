@@ -839,7 +839,7 @@ std::map<double, double> Learner::QLearning(unsigned int numEpisodes, double alp
       cout << initValue << endl;
     else
       cout << Q[info.observation][(getMinAction(info.observation, Q, info.player))] << endl;
-    return {}; // TODO(camyang): what to do here?
+    return {}; // TODO: what to do here?
   } else {
     auto probs = gym.getProbabilityOfSat(Q, statsOn);
     if (verbosity >= Verbosity::Informative) {
