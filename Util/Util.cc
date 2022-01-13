@@ -109,7 +109,7 @@ namespace Util {
     thread_local static Device rdev{};
 #ifdef _OPENMP
     prngSeed = rdev();
-#elif
+#else
     prngSeed = rdev() + omp_get_thread_num();
 #endif
     urng().seed(prngSeed);
